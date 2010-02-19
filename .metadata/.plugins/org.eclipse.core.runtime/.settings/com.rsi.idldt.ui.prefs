@@ -1,0 +1,15 @@
+#Tue Feb 02 10:26:04 JST 2010
+IDL_VALUES=true
+IDL_DEVICE=WIN
+CHROMACODING_VALUES=true
+IDL_DATAFILE_USER_COMMENTS=1
+IDL_DLM_PATH=<IDL_DEFAULT>;+C\:\\hori\\free_soft\\IDL_DLM
+IDLDT_VALUES=true
+IDL_STARTUP=C\:\\hori\\free_soft\\cygwin\\home\\hori\\work\\tmp\\idl_startup_win.pro
+IDL_RBUF_PERSIST=1
+IDL_START_DIR=C\:\\hori\\free_soft\\cygwin\\home\\hori\\work\\tmp
+IDL_PATH=<IDL_DEFAULT>;+C\:\\hori\\free_soft\\cygwin\\home\\hori\\work\\tmp\\thmsw_r7189_2010-01-29\\idl
+IDL_QUIET=0
+eclipse.preferences.version=1
+IDL_CPU_VECTOR_ENABLE=1
+IDL_PATH_CACHE_DISABLE=0
