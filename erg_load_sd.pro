@@ -4,6 +4,7 @@
 ; to load SuperDARN fitacf data as tplot vars
 ;
 ; written by: T. Hori 
+; last updated: Mar. 7, 2010
 ;-
 pro erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
 
