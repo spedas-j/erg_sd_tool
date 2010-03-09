@@ -31,7 +31,8 @@ endif else begin
   endif
 endelse
 
-cdf2tplot,file=datfiles, prefix='sd_hok_', get_support_data=get_support_data
+prefix='sd_' + sites[0] + '_'
+cdf2tplot,file=datfiles, prefix=prefix, get_support_data=get_support_data
 
 tclip, 'sd_hok_'+ ['pwr','spec','vlos','elev'] +'*', -4000,4000, /over
 
@@ -71,9 +72,54 @@ get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
 IF idx[0] NE -1 THEN val[idx] = !values.f_nan
 store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
 
+;Load the position table ;;;;;;;;;;;;;;;;;;
+tbl_0='' & tbl_1='' & tbl_2=''
+time_0='' & time_1='' & time_2=''
+tbllist = ['tbl_0', 'tbl_1' , 'tbl_2']
+timelist = ['time_0','time_1','time_2']
+for i=0L, n_elements(datfiles)-1 do begin
+  cdfi = cdf_load_vars( datfiles[i], varformat='*' ) 
+  timevn = strfilter( cdfi.vars.name, 'Epoch_?' )
+  ptblvn = strfilter( cdfi.vars.name, 'position_tbl_?' )
+  ;Error check
+  if n_elements(timevn) eq 0 or n_elements(ptblvn) eq 0 or $
+    n_elements(timevn) ne n_elements(ptblvn) then begin 
+    dprint, 'Epoch_x and position_tbl_x mismatch in CDF!'
+    return
+  endif
+  timevn = timevn[ sort(timevn) ] ;sort the variable names
+  ptblvn = ptblvn[ sort(ptblvn) ]
+  
+  for j=0, n_elements(ptblvn)-1 do begin
+    tvn = timevn[j] & pvn = ptblvn[j]
+    stblno = strmid(tvn, 0, 1, /reverse)
+    tvnidx = (where( strcmp(cdfi.vars.name,tvn ) , nw))[0]
+    pvnidx = (where( strcmp(cdfi.vars.name,pvn ) , nw))[0]
+    time = *cdfi.vars[tvnidx].dataptr
+    tbl  = *cdfi.vars[pvnidx].dataptr
+    dim = size( tbl, /dim ) & tbl2 = reform( tbl, 1, dim[0],dim[1],dim[2] )
+    rslt=execute('append_array, time_'+stblno+', [time[0],time[n_elements(time)-1]]')
+    rslt=execute('append_array, tbl_'+stblno+', [tbl2,tbl2]' )
+  endfor
+endfor
+
+for i=0, n_elements(tbllist)-1 do begin
+  rslt=execute('n=n_elements('+tbllist[i]+')')
+  if n lt 2 then continue
+  rslt=execute('time='+timelist[i])
+  rslt=execute('tbl='+tbllist[i])
+  store_data, prefix+'position_'+tbllist[i], $
+    data={x:time_double(time,/epoch), y:tbl}
+endfor
+
+;Release unused ptrs
+tplot_ptrs = ptr_extract(tnames(/dataquant))
+unused_ptrs = ptr_extract(cdfi,except=tplot_ptrs)
+ptr_free,unused_ptrs
 
 
 
-
+;Normal end
 return
 end
+
