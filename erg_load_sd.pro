@@ -5,7 +5,6 @@
 ;
 ; written by: T. Hori 
 ; last updated: Mar. 9, 2010
-; comment for git
 ;-
 pro erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
 
@@ -31,45 +30,46 @@ endif else begin
     print, 'Cannot find any of the data file(s): ', cdffn
     return
   endif
+  sites=''
 endelse
 
 prefix='sd_' + sites[0] + '_'
 cdf2tplot,file=datfiles, prefix=prefix, get_support_data=get_support_data
 
-tclip, 'sd_hok_'+ ['pwr','spec','vlos','elev'] +'*', -4000,4000, /over
+tclip, prefix+['pwr','spec','vlos','elev'] +'*', -4000,4000, /over
 
-options,'sd_hok_pwr_0', ytitle='Range gate',ysubtitle='',ztitle='Backscatter power [dB]'
-options,'sd_hok_pwr_err_0', ytitle='Range gate',ysubtitle='',ztitle='power err[dB]'
-options,'sd_hok_spec_width_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width [m/s]'
-options,'sd_hok_spec_width_err_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width err[m/s]'
-options,'sd_hok_vlos_0', ytitle='Range gate',ysubtitle='',ztitle='Doppler velocity [m/s]'
-options,'sd_hok_vlos_err_0', ytitle='Range gate',ysubtitle='',ztitle='Vlos err [m/s]'
-options,'sd_hok_elev_angle_0', ytitle='Range gate',ysubtitle='',ztitle='Elev. angle [deg]'
-options,'sd_hok_echo_flag_0', ytitle='Range gate',ysubtitle='',ztitle='1: iono. echo'
-options,'sd_hok_quality_0', ytitle='Range gate',ysubtitle='',ztitle='quality'
-options,'sd_hok_quality_flag_0', ytitle='Range gate',ysubtitle='',ztitle='quality flg'
+options,prefix+'pwr_0', ytitle='Range gate',ysubtitle='',ztitle='Backscatter power [dB]'
+options,prefix+'pwr_err_0', ytitle='Range gate',ysubtitle='',ztitle='power err[dB]'
+options,prefix+'spec_width_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width [m/s]'
+options,prefix+'spec_width_err_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width err[m/s]'
+options,prefix+'vlos_0', ytitle='Range gate',ysubtitle='',ztitle='Doppler velocity [m/s]'
+options,prefix+'vlos_err_0', ytitle='Range gate',ysubtitle='',ztitle='Vlos err [m/s]'
+options,prefix+'elev_angle_0', ytitle='Range gate',ysubtitle='',ztitle='Elev. angle [deg]'
+options,prefix+'echo_flag_0', ytitle='Range gate',ysubtitle='',ztitle='1: iono. echo'
+options,prefix+'quality_0', ytitle='Range gate',ysubtitle='',ztitle='quality'
+options,prefix+'quality_flag_0', ytitle='Range gate',ysubtitle='',ztitle='quality flg'
 
-zlim, 'sd_hok_pwr_0', 0,30
-zlim, 'sd_hok_pwr_err_0', 0,30
-zlim, 'sd_hok_spec_width_0', 0,200
-zlim, 'sd_hok_spec_width_err_0', 0,300
-zlim, 'sd_hok_vlos_0', -300,300
-zlim, 'sd_hok_vlos_err_0', 0,300
+zlim, prefix+'pwr_0', 0,30
+zlim, prefix+'pwr_err_0', 0,30
+zlim, prefix+'spec_width_0', 0,200
+zlim, prefix+'spec_width_err_0', 0,300
+zlim, prefix+'vlos_0', -300,300
+zlim, prefix+'vlos_err_0', 0,300
 
 get_data, 'sd_hok_pwr_0', data=d & pwr = d.y
 idx = WHERE( ~FINITE(pwr) )
 
-tn='sd_hok_echo_flag_0'
+tn=prefix+'echo_flag_0'
 get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
 IF idx[0] NE -1 THEN val[idx] = !values.f_nan
 store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
 
-tn='sd_hok_quality_0'
+tn=prefix+'quality_0'
 get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
 IF idx[0] NE -1 THEN val[idx] = !values.f_nan
 store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
 
-tn='sd_hok_quality_flag_0'
+tn=prefix+'quality_flag_0'
 get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
 IF idx[0] NE -1 THEN val[idx] = !values.f_nan
 store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
