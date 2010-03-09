@@ -5,6 +5,7 @@
 ;
 ; written by: T. Hori 
 ; last updated: Mar. 9, 2010
+; comment for git
 ;-
 pro erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
 
