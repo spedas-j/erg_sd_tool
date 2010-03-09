@@ -1,128 +1,137 @@
 ;+
-; ERG_LOAD_SD
-; 
-; to load SuperDARN fitacf data as tplot vars
+; erg_load_sd
 ;
-; written by: T. Hori 
-; last updated: Mar. 9, 2010
+; :DESCRIPTION:
+;    Load fitacf CDF files of SuperDARN as tplot variables.
+;
+;
+;
+; :KEYWORDS:
+;    sites
+;    cdffn
+;    get_support_data
+;
+; :AUTHOR: T. Hori
+; :HISTORY:
+;   2010/03/09: Created as this form
 ;-
-pro erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
+PRO erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
 
-if ~keyword_set(cdffn) then begin
-  if ~keyword_set(sites) then sites = 'hok'
+  IF ~KEYWORD_SET(cdffn) THEN BEGIN
+    IF ~KEYWORD_SET(sites) THEN sites = 'hok'
+    
+    source = file_retrieve(/struct)
+    source.local_data_dir = root_data_dir()+'GROUND/sd/fitacf/'+sites[0]+'/'
+    source.remote_data_dir = 'http://st4a.stelab.nagoya-u.ac.jp/~horit/web_tmp/tmp/data/GROUND/sd/fitacf/'+sites[0]+'/'
+    source.min_age_limit = 900
+    
+    datfileformat = 'YYYY/sd_fitacf_l2_'+sites[0]+'_YYYYMMDD*cdf'
+    relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
+    
+    datfiles = file_retrieve(relfnames, _extra=source)
+    IF N_ELEMENTS(datfiles) LT 1 OR STRLEN(datfiles[0]) LT 10 THEN BEGIN
+      PRINT, 'No data was loaded!'
+      RETURN
+    ENDIF
+  ENDIF ELSE BEGIN
+    datfiles = cdffn
+    IF FIX(TOTAL(FILE_TEST(datfiles))) LT 1 THEN BEGIN
+      PRINT, 'Cannot find any of the data file(s): ', cdffn
+      RETURN
+    ENDIF
+    sites=''
+  ENDELSE
   
-  source = file_retrieve(/struct)
-  source.local_data_dir = root_data_dir()+'GROUND/sd/fitacf/'+sites[0]+'/'
-  source.remote_data_dir = 'http://st4a.stelab.nagoya-u.ac.jp/~horit/web_tmp/tmp/data/GROUND/sd/fitacf/'+sites[0]+'/'
-  source.min_age_limit = 900
+  prefix='sd_' + sites[0] + '_'
+  cdf2tplot,file=datfiles, prefix=prefix, get_support_data=get_support_data
   
-  datfileformat = 'YYYY/sd_fitacf_l2_'+sites[0]+'_YYYYMMDD*cdf'
-  relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
+  tclip, prefix+['pwr','spec','vlos','elev'] +'*', -4000,4000, /over
   
-  datfiles = file_retrieve(relfnames, _extra=source)
-  if n_elements(datfiles) lt 1 or strlen(datfiles[0]) lt 10 then begin
-    print, 'No data was loaded!'
-    return
-  endif
-endif else begin
-  datfiles = cdffn 
-  if fix(total(file_test(datfiles))) lt 1 then begin
-    print, 'Cannot find any of the data file(s): ', cdffn
-    return
-  endif
-  sites=''
-endelse
-
-prefix='sd_' + sites[0] + '_'
-cdf2tplot,file=datfiles, prefix=prefix, get_support_data=get_support_data
-
-tclip, prefix+['pwr','spec','vlos','elev'] +'*', -4000,4000, /over
-
-options,prefix+'pwr_0', ytitle='Range gate',ysubtitle='',ztitle='Backscatter power [dB]'
-options,prefix+'pwr_err_0', ytitle='Range gate',ysubtitle='',ztitle='power err[dB]'
-options,prefix+'spec_width_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width [m/s]'
-options,prefix+'spec_width_err_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width err[m/s]'
-options,prefix+'vlos_0', ytitle='Range gate',ysubtitle='',ztitle='Doppler velocity [m/s]'
-options,prefix+'vlos_err_0', ytitle='Range gate',ysubtitle='',ztitle='Vlos err [m/s]'
-options,prefix+'elev_angle_0', ytitle='Range gate',ysubtitle='',ztitle='Elev. angle [deg]'
-options,prefix+'echo_flag_0', ytitle='Range gate',ysubtitle='',ztitle='1: iono. echo'
-options,prefix+'quality_0', ytitle='Range gate',ysubtitle='',ztitle='quality'
-options,prefix+'quality_flag_0', ytitle='Range gate',ysubtitle='',ztitle='quality flg'
-
-zlim, prefix+'pwr_0', 0,30
-zlim, prefix+'pwr_err_0', 0,30
-zlim, prefix+'spec_width_0', 0,200
-zlim, prefix+'spec_width_err_0', 0,300
-zlim, prefix+'vlos_0', -300,300
-zlim, prefix+'vlos_err_0', 0,300
-
-get_data, 'sd_hok_pwr_0', data=d & pwr = d.y
-idx = WHERE( ~FINITE(pwr) )
-
-tn=prefix+'echo_flag_0'
-get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
-IF idx[0] NE -1 THEN val[idx] = !values.f_nan
-store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
-
-tn=prefix+'quality_0'
-get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
-IF idx[0] NE -1 THEN val[idx] = !values.f_nan
-store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
-
-tn=prefix+'quality_flag_0'
-get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
-IF idx[0] NE -1 THEN val[idx] = !values.f_nan
-store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
-
-;Load the position table(s) ;;;;;;;;;;;;;;;;;;
-tbl_0='' & tbl_1='' & tbl_2=''
-time_0='' & time_1='' & time_2=''
-tbllist = ['tbl_0', 'tbl_1' , 'tbl_2']
-timelist = ['time_0','time_1','time_2']
-for i=0L, n_elements(datfiles)-1 do begin
-  cdfi = cdf_load_vars( datfiles[i], varformat='*' ) 
-  timevn = strfilter( cdfi.vars.name, 'Epoch_?' )
-  ptblvn = strfilter( cdfi.vars.name, 'position_tbl_?' )
-  ;Error check
-  if n_elements(timevn) eq 0 or n_elements(ptblvn) eq 0 or $
-    n_elements(timevn) ne n_elements(ptblvn) then begin 
-    dprint, 'Epoch_x and position_tbl_x mismatch in CDF!'
-    return
-  endif
-  timevn = timevn[ sort(timevn) ] ;sort the variable names
-  ptblvn = ptblvn[ sort(ptblvn) ]
+  options,prefix+'pwr_0', ytitle='Range gate',ysubtitle='',ztitle='Backscatter power [dB]'
+  options,prefix+'pwr_err_0', ytitle='Range gate',ysubtitle='',ztitle='power err[dB]'
+  options,prefix+'spec_width_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width [m/s]'
+  options,prefix+'spec_width_err_0', ytitle='Range gate',ysubtitle='',ztitle='Spec. width err[m/s]'
+  options,prefix+'vlos_0', ytitle='Range gate',ysubtitle='',ztitle='Doppler velocity [m/s]'
+  options,prefix+'vlos_err_0', ytitle='Range gate',ysubtitle='',ztitle='Vlos err [m/s]'
+  options,prefix+'elev_angle_0', ytitle='Range gate',ysubtitle='',ztitle='Elev. angle [deg]'
+  options,prefix+'echo_flag_0', ytitle='Range gate',ysubtitle='',ztitle='1: iono. echo'
+  options,prefix+'quality_0', ytitle='Range gate',ysubtitle='',ztitle='quality'
+  options,prefix+'quality_flag_0', ytitle='Range gate',ysubtitle='',ztitle='quality flg'
   
-  for j=0, n_elements(ptblvn)-1 do begin
-    tvn = timevn[j] & pvn = ptblvn[j]
-    stblno = strmid(tvn, 0, 1, /reverse)
-    tvnidx = (where( strcmp(cdfi.vars.name,tvn ) , nw))[0]
-    pvnidx = (where( strcmp(cdfi.vars.name,pvn ) , nw))[0]
-    time = *cdfi.vars[tvnidx].dataptr
-    tbl  = *cdfi.vars[pvnidx].dataptr
-    dim = size( tbl, /dim ) & tbl2 = reform( tbl, 1, dim[0],dim[1],dim[2] )
-    rslt=execute('append_array, time_'+stblno+', [time[0],time[n_elements(time)-1]]')
-    rslt=execute('append_array, tbl_'+stblno+', [tbl2,tbl2]' )
-  endfor
-endfor
-
-for i=0, n_elements(tbllist)-1 do begin
-  rslt=execute('n=n_elements('+tbllist[i]+')')
-  if n lt 2 then continue
-  rslt=execute('time='+timelist[i])
-  rslt=execute('tbl='+tbllist[i])
-  store_data, prefix+'position_'+tbllist[i], $
-    data={x:time_double(time,/epoch), y:tbl}
-endfor
-
-;Release unused ptrs
-tplot_ptrs = ptr_extract(tnames(/dataquant))
-unused_ptrs = ptr_extract(cdfi,except=tplot_ptrs)
-ptr_free,unused_ptrs
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;Normal end
-return
-end
+  zlim, prefix+'pwr_0', 0,30
+  zlim, prefix+'pwr_err_0', 0,30
+  zlim, prefix+'spec_width_0', 0,200
+  zlim, prefix+'spec_width_err_0', 0,300
+  zlim, prefix+'vlos_0', -300,300
+  zlim, prefix+'vlos_err_0', 0,300
+  
+  get_data, 'sd_hok_pwr_0', data=d & pwr = d.y
+  idx = WHERE( ~FINITE(pwr) )
+  
+  tn=prefix+'echo_flag_0'
+  get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
+  IF idx[0] NE -1 THEN val[idx] = !values.f_nan
+  store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
+  
+  tn=prefix+'quality_0'
+  get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
+  IF idx[0] NE -1 THEN val[idx] = !values.f_nan
+  store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
+  
+  tn=prefix+'quality_flag_0'
+  get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
+  IF idx[0] NE -1 THEN val[idx] = !values.f_nan
+  store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
+  
+  ;Load the position table(s) ;;;;;;;;;;;;;;;;;;
+  tbl_0='' & tbl_1='' & tbl_2=''
+  time_0='' & time_1='' & time_2=''
+  tbllist = ['tbl_0', 'tbl_1' , 'tbl_2']
+  timelist = ['time_0','time_1','time_2']
+  FOR i=0L, N_ELEMENTS(datfiles)-1 DO BEGIN
+    cdfi = cdf_load_vars( datfiles[i], varformat='*' )
+    timevn = strfilter( cdfi.vars.name, 'Epoch_?' )
+    ptblvn = strfilter( cdfi.vars.name, 'position_tbl_?' )
+    ;Error check
+    IF N_ELEMENTS(timevn) EQ 0 OR N_ELEMENTS(ptblvn) EQ 0 OR $
+      N_ELEMENTS(timevn) NE N_ELEMENTS(ptblvn) THEN BEGIN
+      dprint, 'Epoch_x and position_tbl_x mismatch in CDF!'
+      RETURN
+    ENDIF
+    timevn = timevn[ SORT(timevn) ] ;sort the variable names
+    ptblvn = ptblvn[ SORT(ptblvn) ]
+    
+    FOR j=0, N_ELEMENTS(ptblvn)-1 DO BEGIN
+      tvn = timevn[j] & pvn = ptblvn[j]
+      stblno = STRMID(tvn, 0, 1, /reverse)
+      tvnidx = (WHERE( STRCMP(cdfi.vars.name,tvn ) , nw))[0]
+      pvnidx = (WHERE( STRCMP(cdfi.vars.name,pvn ) , nw))[0]
+      time = *cdfi.vars[tvnidx].dataptr
+      tbl  = *cdfi.vars[pvnidx].dataptr
+      dim = SIZE( tbl, /dim ) & tbl2 = REFORM( tbl, 1, dim[0],dim[1],dim[2] )
+      rslt=EXECUTE('append_array, time_'+stblno+', [time[0],time[n_elements(time)-1]]')
+      rslt=EXECUTE('append_array, tbl_'+stblno+', [tbl2,tbl2]' )
+    ENDFOR
+  ENDFOR
+  
+  FOR i=0, N_ELEMENTS(tbllist)-1 DO BEGIN
+    rslt=EXECUTE('n=n_elements('+tbllist[i]+')')
+    IF n LT 2 THEN CONTINUE
+    rslt=EXECUTE('time='+timelist[i])
+    rslt=EXECUTE('tbl='+tbllist[i])
+    store_data, prefix+'position_'+tbllist[i], $
+      data={x:time_double(time,/epoch), y:tbl}
+  ENDFOR
+  
+  ;Release unused ptrs
+  tplot_ptrs = ptr_extract(tnames(/dataquant))
+  unused_ptrs = ptr_extract(cdfi,except=tplot_ptrs)
+  PTR_FREE,unused_ptrs
+  
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  
+  
+  ;Normal end
+  RETURN
+END
 
