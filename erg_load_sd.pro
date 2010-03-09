@@ -73,7 +73,7 @@ get_data, tn, data=d, dl=dl, lim=lim & val=FLOAT(d.y)
 IF idx[0] NE -1 THEN val[idx] = !values.f_nan
 store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
 
-;Load the position table ;;;;;;;;;;;;;;;;;;
+;Load the position table(s) ;;;;;;;;;;;;;;;;;;
 tbl_0='' & tbl_1='' & tbl_2=''
 time_0='' & time_1='' & time_2=''
 tbllist = ['tbl_0', 'tbl_1' , 'tbl_2']
@@ -118,6 +118,7 @@ tplot_ptrs = ptr_extract(tnames(/dataquant))
 unused_ptrs = ptr_extract(cdfi,except=tplot_ptrs)
 ptr_free,unused_ptrs
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;Normal end
