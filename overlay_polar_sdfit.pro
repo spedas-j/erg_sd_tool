@@ -74,6 +74,21 @@ for i=0L, n_elements(bmno)-1 do begin
     return
   endif
   pos = reform(tbl.y[tblidx,*,azno:(azno+1),*])
+  ;;;;;;;;;;;;;;;;;;;;;;
+  ;; The routine to convert pos to GEO has been inserted temorarily. 
+  ;; This part should be removed as soon as the bug in make_sd_fitacf_cdf_file.pro 
+  ;; is fixed. 
+  for k=0L, n_elements(pos[*,0,0])-1 do begin
+    for l=0L, n_elements(pos[0,*,0])-1 do begin
+      ts = time_struct(tbl.x[0])
+      yrsec = long(ts.doy*86400. + ts.sod)
+      aacgm_load_coef, 2005
+      aacgm_conv_coord, (pos[k,l,1]), (pos[k,l,0]+360.) mod 360., $
+        400., glat, glon, err, /TO_GEO
+      pos[k,l,1] = glat & pos[k,l,0] = glon
+    endfor
+  endfor
+  ;;;;;;;;;;;;;;;;;;;;;;
   
   for j=0, rgmax-1 do begin
     val = valarr[j]
