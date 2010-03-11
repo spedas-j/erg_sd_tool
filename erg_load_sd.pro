@@ -23,6 +23,7 @@ PRO erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     source = file_retrieve(/struct)
     source.local_data_dir = root_data_dir()+'GROUND/sd/fitacf/'+sites[0]+'/'
     source.remote_data_dir = 'http://st4a.stelab.nagoya-u.ac.jp/~horit/web_tmp/tmp/data/GROUND/sd/fitacf/'+sites[0]+'/'
+    source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+sites[0]+'/'
     source.min_age_limit = 900
     
     datfileformat = 'YYYY/sd_fitacf_l2_'+sites[0]+'_YYYYMMDD*cdf'
