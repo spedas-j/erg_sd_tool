@@ -13,7 +13,7 @@
 ;
 ; :AUTHOR: T. Hori
 ; :HISTORY:
-;   2010/03/09: Created as this form
+;   2010/03/09: Created as a draft version
 ;-
 PRO erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
 
