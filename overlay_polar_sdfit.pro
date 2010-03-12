@@ -12,11 +12,7 @@
 ; :HISTORY:
 ; 	2010/03/09: Created
 ;-
-<<<<<<< HEAD
 pro overlay_polar_sdfit, datvn, time=time, position=position, erase=erase, clip=clip 
-=======
-pro overlay_polar_sdfit, datvn, time=time, position=position, erase=erase
->>>>>>> fetch_head
 
 ;Check argument and keyword
 npar=n_params()
