@@ -3,10 +3,18 @@
 ;-
 pro splitbeam, tvar 
 
+;Does tvar exist?
 if strlen(tnames(tvar)) lt 2 then return
-if strlen(tnames('sd_hok_azim_no_0')) lt 2 then return
+if strlowcase(strmid(tvar, 0,3)) ne 'sd_' then return
 
-get_data, 'sd_hok_azim_no_0', data=d 
+;Generate the tplot var. name for the beam_dir
+stn = strmid(tvar, 3,3)
+suf = strmid(tvar, 0,1, /reverse )
+beamdir_tvar_name = 'sd_'+stn+'_azim_no_'+suf
+
+if strlen(tnames(beamdir_tvar_name)) lt 2 then return
+
+get_data, beamdir_tvar_name, data=d 
 bmidx = uniq( d.y, sort(d.y) )
 
 get_data, tvar, data=dd, dl=dl, lim=lim 
