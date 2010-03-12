@@ -12,7 +12,7 @@
 ; :HISTORY:
 ; 	2010/03/09: Created
 ;-
-pro overlay_polar_sdfit, datvn, time=time, position=position
+pro overlay_polar_sdfit, datvn, time=time, position=position, erase=erase
 
 ;Check argument and keyword
 npar=n_params()
@@ -63,10 +63,17 @@ clmin = 8L
 cnum = clmax-clmin
 
 
+;Set the plot position
+if keyword_set(position) then begin
+  pre_position = !p.position
+  !p.position = position
+endif
+
 ;Set the lat-lon canvas and draw the continents
-map_set, 89., 0., 0,/orth, /isotropic, /horizon  
+map_set, 70., 190., 0,/satellite, sat_p=[6.6, 0., 80.], scale=25e+6, $
+  isotropic=0, /horizon, noerase=~keyword_set(erase)  
 map_continents, /coast
-map_grid
+map_grid, latdel=10., londel=15.
 
 ;Draw the data
 for i=0L, n_elements(bmno)-1 do begin
@@ -116,6 +123,10 @@ for i=0L, n_elements(bmno)-1 do begin
 
 endfor
 
+
+;Resotre the original plot position
+if ~keyword_set(pre_position) then pre_position=0
+!p.position = pre_position
 
 ;Normal end
 return
