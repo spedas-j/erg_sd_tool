@@ -12,7 +12,7 @@
 ; :HISTORY:
 ; 	2010/03/09: Created
 ;-
-pro overlay_polar_sdfit, datvn, time=time
+pro overlay_polar_sdfit, datvn, time=time, position=position, clip=clip 
 
 ;Check argument and keyword
 npar=n_params()
