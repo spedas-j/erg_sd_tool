@@ -66,7 +66,7 @@ PRO erg_load_sd, sites=sites, cdffn=cdffn, get_support_data=get_support_data
   zlim, prefix+'vlos_0', -300,300
   zlim, prefix+'vlos_err_0', 0,300
   
-  get_data, 'sd_hok_pwr_0', data=d & pwr = d.y
+  get_data, prefix+'pwr_0', data=d & pwr = d.y
   idx = WHERE( ~FINITE(pwr) )
   
   tn=prefix+'echo_flag_0'
