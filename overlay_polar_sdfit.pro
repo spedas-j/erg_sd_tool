@@ -12,7 +12,7 @@
 ; :HISTORY:
 ; 	2010/03/09: Created
 ;-
-pro overlay_polar_sdfit, datvn, time=time
+pro overlay_polar_sdfit, datvn, time=time, position=position
 
 ;Check argument and keyword
 npar=n_params()
@@ -30,22 +30,27 @@ endif
 if size(datvn[0], /type) ne 7 then return
 if n_elements(datvn) eq 0 then return
 
+;get the radar name and the suffix 
+stn = strmid(datvn, 3,3)
+suf = strmid(datvn, 0,1,/reverse)
+
 ;Load the data to be drawn and to be used for drawing on a 2-d map
 get_data, datvn, data=d, dl=dl, lim=lim
-get_data, 'sd_hok_azim_no_0', data=az
-get_data, 'sd_hok_position_tbl_0', data=tbl 
-get_data, 'sd_hok_scanstartflag_0', data=stflg
-get_data, 'sd_hok_scanno_0', data=scno
+get_data, 'sd_'+stn+'_azim_no_'+suf, data=az
+get_data, 'sd_'+stn+'_position_tbl_'+suf, data=tbl 
+get_data, 'sd_'+stn+'_scanstartflag_'+suf, data=stflg
+get_data, 'sd_'+stn+'_scanno_'+suf, data=scno
 
 ;Choose data for the time given by keyword
 idx = nn( scno.x, time_double(time) )
 bmno = where( scno.y eq scno.y[idx] )
+
 ;;for debugging
 print, 'time: '+time_string(time)
 print, 'time by nn: '+time_string(scno.x[idx])
-print, 'scan no: ',scno.y[idx]
-print, 'beam no:', bmno
-print, 'scan time: '+time_string(min(scno.x[bmno]))+' -- '+time_string(max(scno.x[bmno]))
+;print, 'scan no: ',scno.y[idx]
+;print, 'beam no:', bmno
+;print, 'scan time: '+time_string(min(scno.x[bmno]))+' -- '+time_string(max(scno.x[bmno]))
 ;;
 
 ;Set the range of the plotted values
@@ -59,8 +64,9 @@ cnum = clmax-clmin
 
 
 ;Set the lat-lon canvas and draw the continents
-map_set, 89., 0., /orth, /isotropic, /horizon  
+map_set, 89., 0., 0,/orth, /isotropic, /horizon  
 map_continents, /coast
+map_grid
 
 ;Draw the data
 for i=0L, n_elements(bmno)-1 do begin
@@ -78,16 +84,16 @@ for i=0L, n_elements(bmno)-1 do begin
   ;; The routine to convert pos to GEO has been inserted temorarily. 
   ;; This part should be removed as soon as the bug in make_sd_fitacf_cdf_file.pro 
   ;; is fixed. 
-  for k=0L, n_elements(pos[*,0,0])-1 do begin
-    for l=0L, n_elements(pos[0,*,0])-1 do begin
-      ts = time_struct(tbl.x[0])
-      yrsec = long(ts.doy*86400. + ts.sod)
-      aacgm_load_coef, 2005
-      aacgm_conv_coord, (pos[k,l,1]), (pos[k,l,0]+360.) mod 360., $
-        400., glat, glon, err, /TO_GEO
-      pos[k,l,1] = glat & pos[k,l,0] = glon
-    endfor
-  endfor
+;  for k=0L, n_elements(pos[*,0,0])-1 do begin
+;    for l=0L, n_elements(pos[0,*,0])-1 do begin
+;      ts = time_struct(tbl.x[0])
+;      yrsec = long(ts.doy*86400. + ts.sod)
+;      aacgm_load_coef, 2005
+;      aacgm_conv_coord, (pos[k,l,1]), (pos[k,l,0]+360.) mod 360., $
+;        400., glat, glon, err, /TO_GEO
+;      pos[k,l,1] = glat & pos[k,l,0] = glon
+;    endfor
+;  endfor
   ;;;;;;;;;;;;;;;;;;;;;;
   
   for j=0, rgmax-1 do begin
