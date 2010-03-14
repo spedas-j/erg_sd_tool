@@ -61,16 +61,27 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
   suf = strmid( tnames(prefix+'pwr_?'), 0, 1, /reverse )
   for i=0, n_elements(suf)-1 do begin
   
-    options,prefix+'pwr_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='Backscatter power [dB]'
+    print, strupcase(stn)+'!CRange gate'
+    options,prefix+'pwr_'+suf[i], ysubtitle='',ztitle='Backscatter power [dB]'
+    options,prefix+'pwr_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'pwr_err_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='power err[dB]'
+    options,prefix+'pwr_err_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'spec_width_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='Spec. width [m/s]'
+    options,prefix+'spec_width_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'spec_width_err_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='Spec. width err[m/s]'
+    options,prefix+'spec_width_err_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'vlos_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='Doppler velocity [m/s]'
+    options,prefix+'vlos_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'vlos_err_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='Vlos err [m/s]'
+    options,prefix+'vlos_err_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'elev_angle_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='Elev. angle [deg]'
+    options,prefix+'elev_angle_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'echo_flag_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='1: iono. echo'
+    options,prefix+'echo_flag_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'quality_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='quality'
+    options,prefix+'quality_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     options,prefix+'quality_flag_'+suf[i], ytitle=strupcase(stn)+'!CRange gate',ysubtitle='',ztitle='quality flg'
+    options,prefix+'quality_flag_'+suf[i], 'ytitle',strupcase(stn)+'!CRange gate'
     
     zlim, prefix+'pwr_'+suf[i], 0,30
     zlim, prefix+'pwr_err_'+suf[i], 0,30

@@ -12,7 +12,8 @@
 ; :HISTORY:
 ; 	2010/03/09: Created
 ;-
-PRO overlay_polar_sdfit, datvn, time=time, position=position, erase=erase, clip=clip
+PRO overlay_polar_sdfit, datvn, time=time, position=position, $
+  erase=erase, clip=clip, geo_plot=geo_plot
 
   ;Initialize SDARN system variable
   sd_init
@@ -76,10 +77,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, erase=erase, clip=
   ENDIF
   
   ;Set the lat-lon canvas and draw the continents
-  map_set, 89., 0., 0,/satellite, sat_p=[6.6, 0., 0.], scale=40e+6, $
-    /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
-  ;map_continents, /coast
-  map_grid, latdel=10., londel=15.
+  sd_map_set, erase=erase 
   
   ;Draw the data
   FOR i=0L, N_ELEMENTS(bmno)-1 DO BEGIN
@@ -93,21 +91,26 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, erase=erase, clip=
       RETURN
     ENDIF
     pos = REFORM(tbl.y[tblidx,*,azno:(azno+1),*])
-    ;;;;;;;;;;;;;;;;;;;;;;
-    ;; The routine to convert pos to GEO has been inserted temorarily.
-    ;; This part should be removed as soon as the bug in make_sd_fitacf_cdf_file.pro
-    ;; is fixed.
-    ;  for k=0L, n_elements(pos[*,0,0])-1 do begin
-    ;    for l=0L, n_elements(pos[0,*,0])-1 do begin
-    ;      ts = time_struct(tbl.x[0])
-    ;      yrsec = long(ts.doy*86400. + ts.sod)
-    ;      aacgm_load_coef, 2005
-    ;      aacgm_conv_coord, (pos[k,l,1]), (pos[k,l,0]+360.) mod 360., $
-    ;        400., glat, glon, err, /TO_GEO
-    ;      pos[k,l,1] = glat & pos[k,l,0] = glon
-    ;    endfor
-    ;  endfor
-    ;;;;;;;;;;;;;;;;;;;;;;
+    
+    ;For plotting in GEO
+    pos_plt = pos 
+    
+    ;Convert to AACGM 
+    if ~keyword_set(geo_plot) then begin
+      ts = time_struct(time)
+      year = ts.year & yrsec = long((ts.doy-1)*86400. + ts.sod)
+      glat = reform(pos[*,*,1]) & glon = reform((pos[*,*,0]+360.) mod 360.) 
+      hgt = glat & hgt[*,*] = 400.
+      year_arr = long(glat) & year_arr[*,*] = year
+      yrsec_arr= long(glat) & yrsec_arr[*,*] = yrsec 
+      aacgm_conv_coord, glat,glon,hgt, mlat,mlon,err,/TO_AACGM
+      mlt_arr = aacgm_mlt( year_arr, yrsec_arr, mlon )
+      plt_lon = ( (mlt_arr + 24.) mod 24. ) * 180./12.
+      
+      pos_plt = pos ;replicate as an array with same numbers of elements
+      pos_plt[*,*,0] = plt_lon
+      pos_plt[*,*,1] = mlat
+    endif
     
     FOR j=0, rgmax-1 DO BEGIN
       val = valarr[j]
@@ -119,8 +122,8 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, erase=erase, clip=
       clvl = (clvl < clmax) ; clmin <= color level <= clmax
       
       ;Lon and Lat for a square to be filled
-      lon = [ pos[j,0,0], pos[j,1,0], pos[j+1,1,0], pos[j+1,0,0] ]
-      lat = [ pos[j,0,1], pos[j,1,1], pos[j+1,1,1], pos[j+1,0,1] ]
+      lon = [ pos_plt[j,0,0], pos_plt[j,1,0], pos_plt[j+1,1,0], pos_plt[j+1,0,0] ]
+      lat = [ pos_plt[j,0,1], pos_plt[j,1,1], pos_plt[j+1,1,1], pos_plt[j+1,0,1] ]
       
       ;Draw
       POLYFILL, lon, lat, color=clvl
