@@ -76,9 +76,9 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, erase=erase, clip=
   ENDIF
   
   ;Set the lat-lon canvas and draw the continents
-  map_set, 70., 190., 0,/satellite, sat_p=[6.6, 0., 80.], scale=40e+6, $
-    isotropic=0, /horizon, noerase=~KEYWORD_SET(erase)
-  map_continents, /coast
+  map_set, 89., 0., 0,/satellite, sat_p=[6.6, 0., 0.], scale=40e+6, $
+    /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
+  ;map_continents, /coast
   map_grid, latdel=10., londel=15.
   
   ;Draw the data

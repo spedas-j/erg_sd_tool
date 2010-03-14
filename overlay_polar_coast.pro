@@ -17,7 +17,7 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
   
   ts = time_struct(time)
   year=ts.year
-  year_secs= (long)( (ts.doy-1)*86400L + ts.sod ) 
+  year_secs= long( (ts.doy-1)*86400L + ts.sod ) 
   IF KEYWORD_SET(force_year) THEN year=force_year
   IF KEYWORD_SET(force_secs) THEN year_secs=force_secs
   
