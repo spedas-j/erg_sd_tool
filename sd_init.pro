@@ -19,6 +19,7 @@ if !sdarn.init ne 0 then return
 
 
 !sdarn.init = 1
+aacgm_load_coef, 2005
 
 return
 end
