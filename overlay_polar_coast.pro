@@ -1,7 +1,7 @@
 PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
     force_secs=force_secs,static=static,time=time, geo_plot=geo_plot
     
-  OPENR,map_unit,'C:/cygwin/home/hori/work/IDL_project/SDtool_forERG/sd_world_data',/GET_LUN
+  OPENR,map_unit,'C:/hori/free_soft/cygwin/home/horit/work/IDL_project/SDtool_forERG/sd_world_data',/GET_LUN
   
   IF KEYWORD_SET(south) THEN hemisphere=-1 ELSE hemisphere=1
   
