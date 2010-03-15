@@ -4,6 +4,7 @@
 pro splitbeam, tvar 
 
 ;Does tvar exist?
+if size(tvar,/type) eq 2 OR size(tvar,/type) eq 3 then tvar=tnames(tvar)
 if strlen(tnames(tvar)) lt 2 then return
 if strlowcase(strmid(tvar, 0,3)) ne 'sd_' then return
 
