@@ -4,6 +4,7 @@
 pro splitbeam, tvar 
 
 ;Does tvar exist?
+tvar = tvar[0] ;so far only 1st argument is taken. 
 if size(tvar,/type) eq 2 OR size(tvar,/type) eq 3 then tvar=tnames(tvar)
 if strlen(tnames(tvar)) lt 2 then return
 if strlowcase(strmid(tvar, 0,3)) ne 'sd_' then return
@@ -29,6 +30,8 @@ for i=0L, n_elements(bmidx)-1 do begin
   if idx[0] eq -1 then continue
   ;help, dd.x, dd.y
   store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*,0], v:dd.v }, dl=dl, lim=lim
+  options, vn, 'ytitle', strupcase(stn)+' bm'+string(d.y[bmidx[i]], '(I2.2)')
+  options, vn, 'ysubtitle', '[range gate]'
   
 endfor
 
