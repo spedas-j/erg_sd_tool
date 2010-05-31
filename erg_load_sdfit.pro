@@ -109,7 +109,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
 
     ;Apply tclip the vlos data temporarily for demo 
-    tclip, prefix+'vlos_'+suf[i] , -500.,500., /over
+    ;tclip, prefix+'vlos_'+suf[i] , -500.,500., /over
 
   endfor
   
