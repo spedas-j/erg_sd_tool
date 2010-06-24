@@ -7,25 +7,33 @@
 ;
 ;
 ; :KEYWORDS:
-;    sites
-;    cdffn
-;    get_support_data
+;    sites: 3-letter code of SD radar name. Currently only 'hok' works for loading.
+;    cdffn: File path of a CDF file if given explicitly. 
+;    get_support_data: Turn this on to load the supporting data needed for drawing the 2D plot
 ;
 ; :AUTHOR: T. Hori
 ; :HISTORY:
 ;   2010/03/09: Created as a draft version
+;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
 ;-
 PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
 
+  ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
+
     IF ~KEYWORD_SET(sites) THEN sites = 'hok'
     
     source = file_retrieve(/struct)
-    source.local_data_dir = root_data_dir()+'GROUND/sd/fitacf/'+sites[0]+'/'
-    source.remote_data_dir = 'http://st4a.stelab.nagoya-u.ac.jp/~horit/data/ergsc/ground/sd/'+sites[0]+'/'
+    source.local_data_dir = root_data_dir()+'ground/radar/sd/fitacf/'+sites[0]+'/'
     ;source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+sites[0]+'/'
     source.min_age_limit = 900
-    
+   
+    ;Currently only the first element of array "sites" is adjusted. 
+    ;to be implemented in future for loading data of multiple stations 
     datfileformat = 'YYYY/sd_fitacf_l2_'+sites[0]+'_YYYYMMDD*cdf'
     relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
     
@@ -34,6 +42,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
       PRINT, 'No data was loaded!'
       RETURN
     ENDIF
+  ;If a CDF file path is given
   ENDIF ELSE BEGIN
     datfiles = cdffn
     IF FIX(TOTAL(FILE_TEST(datfiles))) LT 1 THEN BEGIN
@@ -44,6 +53,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
   ENDELSE
   
   ;Station name, to be improved in future for loading data for multiple stations
+  ;Curretly only data for the first station are loaded even if sites given as an array 
   stn = sites[0]
   
   prefix='sd_' + stn + '_'
@@ -54,14 +64,14 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     return
   endif
   
-  ;Set data values to NaN if abs(data) > 4000
-  tclip, prefix+['pwr','spec','vlos','elev'] +'*', -4000,4000, /over
+  ;Set data values to NaN if abs(data) > 9000
+  tclip, prefix+['pwr','spec','vlos','elev'] +'*', -9000,9000, /over
   
   ;For the case of a CDF including multiple range gate data
   suf = strmid( tnames(prefix+'pwr_?'), 0, 1, /reverse )
   for i=0, n_elements(suf)-1 do begin
   
-    print, strupcase(stn)+' all beams'
+    ;Set labels for some tplot variables
     options,prefix+'pwr_'+suf[i], ysubtitle='[range gate]',ztitle='Backscatter power [dB]'
     options,prefix+'pwr_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
     options,prefix+'pwr_err_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='power err[dB]'
@@ -82,14 +92,16 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     options,prefix+'quality_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
     options,prefix+'quality_flag_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='quality flg'
     options,prefix+'quality_flag_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
-    
+   
+    ;Set the z range explicitly for some tplot variables 
     zlim, prefix+'pwr_'+suf[i], 0,30
     zlim, prefix+'pwr_err_'+suf[i], 0,30
     zlim, prefix+'spec_width_'+suf[i], 0,200
     zlim, prefix+'spec_width_err_'+suf[i], 0,300
-    zlim, prefix+'vlos_'+suf[i], -300,300
+    zlim, prefix+'vlos_'+suf[i], -400,400
     zlim, prefix+'vlos_err_'+suf[i], 0,300
-    
+   
+    ;Fill values --> NaN 
     get_data, prefix+'pwr_'+suf[i], data=d & pwr = d.y
     idx = WHERE( ~FINITE(pwr) )
     

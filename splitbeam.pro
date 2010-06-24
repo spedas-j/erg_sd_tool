@@ -1,5 +1,18 @@
 ;+
+; :DESCRIPTION:
+;    Divide tplot variables including all beams into that for each beam.
+;
+; :EXAMPLE:
+;    splitbeam, 'sd_hok_vlos_0'
+;
 ; :Author: hori
+; :HISTORY: 
+;    2010/03/02: Created
+;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
 ;-
 pro splitbeam, tvar 
 
