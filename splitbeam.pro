@@ -14,20 +14,22 @@
 ; $LastChangedRevision:$
 ; $URL:$
 ;-
-pro splitbeam, tvar 
+pro splitbeam, tvars 
+
+for n = 0, n_elements(tvars)-1 do begin 
 
 ;Does tvar exist?
-tvar = tvar[0] ;so far only 1st argument is taken. 
+tvar = tvars[n] ;so far only 1st argument is taken. 
 if size(tvar,/type) eq 2 OR size(tvar,/type) eq 3 then tvar=tnames(tvar)
-if strlen(tnames(tvar)) lt 2 then return
-if strlowcase(strmid(tvar, 0,3)) ne 'sd_' then return
+if strlen(tnames(tvar)) lt 2 then continue
+if strlowcase(strmid(tvar, 0,3)) ne 'sd_' then continue
 
 ;Generate the tplot var. name for the beam_dir
 stn = strmid(tvar, 3,3)
 suf = strmid(tvar, 0,1, /reverse )
 beamdir_tvar_name = 'sd_'+stn+'_azim_no_'+suf
 
-if strlen(tnames(beamdir_tvar_name)) lt 2 then return
+if strlen(tnames(beamdir_tvar_name)) lt 2 then continue
 
 get_data, beamdir_tvar_name, data=d 
 bmidx = uniq( d.y, sort(d.y) )
@@ -46,6 +48,8 @@ for i=0L, n_elements(bmidx)-1 do begin
   options, vn, 'ytitle', strupcase(stn)+' bm'+string(d.y[bmidx[i]], '(I2.2)')
   options, vn, 'ysubtitle', '[range gate]'
   
+endfor
+
 endfor
 
 
