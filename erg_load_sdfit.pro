@@ -98,6 +98,16 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     options,prefix+'quality_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
     options,prefix+'quality_flag_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='quality flg'
     options,prefix+'quality_flag_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
+
+    ;Split the vlos data into 2 components
+    get_data, prefix+'vlos_'+suf[i], data=d, dl=dl, lim=lim
+    store_data, prefix+'vlos_'+suf[i], data={x:d.x, $
+      y:d.y[*,*,2],v:d.v},dl=dl,lim=lim
+    options,prefix+'vlos_'+suf[i],ztitle='LOS Doppler vel. [m/s]'
+    store_data, prefix+'vnorth_'+suf[i], data={x:d.x, y:d.y[*,*,0],v:d.v},dl=dl,lim=lim
+    options,prefix+'vnorth_'+suf[i],ztitle='GEO Northward comp. of Doppler vel. [m/s]'
+    store_data, prefix+'veast_'+suf[i], data={x:d.x, y:d.y[*,*,1],v:d.v},dl=dl,lim=lim
+    options,prefix+'veast_'+suf[i],ztitle='GEO Eastward comp. of Doppler vel. [m/s]'
    
     ;Set the z range explicitly for some tplot variables 
     zlim, prefix+'pwr_'+suf[i], 0,30
@@ -105,6 +115,8 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     zlim, prefix+'spec_width_'+suf[i], 0,200
     zlim, prefix+'spec_width_err_'+suf[i], 0,300
     zlim, prefix+'vlos_'+suf[i], -400,400
+    zlim, prefix+'vnorth_'+suf[i], -400,400
+    zlim, prefix+'veast_'+suf[i], -400,400
     zlim, prefix+'vlos_err_'+suf[i], 0,300
    
     ;Fill values --> NaN 
