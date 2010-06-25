@@ -44,7 +44,7 @@ PRO splitbeam, tvars
       ;print, n_elements(idx)
       IF idx[0] EQ -1 THEN CONTINUE
       ;help, dd.x, dd.y
-      store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*,0], v:dd.v }, dl=dl, lim=lim
+      store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*,*], v:dd.v }, dl=dl, lim=lim
       options, vn, 'ytitle', STRUPCASE(stn)+' bm'+STRING(d.y[bmidx[i]], '(I2.2)')
       options, vn, 'ysubtitle', '[range gate]'
       
