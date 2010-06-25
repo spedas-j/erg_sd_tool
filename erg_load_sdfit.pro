@@ -9,7 +9,7 @@
 ; :KEYWORDS:
 ;    sites: 3-letter code of SD radar name. Currently only 'hok' works for loading.
 ;    cdffn: File path of a CDF file if given explicitly. 
-;    get_support_data: Turn this on to load the supporting data needed for drawing the 2D plot
+;    get_support_data: Turn this on to load the supporting data 
 ;
 ; :AUTHOR: T. Hori
 ; :HISTORY:
@@ -25,16 +25,21 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
 
+    ;Currently only 'hok' is put in array "sites". 
+    ;This part should be implemented in future to take multiple sites 
+    ;with thm_valid_names() and a for loop of stn. 
     IF ~KEYWORD_SET(sites) THEN sites = 'hok'
-    
+   
+    stn = sites[0] 
+ 
     source = file_retrieve(/struct)
-    source.local_data_dir = root_data_dir()+'ground/radar/sd/fitacf/'+sites[0]+'/'
-    source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+sites[0]+'/'
+    source.local_data_dir = root_data_dir()+'ground/radar/sd/fitacf/'+stn+'/'
+    source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+stn+'/'
     source.min_age_limit = 900
    
     ;Currently only the first element of array "sites" is adjusted. 
     ;to be implemented in future for loading data of multiple stations 
-    datfileformat = 'YYYY/sd_fitacf_l2_'+sites[0]+'_YYYYMMDD*cdf'
+    datfileformat = 'YYYY/sd_fitacf_l2_'+stn+'_YYYYMMDD*cdf'
     relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
     
     datfiles = file_retrieve(relfnames, _extra=source)
@@ -52,13 +57,11 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     ;;sites=''
   ENDELSE
   
-  ;Station name, to be improved in future for loading data for multiple stations
-  ;Curretly only data for the first station are loaded even if sites given as an array 
-  stn = sites[0]
-  
+  ;Read CDF files and create tplot variables
   prefix='sd_' + stn + '_'
   cdf2tplot,file=datfiles, prefix=prefix, get_support_data=get_support_data
-  
+ 
+  ;Quit if no data have been loaded 
   if n_elements(tnames(prefix+'*') ) lt 2 then begin
     print, 'No tplot var loaded.'
     return
