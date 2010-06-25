@@ -22,6 +22,9 @@
 ;-
 PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
 
+  ;Initialize the TDAS environment
+  thm_init
+
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
 
