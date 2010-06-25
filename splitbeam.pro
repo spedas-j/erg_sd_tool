@@ -6,7 +6,7 @@
 ;    splitbeam, 'sd_hok_vlos_0'
 ;
 ; :Author: hori
-; :HISTORY: 
+; :HISTORY:
 ;    2010/03/02: Created
 ;
 ; $LastChangedBy:$
@@ -14,44 +14,44 @@
 ; $LastChangedRevision:$
 ; $URL:$
 ;-
-pro splitbeam, tvars 
+PRO splitbeam, tvars
 
-for n = 0, n_elements(tvars)-1 do begin 
-
-;Does tvar exist?
-tvar = tvars[n] ;so far only 1st argument is taken. 
-if size(tvar,/type) eq 2 OR size(tvar,/type) eq 3 then tvar=tnames(tvar)
-if strlen(tnames(tvar)) lt 2 then continue
-if strlowcase(strmid(tvar, 0,3)) ne 'sd_' then continue
-
-;Generate the tplot var. name for the beam_dir
-stn = strmid(tvar, 3,3)
-suf = strmid(tvar, 0,1, /reverse )
-beamdir_tvar_name = 'sd_'+stn+'_azim_no_'+suf
-
-if strlen(tnames(beamdir_tvar_name)) lt 2 then continue
-
-get_data, beamdir_tvar_name, data=d 
-bmidx = uniq( d.y, sort(d.y) )
-
-get_data, tvar, data=dd, dl=dl, lim=lim 
-
-for i=0L, n_elements(bmidx)-1 do begin
-
-  vn = tvar + '_azim' + string(d.y[bmidx[i]], '(I2.2)')
-  ;print, vn
-  idx = where( d.y eq d.y[bmidx[i]] )
-  ;print, n_elements(idx) 
-  if idx[0] eq -1 then continue
-  ;help, dd.x, dd.y
-  store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*,0], v:dd.v }, dl=dl, lim=lim
-  options, vn, 'ytitle', strupcase(stn)+' bm'+string(d.y[bmidx[i]], '(I2.2)')
-  options, vn, 'ysubtitle', '[range gate]'
+  FOR n = 0, N_ELEMENTS(tvars)-1 DO BEGIN
   
-endfor
-
-endfor
-
-
-end
+    ;Does tvar exist?
+    tvar = tvars[n] ;so far only 1st argument is taken.
+    IF SIZE(tvar,/type) EQ 2 OR SIZE(tvar,/type) EQ 3 THEN tvar=tnames(tvar)
+    IF STRLEN(tnames(tvar)) LT 2 THEN CONTINUE
+    IF STRLOWCASE(STRMID(tvar, 0,3)) NE 'sd_' THEN CONTINUE
+    
+    ;Generate the tplot var. name for the beam_dir
+    stn = STRMID(tvar, 3,3)
+    suf = STRMID(tvar, 0,1, /reverse )
+    beamdir_tvar_name = 'sd_'+stn+'_azim_no_'+suf
+    
+    IF STRLEN(tnames(beamdir_tvar_name)) LT 2 THEN CONTINUE
+    
+    get_data, beamdir_tvar_name, data=d
+    bmidx = uniq( d.y, SORT(d.y) )
+    
+    get_data, tvar, data=dd, dl=dl, lim=lim
+    
+    FOR i=0L, N_ELEMENTS(bmidx)-1 DO BEGIN
+    
+      vn = tvar + '_azim' + STRING(d.y[bmidx[i]], '(I2.2)')
+      ;print, vn
+      idx = WHERE( d.y EQ d.y[bmidx[i]] )
+      ;print, n_elements(idx)
+      IF idx[0] EQ -1 THEN CONTINUE
+      ;help, dd.x, dd.y
+      store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*,0], v:dd.v }, dl=dl, lim=lim
+      options, vn, 'ytitle', STRUPCASE(stn)+' bm'+STRING(d.y[bmidx[i]], '(I2.2)')
+      options, vn, 'ysubtitle', '[range gate]'
+      
+    ENDFOR
+    
+  ENDFOR
+  
+  
+END
 
