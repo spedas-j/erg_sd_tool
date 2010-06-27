@@ -32,17 +32,23 @@ tplot_names
 
 ;Plot some data
 window, 0, xsize=600, ysize=750
-tplot, ['sd_hok_pwr_0', 'sd_hok_vlos_0', 'sd_hok_spec_width_0']
+tplot, ['sd_hok_pwr_1', 'sd_hok_vlos_1', 'sd_hok_spec_width_1']
 
 ;Change the time range of the plot
 tlimit, ['2007-06-21/13:00','2007-06-21/15:00']
 
 ;Divide the data into those for separate beams
-splitbeam, ['sd_hok_pwr_0', 'sd_hok_vlos_0', 'sd_hok_spec_width_0']
+splitbeam, ['sd_hok_pwr_1', 'sd_hok_vlos_1', 'sd_hok_spec_width_1']
 
 ;Plot data for a specific beam
-tplot, ['sd_hok_pwr_0_azim04', 'sd_hok_vlos_0_azim04', $
-        'sd_hok_spec_width_0_azim04']
+tplot, ['sd_hok_pwr_1_azim04', 'sd_hok_vlos_1_azim04', $
+        'sd_hok_spec_width_1_azim04']
+
+;Plot the northward and eastward components in the geographical coordinates 
+;of the line-of-sight Doppler velocity 
+splitbeam, ['sd_hok_vnorth_1','sd_hok_veast_1']
+tplot, ['sd_hok_vnorth_1_azim04','sd_hok_veast_1_azim04']
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Commands for 2-dimensional plotting on the ground map are 
