@@ -49,6 +49,14 @@ tplot, ['sd_hok_pwr_1_azim04', 'sd_hok_vlos_1_azim04', $
 splitbeam, ['sd_hok_vnorth_1','sd_hok_veast_1']
 tplot, ['sd_hok_vnorth_1_azim04','sd_hok_veast_1_azim04']
 
+;Plot some parameters relating to the radar operation
+timespan, '2007-06-21', 1, /day    ;again set the time range to be 1 day
+erg_load_sdfit, site='hok', /get_support_data  ;Load data with the supporting data
+splitbeam, 'sd_hok_elev_angle_1'
+ylim, 'sd_hok_noise_1', 0,0, 1  ;auto range with log scale
+tplot, 'sd_hok_'+['elev_angle_1_azim04','scanno_1','smsep_1',$
+	'tfreq_1','noise_1', 'num_ave_1']
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Commands for 2-dimensional plotting on the ground map are 
