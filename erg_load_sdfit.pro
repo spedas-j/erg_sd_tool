@@ -99,7 +99,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     options,prefix+'quality_flag_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='quality flg'
     options,prefix+'quality_flag_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
 
-    ;Split the vlos data into 2 components
+    ;Split vlos_? tplot variable into 3 components
     get_data, prefix+'vlos_'+suf[i], data=d, dl=dl, lim=lim
     store_data, prefix+'vlos_'+suf[i], data={x:d.x, $
       y:d.y[*,*,2],v:d.v},dl=dl,lim=lim
