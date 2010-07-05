@@ -24,7 +24,7 @@
 ;-
 PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   get_support_data=get_support_data, $
-  noacknowledgement=noacknowledgement, trange=trange
+  noacknowledgment=noacknowledgment, trange=trange
 
   ;Initialize the TDAS environment
   thm_init
@@ -86,11 +86,11 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     ;Set labels for some tplot variables
     options,prefix+'pwr_'+suf[i], ysubtitle='[range gate]',ztitle='Backscatter power [dB]'
     options,prefix+'pwr_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
-    options,prefix+'pwr_err_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='power err[dB]'
+    options,prefix+'pwr_err_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='power err [dB]'
     options,prefix+'pwr_err_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
     options,prefix+'spec_width_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='Spec. width [m/s]'
     options,prefix+'spec_width_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
-    options,prefix+'spec_width_err_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='Spec. width err[m/s]'
+    options,prefix+'spec_width_err_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='Spec. width err [m/s]'
     options,prefix+'spec_width_err_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
     options,prefix+'vlos_'+suf[i], ytitle=strupcase(stn)+' all beams',ysubtitle='[range gate]',ztitle='Doppler velocity [m/s]'
     options,prefix+'vlos_'+suf[i], 'ytitle',strupcase(stn)+' all beams'
