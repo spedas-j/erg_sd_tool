@@ -62,7 +62,9 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
   
   ;Read CDF files and create tplot variables
   prefix='sd_' + stn + '_'
-  cdf2tplot,file=datfiles, prefix=prefix, get_support_data=get_support_data
+  cdf2tplot,file=datfiles, prefix=prefix, $
+    get_support_data=get_support_data, $
+    /convert_int1_to_int2
  
   ;Quit if no data have been loaded 
   if n_elements(tnames(prefix+'*') ) lt 2 then begin
@@ -150,7 +152,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
   tbllist = ['tbl_0', 'tbl_1' , 'tbl_2']
   timelist = ['time_0','time_1','time_2']
   FOR i=0L, N_ELEMENTS(datfiles)-1 DO BEGIN
-    cdfi = cdf_load_vars( datfiles[i], varformat='*' )
+    cdfi = cdf_load_vars( datfiles[i], varformat='*',/convert_int1_to_int2 )
     timevn = strfilter( cdfi.vars.name, 'Epoch_?' )
     ptblvn = strfilter( cdfi.vars.name, 'position_tbl_?' )
     ;Error check
