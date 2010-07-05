@@ -10,6 +10,8 @@
 ;    sites: 3-letter code of SD radar name. Currently only 'hok' works for loading.
 ;    cdffn: File path of a CDF file if given explicitly. 
 ;    get_support_data: Turn this on to load the supporting data 
+;    trange: time range for which data are loaded. 
+;            e.g., ['2008-10-01/00:00:00','2008-10-02/00:00:00'] 
 ;
 ; :AUTHOR: T. Hori
 ; :HISTORY:
@@ -22,7 +24,7 @@
 ;-
 PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   get_support_data=get_support_data, $
-  noacknowledgement=noacknowledgement
+  noacknowledgement=noacknowledgement, trange=trange
 
   ;Initialize the TDAS environment
   thm_init
