@@ -20,7 +20,9 @@
 ; $LastChangedRevision:$
 ; $URL:$
 ;-
-PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
+PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
+  get_support_data=get_support_data, $
+  noacknowledgement=noacknowledgement
 
   ;Initialize the TDAS environment
   thm_init
@@ -67,7 +69,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
     /convert_int1_to_int2
  
   ;Quit if no data have been loaded 
-  if n_elements(tnames(prefix+'*') ) lt 2 then begin
+  if n_elements(tnames(prefix+'*') ) lt 1 then begin
     print, 'No tplot var loaded.'
     return
   endif
@@ -192,6 +194,18 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, get_support_data=get_support_data
   PTR_FREE,unused_ptrs
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  
+  ;Show the rules of the road 
+  ;unless keyword noacknowledgement is defined.
+  if ~keyword_set(noacknowledgement) then begin
+    vstr = tnames(prefix+'pwr_?')
+    if strlen(vstr[0]) gt 5 then begin
+      get_data, vstr[0], data=d, dl=dl
+      print, '############## RULES OF THE ROAD ################'
+      print, dl.cdf.gatt.rules_of_use
+      print, '############## RULES OF THE ROAD ################'
+    endif
+  endif
   
   
   ;Normal end
