@@ -7,7 +7,9 @@
 ;
 ;
 ; :KEYWORDS:
-;    sites: 3-letter code of SD radar name. Currently only 'hok' works for loading.
+;    sites: 3-letter code of SD radar name. 
+;           Currently only the following codes work: 
+;           'hok', 'ksr'  
 ;    cdffn: File path of a CDF file if given explicitly. 
 ;    get_support_data: Turn this on to load the supporting data 
 ;    trange: time range for which data are loaded. 
@@ -16,6 +18,8 @@
 ; :AUTHOR: T. Hori
 ; :HISTORY:
 ;   2010/03/09: Created as a draft version
+;   2010/07/01: now work for hok and ksr
+;   2010/09/10: added some keywords
 ;
 ; $LastChangedBy:$
 ; $LastChangedDate:$
@@ -24,7 +28,8 @@
 ;-
 PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   get_support_data=get_support_data, $
-  noacknowledgment=noacknowledgment, trange=trange
+  noacknowledgment=noacknowledgment, trange=trange, $
+  downloadonly=downloadonly, no_download=no_download
 
   ;Initialize the TDAS environment
   thm_init
@@ -43,7 +48,9 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     source.local_data_dir = root_data_dir()+'ergsc/ground/radar/sd/fitacf/'+stn+'/'
     source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+stn+'/'
     source.min_age_limit = 900
-   
+    if keyword_set(downloadonly) then source.downloadonly = 1
+    if keyword_set(no_download9 then source.no_download = 1
+    
     ;Currently only the first element of array "sites" is adjusted. 
     ;to be implemented in future for loading data of multiple stations 
     datfileformat = 'YYYY/sd_fitacf_l2_'+stn+'_YYYYMMDD*cdf'
@@ -63,6 +70,9 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     ENDIF
     ;;sites=''
   ENDELSE
+  
+  ;for the case of "donwload only"
+  if keyword_set(downloadonly) then return
   
   ;Read CDF files and create tplot variables
   prefix='sd_' + stn + '_'
