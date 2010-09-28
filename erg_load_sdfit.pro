@@ -49,7 +49,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+stn+'/'
     source.min_age_limit = 900
     if keyword_set(downloadonly) then source.downloadonly = 1
-    if keyword_set(no_download9 then source.no_download = 1
+    if keyword_set(no_download) then source.no_download = 1
     
     ;Currently only the first element of array "sites" is adjusted. 
     ;to be implemented in future for loading data of multiple stations 
@@ -87,7 +87,11 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   endif
   
   ;Set data values to NaN if abs(data) > 9000
-  tclip, prefix+['pwr','spec','vlos','elev'] +'*', -9000,9000, /over
+  tclip, prefix+['pwr','spec','vlos'] +'*', -9000,9000, /over
+  s = tnames(prefix+'elev*') 
+  if strlen(s[0]) gt 5 then begin
+    tclip, prefix+'elev' +'*', -9000,9000, /over
+  endif
   
   ;For the case of a CDF including multiple range gate data
   suf = strmid( tnames(prefix+'pwr_?'), 0, 1, /reverse )
