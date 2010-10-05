@@ -33,7 +33,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   IF SIZE(datvn[0], /type) EQ 2 OR SIZE(datvn[0], /type) EQ 3 THEN BEGIN
     datvn = tnames(datvn[0])
   ENDIF
-  ;then datvn should a string now
+  ;then datvn should be a string now, which is checked below
   IF SIZE(datvn[0], /type) NE 7 THEN RETURN
   IF N_ELEMENTS(datvn) EQ 0 THEN RETURN
   
@@ -76,11 +76,12 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
     !p.position = position
   ENDIF
   
-  ;Set the lat-lon canvas and draw the continents
+  ;Set the lat-lon canvas 
   sd_map_set, erase=erase 
   
   ;Draw the data
   FOR i=0L, N_ELEMENTS(bmno)-1 DO BEGIN
+    
     bn = bmno[i]
     valarr = REFORM(d.y[bn, *, 0])
     rgmax = N_ELEMENTS(valarr)
