@@ -47,6 +47,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   get_data, 'sd_'+stn+'_position_tbl_'+suf, data=tbl
   get_data, 'sd_'+stn+'_scanstartflag_'+suf, data=stflg
   get_data, 'sd_'+stn+'_scanno_'+suf, data=scno
+  get_data, 'sd_'+stn+'_echo_flag_'+suf, data=echflg
   
   ;Choose data for the time given by keyword
   idx = nn( scno.x, time_double(time) )
@@ -84,6 +85,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
     
     bn = bmno[i]
     valarr = REFORM(d.y[bn, *, 0])
+    echflgarr = REFORM(echflg.y[bn,*])
     rgmax = N_ELEMENTS(valarr)
     azno = az.y[bn]
     tblidx = MAX(WHERE(tbl.x LE d.x[bn], cnt))
