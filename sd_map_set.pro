@@ -10,6 +10,7 @@ PRO sd_map_set, time, erase=erase, clip=clip
   
   ;Set the lat-lon canvas and draw the continents
   map_set, 89., 0., 0,/satellite, sat_p=[6.6, 0., 0.], scale=50e+6, $
+  ;map_set, 80., 0., 0,/satellite, sat_p=[2.6, 0., 0.], scale=30e+6, $
     /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
   ;map_continents, /coast
   map_grid, latdel=10., londel=15.
