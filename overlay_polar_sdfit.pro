@@ -13,7 +13,8 @@
 ; 	2010/03/09: Created
 ;-
 PRO overlay_polar_sdfit, datvn, time=time, position=position, $
-  erase=erase, clip=clip, geo_plot=geo_plot
+  erase=erase, clip=clip, geo_plot=geo_plot, $
+  nogscat=nogscat
 
   ;Initialize SDARN system variable
   sd_init
@@ -47,7 +48,12 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   get_data, 'sd_'+stn+'_position_tbl_'+suf, data=tbl
   get_data, 'sd_'+stn+'_scanstartflag_'+suf, data=stflg
   get_data, 'sd_'+stn+'_scanno_'+suf, data=scno
-  get_data, 'sd_'+stn+'_echo_flag_'+suf, data=echflg
+  if strlen(tnames('sd_'+stn+'_echo_flag_'+suf)) gt 6 then begin
+    get_data, 'sd_'+stn+'_echo_flag_'+suf, data=echflg
+  endif else begin
+    print, 'Cannot find the echo_flag data, which should be loaded in advance'
+    return
+  endelse
   
   ;Choose data for the time given by keyword
   idx = nn( scno.x, time_double(time) )
@@ -120,16 +126,24 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
       IF ~FINITE(val) THEN CONTINUE ;Skip drawing for NaN
       
       ;Color level for val
-      clvl = clmin + cnum*(val-valrng[0])/(valrng[1]-valrng[0])
-      clvl = (clvl > clmin)
-      clvl = (clvl < clmax) ; clmin <= color level <= clmax
+      if fix(echflgarr[j]) eq 1 then begin
+        clvl = clmin + cnum*(val-valrng[0])/(valrng[1]-valrng[0])
+        clvl = (clvl > clmin)
+        clvl = (clvl < clmax) ; clmin <= color level <= clmax
+      endif else begin
+        if keyword_set(nogscat) then continue ;skip plotting ground scatter
+      endelse
       
       ;Lon and Lat for a square to be filled
       lon = [ pos_plt[j,0,0], pos_plt[j,1,0], pos_plt[j+1,1,0], pos_plt[j+1,0,0] ]
       lat = [ pos_plt[j,0,1], pos_plt[j,1,1], pos_plt[j+1,1,1], pos_plt[j+1,0,1] ]
       
       ;Draw
-      POLYFILL, lon, lat, color=clvl
+      if fix(echflgarr[j]) eq 1 then begin
+        POLYFILL, lon, lat, color=clvl
+      endif else begin
+        POLYFILL, lon, lat, color=1
+      endelse
       
     ENDFOR
     
