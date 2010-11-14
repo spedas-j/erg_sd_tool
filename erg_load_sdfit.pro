@@ -213,7 +213,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   
   ;Show the rules of the road 
   ;unless keyword noacknowledgement is defined.
-  if ~keyword_set(noacknowledgement) then begin
+  if ~keyword_set(noacknowledgment) then begin
     vstr = tnames(prefix+'pwr_?')
     if strlen(vstr[0]) gt 5 then begin
       get_data, vstr[0], data=d, dl=dl
