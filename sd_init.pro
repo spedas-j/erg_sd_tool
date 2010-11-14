@@ -38,5 +38,10 @@ if !sdarn.init ne 0 then return
 ;Load the S-H coefficients for AACGM
 aacgm_load_coef, 2005
 
+;Swap magenda with grey for ground scatter drawing
+tvlct, r,g,b, /get
+r[1]=90b & g[1]=90b & b[1]=90b
+tvlct, r,g,b
+
 return
 end
