@@ -361,6 +361,15 @@ for j=0L,gapcnt do begin
       
       endif
       
+      ;if fill_color defined, fill all pixels with the same color specified by fill_color
+      str_element,opt,'fill_color',value=fill_color
+      if keyword_set(fill_color) then begin
+        if fill_color ge 0 then begin
+          idx = where(image lt 255) & if idx[0] ne -1 then image[idx]=fill_color
+          no_color_scale = 1
+        endif
+      endif
+      
       ;printdat,image,xposition,yposition
       if xposition ge 0 and yposition ge 0 and xposition lt !d.x_size and yposition lt !d.y_size then $
           tv,image,xposition,yposition,xsize=npx,ysize=npy
