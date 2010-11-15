@@ -39,9 +39,10 @@ if !sdarn.init ne 0 then return
 aacgm_load_coef, 2005
 
 ;Swap magenda with grey for ground scatter drawing
-tvlct, r,g,b, /get
-r[1]=90b & g[1]=90b & b[1]=90b
-tvlct, r,g,b
+;tvlct, r,g,b, /get
+;r[1]=90b & g[1]=90b & b[1]=90b
+;tvlct, r,g,b
+; --> Now this modification of color table is done by loadct_sd 
 
 return
 end
