@@ -84,7 +84,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   ENDIF
   
   ;Set the lat-lon canvas 
-  sd_map_set, erase=erase 
+  ;sd_map_set, erase=erase 
   
   ;Set the SD color table
   loadct_sd, previous_ct=prevct, /reverse
