@@ -19,10 +19,10 @@ PRO splitbeam, tvars
   FOR n = 0, N_ELEMENTS(tvars)-1 DO BEGIN
   
     ;Does tvar exist?
-    tvar = tvars[n] ;so far only 1st argument is taken.
+    tvar = tvars[n]
     IF SIZE(tvar,/type) EQ 2 OR SIZE(tvar,/type) EQ 3 THEN tvar=tnames(tvar)
-    IF STRLEN(tnames(tvar)) LT 2 THEN CONTINUE
-    IF STRLOWCASE(STRMID(tvar, 0,3)) NE 'sd_' THEN CONTINUE
+    IF STRLEN(tnames(tvar)) LT 2 THEN CONTINUE ;Skip if tplot var not found
+    IF STRLOWCASE(STRMID(tvar, 0,3)) NE 'sd_' THEN CONTINUE ;Skip if given non-SD data
     
     ;Generate the tplot var. name for the beam_dir
     stn = STRMID(tvar, 3,3)
@@ -44,7 +44,7 @@ PRO splitbeam, tvars
       ;print, n_elements(idx)
       IF idx[0] EQ -1 THEN CONTINUE
       ;help, dd.x, dd.y
-      store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*,*], v:dd.v }, dl=dl, lim=lim
+      store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*], v:dd.v }, dl=dl, lim=lim
       options, vn, 'ytitle', STRUPCASE(stn)+' bm'+STRING(d.y[bmidx[i]], '(I2.2)')
       options, vn, 'ysubtitle', '[range gate]'
       
