@@ -125,10 +125,25 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
       y:d.y[*,*,2],v:d.v},dl=dl,lim=lim
     options,prefix+'vlos_'+suf[i],ztitle='LOS Doppler vel. [m/s]'
     store_data, prefix+'vnorth_'+suf[i], data={x:d.x, y:d.y[*,*,0],v:d.v},dl=dl,lim=lim
-    options,prefix+'vnorth_'+suf[i],ztitle='GEO Northward comp. of Doppler vel. [m/s]'
+    options,prefix+'vnorth_'+suf[i],ztitle='LOS V Northward [m/s]'
     store_data, prefix+'veast_'+suf[i], data={x:d.x, y:d.y[*,*,1],v:d.v},dl=dl,lim=lim
-    options,prefix+'veast_'+suf[i],ztitle='GEO Eastward comp. of Doppler vel. [m/s]'
-   
+    options,prefix+'veast_'+suf[i],ztitle='LOS V Eastward [m/s]'
+    
+    ;Combine iono. echo and ground echo for vlos
+    nm = ['vlos_','vnorth_','veast_']
+    for n=0L, n_elements(nm)-1 do begin
+      get_data, prefix+nm[n]+suf[i], data=d, dl=dl, lim=lim
+      get_data, prefix+'echo_flag_'+suf[i], data=flg, dl=flgdl, lim=flglim
+      idx = where( flg.y eq 1. )
+      if idx[0] ne -1 then d.y[idx] = !values.f_nan
+      maxrg = max(d.v, /nan)+1
+      store_data, prefix+nm[n]+'gscat_'+suf[i], data=d, lim=lim, $
+        dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1,fill_color:5}
+      store_data, prefix+nm[n]+'bothscat_'+suf[i], $
+        data=[prefix+nm[n]+suf[i],prefix+nm[n]+'gscat_'+suf[i]], $
+        dl={yrange:[0.,maxrg]}
+    endfor
+    
     ;Set the z range explicitly for some tplot variables 
     zlim, prefix+'pwr_'+suf[i], 0,30
     zlim, prefix+'pwr_err_'+suf[i], 0,30
