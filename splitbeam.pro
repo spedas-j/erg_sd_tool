@@ -34,19 +34,36 @@ PRO splitbeam, tvars
     get_data, beamdir_tvar_name, data=d
     bmidx = uniq( d.y, SORT(d.y) )
     
-    get_data, tvar, data=dd, dl=dl, lim=lim
+    get_data, tvar, data=data, dl=dl, lim=lim
     
     FOR i=0L, N_ELEMENTS(bmidx)-1 DO BEGIN
     
-      vn = tvar + '_azim' + STRING(d.y[bmidx[i]], '(I2.2)')
+      azim_suf = '_azim' + STRING(d.y[bmidx[i]], '(I2.2)')
+      vn = tvar + azim_suf
       ;print, vn
       idx = WHERE( d.y EQ d.y[bmidx[i]] )
       ;print, n_elements(idx)
       IF idx[0] EQ -1 THEN CONTINUE
       ;help, dd.x, dd.y
-      store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*], v:dd.v }, dl=dl, lim=lim
+      if is_struct(data) then begin
+        dd = data
+        store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*], v:dd.v }, dl=dl, lim=lim
+      endif else begin ;Cases of multi-tplot var containing both iono. and ground scatter data 
+        vn_iono = data[ ( where( strpos(data,'gscat') lt 0 ) )[0] ] ;& help, vn_iono
+        vn_gscat= data[ ( where( strpos(data,'gscat') ge 0 ) )[0] ] ;& help, vn_gscat
+        get_data, vn_iono, data=dd, dl=dl, lim=lim
+        get_data, vn_gscat, data=ddg, dl=dlg, lim=limg
+        store_data, vn_iono+azim_suf, data={x:dd.x[idx], y:dd.y[idx,*], v:dd.v}, dl=dl,lim=lim
+        store_data, vn_gscat+azim_suf,data={x:ddg.x[idx],y:ddg.y[idx,*],v:ddg.v},dl=dlg,lim=limg
+        options, vn_iono+azim_suf, 'ytitle', STRUPCASE(stn)+' bm'+STRING(d.y[bmidx[i]], '(I2.2)')
+        options, vn_iono+azim_suf, 'ysubtitle', '[range gate]'
+        store_data, vn, data=[ vn_iono+azim_suf,vn_gscat+azim_suf ]
+      endelse
+      
       options, vn, 'ytitle', STRUPCASE(stn)+' bm'+STRING(d.y[bmidx[i]], '(I2.2)')
       options, vn, 'ysubtitle', '[range gate]'
+      maxrg = max(dd.v,/nan)+1
+      ylim, vn, [0,maxrg]
       
     ENDFOR
     
