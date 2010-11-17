@@ -158,9 +158,9 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct
     b[bottom_c:top_c] = reverse(b[bottom_c:top_c])
   ENDIF
   
-  r[cols] = BYTE([0,1,0,0,0,0.353,1,1]*255)
-  g[cols] = BYTE([0,0,0,1,1,0.353,0,1]*255)
-  b[cols] = BYTE([0,1,1,1,0,0.353,0,1]*255)
+  r[cols] = BYTE([0,1,0,0,0,0.553,1,1]*255)
+  g[cols] = BYTE([0,0,0,1,1,0.553,0,1]*255)
+  b[cols] = BYTE([0,1,1,1,0,0.553,0,1]*255)
   TVLCT,r,g,b
   
   r_curr = r  ;Important!  Update the colors common block.
