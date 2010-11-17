@@ -1,5 +1,5 @@
 PRO sd_map_set, time, erase=erase, clip=clip, $
-  center_glat=glatc, center_glon=glonc
+  center_glat=glatc, center_glon=glonc, lonlab=lonlab
 
   npar = N_PARAMS()
   IF npar LT 1 THEN time = !sdarn.sd_polar.plot_time
@@ -42,9 +42,13 @@ PRO sd_map_set, time, erase=erase, clip=clip, $
   idx=where(lons gt 180. ) & lons[idx] -= 360.
   lonnames=['00hMLT','','02hMLT','','04hMLT','','06hMLT','','08hMLT','','10hMLT','','12hMLT','', $
             '14hMLT','','16hMLT','','18hMLT','','20hMLT','','22hMLT','']
-  lonlab = 80.
+  if ~keyword_set(lonlab) then lonlab = 80.
   for i=0,n_elements(lons)-1 do begin
+    nrmcord = convert_coord(lons[i],lonlab,/data,/to_normal)
+    if nrmcord[0] le 0. or nrmcord[0] ge 1. or $
+      nrmcord[1] le 0. or nrmcord[1] ge 1. then continue
     xyouts, lons[i], lonlab, lonnames[i], orientation=ori[i], font=1, charsize=1.4
+    
   endfor
   
   RETURN
