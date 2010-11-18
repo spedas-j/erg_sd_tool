@@ -49,7 +49,11 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+stn+'/'
     source.min_age_limit = 900
     if keyword_set(downloadonly) then source.downloadonly = 1
-    if keyword_set(no_download) then source.no_download = 1
+    if keyword_set(no_download) then begin
+      source.no_download = 1
+      source.nowait = 1
+      source.no_update = 1
+    endif
     
     ;Currently only the first element of array "sites" is adjusted. 
     ;to be implemented in future for loading data of multiple stations 
@@ -57,7 +61,8 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
     
     datfiles = file_retrieve(relfnames, _extra=source)
-    IF N_ELEMENTS(datfiles) LT 1 OR STRLEN(datfiles[0]) LT 10 THEN BEGIN
+    IF total(file_test(datfiles)) eq 0 THEN BEGIN
+      print, 'Cannot download/find data file: '+datfiles
       PRINT, 'No data was loaded!'
       RETURN
     ENDIF
