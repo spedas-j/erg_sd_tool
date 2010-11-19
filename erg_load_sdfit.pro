@@ -143,10 +143,10 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
       if idx[0] ne -1 then d.y[idx] = !values.f_nan
       maxrg = max(d.v, /nan)+1
       store_data, prefix+nm[n]+'gscat_'+suf[i], data=d, lim=lim, $
-        dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1,fill_color:5,yrange:[0,0]}
+        dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1,fill_color:5}
       store_data, prefix+nm[n]+'bothscat_'+suf[i], $
         data=[prefix+nm[n]+suf[i],prefix+nm[n]+'gscat_'+suf[i]], $
-        dl={yrange:[0,0]}
+        dl={yrange:[0,maxrg]}
     endfor
     
     ;Set the z range explicitly for some tplot variables 
