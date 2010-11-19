@@ -28,7 +28,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, $
   
   ;Set the lat-lon canvas and draw the continents
   map_set, mlatc, mltc_lon, rot_angle, $
-    /satellite, sat_p=[6.6, 25., 0.], scale=scale, $
+    /satellite, sat_p=[6.6, 0., 0.], scale=scale, $
   ;map_set, 80., 0., 0,/satellite, sat_p=[2.6, 0., 0.], scale=30e+6, $
     /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
   ;map_continents, /coast
