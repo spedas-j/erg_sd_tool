@@ -87,7 +87,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   ;sd_map_set, erase=erase 
   
   ;Set the SD color table
-  loadct_sd, previous_ct=prevct, /reverse
+  ;loadct_sd, 44, previous_ct=prevct
   
   ;Draw the data
   FOR i=0L, N_ELEMENTS(bmno)-1 DO BEGIN
@@ -100,7 +100,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
     tblidx = MAX(WHERE(tbl.x LE d.x[bn], cnt))
     IF tblidx EQ -1 THEN BEGIN
       PRINT, 'beam time does not fall in any time range of the position table!'
-      loadct2, prevct ;Resotre the original color table before returing
+      ;loadct2, prevct ;Resotre the original color table before returing
       RETURN
     ENDIF
     pos = REFORM(tbl.y[tblidx,*,azno:(azno+1),*])
@@ -154,7 +154,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   ENDFOR
   
   ;Restore the original color table
-  loadct2, prevct
+  ;loadct_sd, prevct
   
   ;Resotre the original plot position
   IF ~KEYWORD_SET(pre_position) THEN pre_position=0
