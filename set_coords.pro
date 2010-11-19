@@ -63,6 +63,15 @@ pro set_coords, tplot_vars, coord
       get_data, d[0], lim=lim
       yr = minmax(lim.yrange)
       ylim, vn, yr[0],yr[1]
+      CASE (coord) OF
+        'gate': BEGIN
+          options, vn, 'ysubtitle','[range gate]'
+        END
+        'mlat': BEGIN
+          options, vn, 'ysubtitle','[Mag. Lat]'
+        END
+      ENDCASE
+
       return
     endif
     
@@ -78,7 +87,7 @@ pro set_coords, tplot_vars, coord
         
         options, vn, 'yrange', minmax(gateno)
         options, vn, 'ystyle', 1
-        if stregex(vn,'_gscat_') lt 0 then options, vn, 'ysubtitle','[range gate]'
+        options, vn, 'ysubtitle','[range gate]'
         
       END
       
@@ -117,7 +126,7 @@ pro set_coords, tplot_vars, coord
         yr = minmax(d.v)
         ylim, vn, yr[0],yr[1] 
         options, vn, 'ystyle', 1
-        if stregex(vn,'_gscat_') lt 0 then options, vn, ysubtitle='[Mag. Lat]'
+        options, vn, ysubtitle='[Mag. Lat]'
       end
       
       ELSE: BEGIN
