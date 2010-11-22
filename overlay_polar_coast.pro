@@ -38,8 +38,8 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
   FREE_LUN,map_unit
   
   ;Set !p.position and preserve the original setting 
+  pre_pos = !p.position
   if keyword_set(position) then begin
-    pre_pos = !p.position
     !p.position = position
   endif else position = !p.position
   

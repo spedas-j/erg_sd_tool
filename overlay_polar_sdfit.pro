@@ -160,7 +160,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   if ~keyword_set(notimelabel) then begin
     t = !sdarn.sd_polar.plot_time 
     tstr = time_string(t, tfor='hh:mm')+' UT'
-    xyouts, position[0]+0.02, position[1]+0.02, tstr, /normal, $
+    xyouts, !x.window[0]+0.02, !y.window[0]+0.02, tstr, /normal, $
       font=1, charsize=charsz*2.5
   endif
   

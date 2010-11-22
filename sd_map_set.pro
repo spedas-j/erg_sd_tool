@@ -29,14 +29,13 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   ;mlt = aacgm_mlt( ts.year, long((ts.doy-1)*86400.+ts.sod), mlon)
   
   ;Set the plot position 
+  pre_pos = !p.position
   if keyword_set(position) then begin
-    pre_pos = !p.position
     !p.position = position
   endif else position = !p.position
   if position[0] ge position[2] or position[1] ge position[3] then begin
     print, 'invalid position: forcely set [0,0,1,1]
     position = [0.,0.,1.,1.]
-    pre_pos = !p.position
   endif
   
   if keyword_set(clip) then scale=30e+6 else scale=50e+6
@@ -69,8 +68,9 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     if ~keyword_set(lonlab) then lonlab = 77.
     for i=0,n_elements(lons)-1 do begin
       nrmcord = convert_coord(lons[i],lonlab,/data,/to_normal)
-      if nrmcord[0] le position[0] or nrmcord[0] ge position[2] or $
-        nrmcord[1] le position[1] or nrmcord[1] ge position[3] then continue
+      pos = [!x.window[0],!y.window[0],!x.window[1],!y.window[1]]
+      if nrmcord[0] le pos[0] or nrmcord[0] ge pos[2] or $
+        nrmcord[1] le pos[1] or nrmcord[1] ge pos[3] then continue
       xyouts, lons[i], lonlab, lonnames[i], orientation=ori[i], $
         font=1, charsize=charsz
       
