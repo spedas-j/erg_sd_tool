@@ -14,10 +14,12 @@
 ;-
 PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   erase=erase, clip=clip, geo_plot=geo_plot, $
-  nogscat=nogscat
+  nogscat=nogscat, $
+  notimelabel=notimelabel
 
-  ;Initialize SDARN system variable
+  ;Initialize SDARN system variable and get the default charsize
   sd_init
+  charsz = !sdarn.sd_polar.charsize
   
   ;Check argument and keyword
   npar=N_PARAMS()
@@ -152,9 +154,15 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
     ENDFOR
     
   ENDFOR
+
+  ;Time label
+  if ~keyword_set(notimelabel) then begin
+    t = !sdarn.sd_polar.plot_time 
+    tstr = time_string(t, tfor='hh:mm')+' UT'
+    xyouts, position[0]+0.02, position[1]+0.02, tstr, /normal, $
+      font=1, charsize=charsz*2.5
+  endif
   
-  ;Restore the original color table
-  ;loadct_sd, prevct
   
   ;Resotre the original plot position
   IF ~KEYWORD_SET(pre_position) THEN pre_position=0
