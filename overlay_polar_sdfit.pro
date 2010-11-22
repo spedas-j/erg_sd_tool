@@ -33,12 +33,11 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   ENDIF
   
   ;if datvn is the index number for tplot var
-  IF SIZE(datvn[0], /type) EQ 2 OR SIZE(datvn[0], /type) EQ 3 THEN BEGIN
-    datvn = tnames(datvn[0])
-  ENDIF
-  ;then datvn should be a string now, which is checked below
-  IF SIZE(datvn[0], /type) NE 7 THEN RETURN
-  IF N_ELEMENTS(datvn) EQ 0 THEN RETURN
+  datvn = tnames(datvn)
+  if datvn eq '' then begin
+    print, 'Given tplot var(s) does not exist?'
+    return
+  endif
   
   ;get the radar name and the suffix
   stn = STRMID(datvn, 3,3)
@@ -46,6 +45,8 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   
   ;Load the data to be drawn and to be used for drawing on a 2-d map
   get_data, datvn, data=d, dl=dl, lim=lim
+  if (size(d))[2] ne 8 then get_data, d[0], data=d, dl=dl, lim=lim ;For multi-tplot vars 
+   
   get_data, 'sd_'+stn+'_azim_no_'+suf, data=az
   get_data, 'sd_'+stn+'_position_tbl_'+suf, data=tbl
   get_data, 'sd_'+stn+'_scanstartflag_'+suf, data=stflg
