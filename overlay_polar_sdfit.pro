@@ -84,7 +84,7 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   IF KEYWORD_SET(position) THEN BEGIN
     pre_position = !p.position
     !p.position = position
-  ENDIF
+  ENDIF else position = !p.position
   
   ;Set the lat-lon canvas 
   ;sd_map_set, erase=erase 
