@@ -1,5 +1,6 @@
 PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
-    force_secs=force_secs,static=static,time=time, geo_plot=geo_plot
+    force_secs=force_secs,static=static,time=time, geo_plot=geo_plot, $
+    position=position
     
   OPENR,map_unit,whereami()+'sd_world_data',/GET_LUN
   ;OPENR,map_unit,'C:/hori/free_soft/cygwin/home/horit/work/IDL_project/SDtool_forERG/sd_world_data',/GET_LUN
@@ -35,6 +36,12 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
   ENDFOR
   CLOSE,map_unit
   FREE_LUN,map_unit
+  
+  ;Set !p.position and preserve the original setting 
+  if keyword_set(position) then begin
+    pre_pos = !p.position
+    !p.position = position
+  endif else position = !p.position
   
   plot_coast=FLTARR(2,5000) & plot_pts=0
   FOR i=0,pts-1 DO BEGIN
@@ -88,6 +95,10 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
       plot_pts=0
     ENDELSE
   ENDFOR
+  
+  ;Restore the original position
+  !p.position = pre_pos
+  
   
 END
 
