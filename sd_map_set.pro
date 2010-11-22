@@ -25,10 +25,15 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   ;aacgm_conv_coord, 60., 0., 400., mlat,mlon,err, /TO_AACGM
   ;mlt = aacgm_mlt( ts.year, long((ts.doy-1)*86400.+ts.sod), mlon)
   
+  ;Set the plot position 
   if keyword_set(position) then begin
     pre_pos = !p.position
     !p.position = position
   endif else position = !p.position
+  if position[0] ge position[2] or position[1] ge position[3] then begin
+    print, 'invalid position: forcely set [0,0,1,1]
+    position = [0.,0.,1.,1.]
+  endif
   
   if keyword_set(clip) then scale=30e+6 else scale=50e+6
   
