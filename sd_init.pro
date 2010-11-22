@@ -16,13 +16,14 @@
 pro sd_init, reset=reset
 
 defsysv,'!sdarn',exists=exists
-if not keyword_set(exists) then begin
+if (not keyword_set(exists)) or (keyword_set(reset)) then begin
 
   defsysv,'!sdarn', $
     { $
       init: 0 $
       ,sd_polar: { $
-                  plot_time: 0.D $
+                  plot_time: 0.D, $
+                  charsize: 1.0 $
                 } $
     }
     
