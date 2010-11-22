@@ -2,6 +2,9 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   center_glat=glatc, center_glon=glonc, $
   mltlabel=mltlabel, lonlab=lonlab
 
+  ;Initialize the SD plot environment
+  sd_init
+  
   npar = N_PARAMS()
   IF npar LT 1 THEN time = !sdarn.sd_polar.plot_time
   
@@ -33,6 +36,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   if position[0] ge position[2] or position[1] ge position[3] then begin
     print, 'invalid position: forcely set [0,0,1,1]
     position = [0.,0.,1.,1.]
+    pre_pos = !p.position
   endif
   
   if keyword_set(clip) then scale=30e+6 else scale=50e+6
