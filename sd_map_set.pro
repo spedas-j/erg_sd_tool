@@ -1,5 +1,5 @@
 PRO sd_map_set, time, erase=erase, clip=clip, $
-  center_glat=glatc, center_glon=glonc, lonlab=lonlab
+  center_glat=glatc, center_glon=glonc, lonlab=lonlab, position=position
 
   npar = N_PARAMS()
   IF npar LT 1 THEN time = !sdarn.sd_polar.plot_time
@@ -26,6 +26,11 @@ PRO sd_map_set, time, erase=erase, clip=clip, $
   ;aacgm_conv_coord, 60., 0., 400., mlat,mlon,err, /TO_AACGM
   ;mlt = aacgm_mlt( ts.year, long((ts.doy-1)*86400.+ts.sod), mlon)
   
+  if keyword_set(position) then begin
+    pre_pos = !p.position
+    !p.position = position
+  endif
+  
   ;Set the lat-lon canvas and draw the continents
   map_set, mlatc, mltc_lon, rot_angle, $
     /satellite, sat_p=[6.6, 0., 0.], scale=scale, $
@@ -50,6 +55,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, $
     xyouts, lons[i], lonlab, lonnames[i], orientation=ori[i], font=1, charsize=1.4
     
   endfor
+  
+  !p.position = pre_pos
   
   RETURN
 END
