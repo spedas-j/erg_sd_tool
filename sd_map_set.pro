@@ -1,5 +1,6 @@
-PRO sd_map_set, time, erase=erase, clip=clip, $
-  center_glat=glatc, center_glon=glonc, lonlab=lonlab, position=position
+PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
+  center_glat=glatc, center_glon=glonc, $
+  mltlabel=mltlabel, lonlab=lonlab
 
   npar = N_PARAMS()
   IF npar LT 1 THEN time = !sdarn.sd_polar.plot_time
@@ -19,8 +20,6 @@ PRO sd_map_set, time, erase=erase, clip=clip, $
   rot_angle = (-mltc_lon +360.) mod 360. 
   if rot_angle gt 180. then rot_angle -= 360.
   
-  if keyword_set(clip) then scale=30e+6 else scale=50e+6
-  
   ;Calculate the rotation angle of the north dir in a polar plot
   ;ts = time_struct(time)
   ;aacgm_conv_coord, 60., 0., 400., mlat,mlon,err, /TO_AACGM
@@ -29,7 +28,17 @@ PRO sd_map_set, time, erase=erase, clip=clip, $
   if keyword_set(position) then begin
     pre_pos = !p.position
     !p.position = position
-  endif
+  endif else position = !p.position
+  
+  if keyword_set(clip) then scale=30e+6 else scale=50e+6
+  
+  ;Resize the canvas size for the position values
+  scl = (position[2]-position[0]) < (position[3]-position[1])
+  scale /= scl 
+  
+  ;Set charsize used for MLT labels and so on
+  charsz = 1.4 * (keyword_set(clip) ? 50./30. : 1. ) * scl
+  !sdarn.sd_polar.charsize = charsz
   
   ;Set the lat-lon canvas and draw the continents
   map_set, mlatc, mltc_lon, rot_angle, $
@@ -40,22 +49,27 @@ PRO sd_map_set, time, erase=erase, clip=clip, $
   
   map_grid, latdel=10., londel=15.
   
-  ;Write the MLT labels
-  lons = 15.*findgen(24)
-  ori = lons + 90 & ori[where(ori gt 180)] -= 360.
-  
-  idx=where(lons gt 180. ) & lons[idx] -= 360.
-  lonnames=['00hMLT','','02hMLT','','04hMLT','','06hMLT','','08hMLT','','10hMLT','','12hMLT','', $
-            '14hMLT','','16hMLT','','18hMLT','','20hMLT','','22hMLT','']
-  if ~keyword_set(lonlab) then lonlab = 80.
-  for i=0,n_elements(lons)-1 do begin
-    nrmcord = convert_coord(lons[i],lonlab,/data,/to_normal)
-    if nrmcord[0] le 0. or nrmcord[0] ge 1. or $
-      nrmcord[1] le 0. or nrmcord[1] ge 1. then continue
-    xyouts, lons[i], lonlab, lonnames[i], orientation=ori[i], font=1, charsize=1.4
+  if keyword_set(mltlabel) then begin
+    ;Write the MLT labels
+    lons = 15.*findgen(24)
+    ori = lons + 90 & ori[where(ori gt 180)] -= 360.
     
-  endfor
+    idx=where(lons gt 180. ) & lons[idx] -= 360.
+    lonnames=['00hMLT','','02hMLT','','04hMLT','','06hMLT','','08hMLT','','10hMLT','','12hMLT','', $
+              '14hMLT','','16hMLT','','18hMLT','','20hMLT','','22hMLT','']
+    if ~keyword_set(lonlab) then lonlab = 77.
+    for i=0,n_elements(lons)-1 do begin
+      nrmcord = convert_coord(lons[i],lonlab,/data,/to_normal)
+      if nrmcord[0] le position[0] or nrmcord[0] ge position[2] or $
+        nrmcord[1] le position[1] or nrmcord[1] ge position[3] then continue
+      xyouts, lons[i], lonlab, lonnames[i], orientation=ori[i], $
+        font=1, charsize=charsz
+      
+    endfor
+    
+  endif
   
+  ;Restore the original position setting
   !p.position = pre_pos
   
   RETURN
