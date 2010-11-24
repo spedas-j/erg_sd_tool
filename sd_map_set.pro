@@ -32,21 +32,26 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   pre_pos = !p.position
   if keyword_set(position) then begin
     !p.position = position
-  endif else position = !p.position
+  endif else begin
+    nopos = 1
+    position = !p.position
+  endelse
   if position[0] ge position[2] or position[1] ge position[3] then begin
     print, 'invalid position: forcely set [0,0,1,1]
     position = [0.,0.,1.,1.]
   endif
   
   if keyword_set(clip) then scale=30e+6 else scale=50e+6
-  
   ;Resize the canvas size for the position values
-  scl = (position[2]-position[0]) < (position[3]-position[1])
+  if ~keyword_set(nopos) then begin
+    scl = (position[2]-position[0]) < (position[3]-position[1])
+  endif else begin
+    scl = 1.
+    if !x.window[1]-!x.window[0] gt 0. then $
+      scl = (!x.window[1]-!x.window[0]) < (!y.window[1]-!y.window[0])
+  endelse
   scale /= scl 
   
-  ;Set charsize used for MLT labels and so on
-  charsz = 1.4 * (keyword_set(clip) ? 50./30. : 1. ) * scl
-  !sdarn.sd_polar.charsize = charsz
   
   ;Set the lat-lon canvas and draw the continents
   map_set, mlatc, mltc_lon, rot_angle, $
@@ -56,6 +61,14 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   ;map_continents, /coast
   
   map_grid, latdel=10., londel=15.
+  
+  ;Resize the canvas size for the position values
+  scl = (!x.window[1]-!x.window[0]) < (!y.window[1]-!y.window[0])
+  scale /= scl 
+  ;Set charsize used for MLT labels and so on
+  charsz = 1.4 * (keyword_set(clip) ? 50./30. : 1. ) * scl
+  !sdarn.sd_polar.charsize = charsz
+  
   
   if keyword_set(mltlabel) then begin
     ;Write the MLT labels
