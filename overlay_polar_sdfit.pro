@@ -81,8 +81,8 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   
   
   ;Set the plot position
+  pre_position = !p.position
   IF KEYWORD_SET(position) THEN BEGIN
-    pre_position = !p.position
     !p.position = position
   ENDIF else position = !p.position
   
