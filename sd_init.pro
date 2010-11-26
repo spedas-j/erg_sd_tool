@@ -21,6 +21,7 @@ if (not keyword_set(exists)) or (keyword_set(reset)) then begin
   defsysv,'!sdarn', $
     { $
       init: 0 $
+      ,aacgm_dlm_exists: 0 $
       ,sd_polar: { $
                   plot_time: 0.D, $
                   charsize: 1.0 $
@@ -36,14 +37,15 @@ if !sdarn.init ne 0 then return
 
 !sdarn.init = 1
 
-;Load the S-H coefficients for AACGM
-aacgm_load_coef, 2005
+;Check if AACGM DLM is usable?
+help, /dlm, 'AACGM', out=out
+if strmid(out[0],0,8) eq '** AACGM' then begin
+  !sdarn.aacgm_dlm_exists = 1
+  aacgm_load_coef, 2000      ;Load the S-H coefficients for Year 2000
+endif else begin
+  aacgmidl
+endelse
 
-;Swap magenda with grey for ground scatter drawing
-;tvlct, r,g,b, /get
-;r[1]=90b & g[1]=90b & b[1]=90b
-;tvlct, r,g,b
-; --> Now this modification of color table is done by loadct_sd 
 
 return
 end
