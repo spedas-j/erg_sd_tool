@@ -119,8 +119,8 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
       hgt = glat & hgt[*,*] = 400.
       year_arr = long(glat) & year_arr[*,*] = year
       yrsec_arr= long(glat) & yrsec_arr[*,*] = yrsec 
-      aacgm_conv_coord, glat,glon,hgt, mlat,mlon,err,/TO_AACGM
-      mlt_arr = aacgm_mlt( year_arr, yrsec_arr, mlon )
+      aacgmconvcoord, glat,glon,hgt, mlat,mlon,err,/TO_AACGM
+      mlt_arr = aacgmmlt( year_arr, yrsec_arr, mlon )
       plt_lon = ( (mlt_arr + 24.) mod 24. ) * 180./12.
       
       pos_plt = pos ;replicate as an array with same numbers of elements

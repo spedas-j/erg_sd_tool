@@ -15,9 +15,9 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     glatc = 89. & glonc = 0.
   endelse
   
-  aacgm_conv_coord, glatc, glonc,0.1, mlatc,mlonc,err, /TO_AACGM
+  aacgmconvcoord, glatc, glonc,0.1, mlatc,mlonc,err, /TO_AACGM
   ts = time_struct(time) & yrsec = (ts.doy-1)*86400L + long(ts.sod)
-  mltc = ( aacgm_mlt(ts.year, yrsec, mlonc) + 24. ) mod 24.
+  mltc = ( aacgmmlt(ts.year, yrsec, mlonc) + 24. ) mod 24.
   mltc_lon = 360./24.* mltc
   
   rot_angle = (-mltc_lon +360.) mod 360. 

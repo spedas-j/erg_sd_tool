@@ -98,7 +98,7 @@ pro set_coords, tplot_vars, coord
           glat = total( reform( glatarr[ *, azimno:(azimno+1)] ), 2) /2. ;simple average
           glon = total( reform( glonarr[ *, azimno:(azimno+1)] ), 2) /2. ;simple average
           ;GEO --> AACGM, assuming 400km
-          aacgm_conv_coord, glat, glon, replicate(400.,rgmax), mlat,mlon,err,/TO_AACGM
+          aacgmconvcoord, glat, glon, replicate(400.,rgmax), mlat,mlon,err,/TO_AACGM
           
           str_element, d, 'v', mlat, /add_replace
           store_data, vn, data=d, dl=dl, lim=lim
@@ -107,7 +107,7 @@ pro set_coords, tplot_vars, coord
           glat = reform( glatarr[*,0:(azmmax-1)] + glatarr[*,1:azmmax] ) /2.
           glon = reform( glonarr[*,0:(azmmax-1)] + glonarr[*,1:azmmax] ) /2.
           alt = glat & alt[*,*] = 400. ;km
-          aacgm_conv_coord, glat,glon,alt, mlat,mlon,err,/TO_AACGM
+          aacgmconvcoord, glat,glon,alt, mlat,mlon,err,/TO_AACGM
           if (size(mlat))[0] eq 0 then begin ; For Unix ver. AACGM DLM bug 
             mlat = reform(mlat,rgmax,azmmax) & mlon = reform(mlon,rgmax,azmmax)
           endif

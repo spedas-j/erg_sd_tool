@@ -50,7 +50,7 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
       IF coast(0,i)*hemisphere GT 0 THEN BEGIN
       
         if ~keyword_set(geo_plot) then begin  ;For plotting in AACGM
-          aacgm_conv_coord,coast[0,i],coast[1,i],400.,mlat,mlon,err,/TO_AACGM
+          aacgmconvcoord,coast[0,i],coast[1,i],400.,mlat,mlon,err,/TO_AACGM
           mag_pos = [mlat, mlon]
           ;mag_pos=cnvcoord(coast(0,i),coast(1,i),1)
           
@@ -58,7 +58,7 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
           
           IF NOT KEYWORD_SET(static) THEN BEGIN
             ;x0= mlt(year,year_secs,mag_pos[1])*180/12 ;longitude [deg]
-            x0 = aacgm_mlt(year,year_secs,mag_pos[1])*180./12. ; [deg]
+            x0 = aacgmmlt(year,year_secs,mag_pos[1])*180./12. ; [deg]
             x0= (x0 + 360. ) MOD 360.
             y0= mag_pos[0] ;latitude [deg]
             ;x0= ABS(hemisphere*90-mag_pos(0))* $
