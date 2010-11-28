@@ -1,3 +1,18 @@
+pro aacgmloadcoef, year
+
+;Initialize !sdarn if not defined
+help, name='!sdarn',out=out
+if out eq '' then sd_init
+
+;Only AACGM DLM has a subroutine to load the S-H coefficients for given year
+if !sdarn.aacgm_dlm_exists then begin 
+  ;print, 'using AACGM_DLM'
+  aacgm_load_coef, year
+endif 
+
+return
+end
+
 pro aacgmconvcoord, glat,glon,alt,mlat,mlon,err, TO_AACGM=TO_AACGM, TO_GEO=TO_GEO
 
 ;Initialize !sdarn if not defined
