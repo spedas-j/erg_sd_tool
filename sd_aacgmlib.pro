@@ -61,4 +61,10 @@ endelse
 return, !values.f_nan ;error 
 end
 
+pro sd_aacgmlib
+
+print, 'SD_AACGMLIB compiled.'
+
+return
+end
 

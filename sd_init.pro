@@ -1,9 +1,11 @@
 ;+
 ; :DESCRIPTION:
-;    Initialize the environment for the 2D plot
+;    Initialize the environment for drawing SD data 
 ;
 ; :NOTE:
-;    The AACGM DLM needs to be installed properly in advance.
+;    This procedure is called automatically on executing most of 
+;    sd_*.pro  
+;    
 ;
 ; :AUTHOR: T. Hori
 ; :HISTORY: 
@@ -46,6 +48,8 @@ endif else begin
   aacgmidl
 endelse
 
+;Just compile the AACGM wrapper pro/fun
+sd_aacgmlib
 
 return
 end
