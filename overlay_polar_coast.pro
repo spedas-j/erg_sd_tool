@@ -9,6 +9,9 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
   
   IF NOT KEYWORD_SET(col) THEN col=0
   
+  ;Initialize the SD environment
+  sd_init
+  
   IF ~KEYWORD_SET(time) THEN BEGIN
     t0 = !sdarn.sd_polar.plot_time
     get_timespan, tr

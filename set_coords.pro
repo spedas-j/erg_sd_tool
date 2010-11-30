@@ -20,6 +20,9 @@ pro set_coords, tplot_vars, coord
     return
   endif
   
+  ;Initialize
+  sd_init
+  
   if ~keyword_set(coord) then coord = 'mlat'
   coord = strlowcase(coord)
   
