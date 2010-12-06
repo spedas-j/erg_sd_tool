@@ -14,16 +14,9 @@ PRO cut_col_tab
   red  =INTARR(ncol)
   green=INTARR(ncol)
   blue =INTARR(ncol)
-  
-  ; Define internal colour table
-  ;IF col_table EQ -1 THEN BEGIN
-  
+    
   colour_table=INTARR(4,256)
   
-  ; Check whether colour or grey scale should be used
-  ; If grey scale then reverse for postscript
-  
-  ;IF (format AND 4) EQ 0 THEN BEGIN
   stack = SCOPE_TRACEBACK(/structure)
   filename = stack[SCOPE_LEVEL()-1].filename
   dir = FILE_DIRNAME(filename)
@@ -42,19 +35,6 @@ PRO cut_col_tab
   ENDFOR
   colour_table=colour_stretch
   
-  ;    ENDIF ELSE BEGIN
-  ;      grey_base=0.1
-  ;      IF !D.NAME NE 'PS' THEN BEGIN
-  ;        colour_table(1,*)=FIX(INDGEN(256)*(1-grey_base)+256*grey_base)
-  ;        colour_table(2,*)=FIX(INDGEN(256)*(1-grey_base)+256*grey_base)
-  ;        colour_table(3,*)=FIX(INDGEN(256)*(1-grey_base)+256*grey_base)
-  ;      ENDIF ELSE BEGIN
-  ;        colour_table(1,*)=255-FIX(INDGEN(256)*(1-grey_base)+256*grey_base)
-  ;        colour_table(2,*)=255-FIX(INDGEN(256)*(1-grey_base)+256*grey_base)
-  ;        colour_table(3,*)=255-FIX(INDGEN(256)*(1-grey_base)+256*grey_base)
-  ;      ENDELSE
-  ;    ENDELSE
-  
   indx=1.0
   skip=255.0/(ncol-1)
   FOR col=1,ncol-1 DO BEGIN
@@ -64,7 +44,7 @@ PRO cut_col_tab
     indx=indx+skip
   ENDFOR
   
-  ; Swap colour bar if necessary
+  ; Swap colour bar so that color goes red -> yellow -> green -> blue 
   red_swap  =red
   blue_swap =blue
   green_swap=green
@@ -74,27 +54,9 @@ PRO cut_col_tab
     green(ncol-col)=green_swap(col)
   ENDFOR
   
-  ;ENDIF
-  
-  ; Black and white
-  ;  red(0)       =0
-  ;  blue(0)      =0
-  ;  green(0)     =0
-  ;  red(ncol-1)  =255
-  ;  blue(ncol-1) =255
-  ;  green(ncol-1)=255
-  
-  ; Ground scatter colour (grey)
-  ;  red(ncol-2)  =grey_level*16
-  ;  blue(ncol-2) =grey_level*16
-  ;  green(ncol-2)=grey_level*16
-  
   IF !D.NAME NE 'NULL' AND !d.name NE 'HP'THEN BEGIN
   
     TVLCT,red,green,blue
-    
-  ; Load external colour table if selected
-  ;IF col_table NE -1 THEN set_colour_table,col_table
     
   ENDIF
   
