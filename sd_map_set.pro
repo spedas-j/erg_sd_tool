@@ -1,6 +1,7 @@
 PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   center_glat=glatc, center_glon=glonc, $
-  mltlabel=mltlabel, lonlab=lonlab
+  mltlabel=mltlabel, lonlab=lonlab, $
+  force_scale=force_scale
 
   ;Initialize the SD plot environment
   sd_init
@@ -41,7 +42,10 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     position = [0.,0.,1.,1.]
   endif
   
+  ;Set the scale for drawing the map_set canvas
   if keyword_set(clip) then scale=30e+6 else scale=50e+6
+  if keyword_set(force_scale) then scale = force_scale
+  
   ;Resize the canvas size for the position values
   if ~keyword_set(nopos) then begin
     scl = (position[2]-position[0]) < (position[3]-position[1])
