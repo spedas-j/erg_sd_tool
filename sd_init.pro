@@ -1,15 +1,19 @@
 ;+
+; PROCEDURE sd_init
+; 
 ; :DESCRIPTION:
 ;    Initialize the environment for drawing SD data 
 ;
 ; :NOTE:
 ;    This procedure is called automatically on executing most of 
-;    sd_*.pro  
+;    sd_*.pro.   
 ;    
 ;
-; :AUTHOR: T. Hori
+; :AUTHOR: 
+;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
 ; :HISTORY: 
-;       2010/03/10: Created
+;   2010/03/10: Created
+; 
 ; $LastChangedBy: $
 ; $LastChangedDate: $
 ; $LastChangedRevision: $

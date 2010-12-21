@@ -1,11 +1,25 @@
 ;+
-;PROCEDURE loadct_sd
+; PROCEDURE loadct_sd
+; 
+; :DESCRIPTION:
 ; Basically this procedure is the same as loadct2.pro except for
-; yellow (color=5) replaced with grey
-;
-; This slightly modified color table is to used for plotting SuperDARN data
+; yellow (color=5) replaced with grey. In addition, if you run 
+; this with an argument of 44 (e.g., loadct_sd, 44), then it 
+; loads the Cutlass color table usually used for SuperDARN data. 
+; 
+; :AUTHOR:
+;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; :HISTORY:
+;   2010/11/20: created 
+; 
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
 ;-
 
+;To define the cutlass color table. The RGB values are loaded 
+;from cut_col_tab.dat which should be placed in the same directory.
 PRO cut_col_tab
 
   ; Number of colours for current device

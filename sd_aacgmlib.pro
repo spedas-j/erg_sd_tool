@@ -1,5 +1,7 @@
 ;+
-; sd_aacgmlib 
+; PROCEDURE sd_aacgmlib 
+; 
+; :DESCRIPTION:
 ; A dummy procedure to compile the AACGM wrapper procedure/function 
 ; defined below by just type "sd_aacgmlib" 
 ; 
@@ -7,10 +9,15 @@
 ; (not defined, then define it by sd_init) to select appropriate 
 ; AACGM routines (DLM, or IDL native ones attached to TDAS). 
 ; 
-; :AUTHOR: Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
-; 
+; :AUTHOR: 
+;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
 ; :HISTORY:
-; 2010/12/02: created and got through the initial bug fixes
+;   2010/12/02: created and got through the initial bug fixes
+;
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
 ;-
 pro aacgmloadcoef, year
 
@@ -75,9 +82,10 @@ endelse
 return, !values.f_nan ;error 
 end
 
-pro sd_aacgmlib
+;This is just to compile the above pro/fun by executing. 
+pro sd_aacgmlib, quiet=quiet
 
-print, 'SD_AACGMLIB compiled.'
+if ~keyword_set(quiet) then print, 'SD_AACGMLIB compiled.'
 
 return
 end
