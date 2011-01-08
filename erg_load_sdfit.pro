@@ -26,6 +26,25 @@
 ; $LastChangedRevision:$
 ; $URL:$
 ;-
+;---------------------------------------------------
+;Internal routine to get the table of the pixel 
+;centers from the table of the pixel conors.
+PRO get_pixel_cntr, tbl, cnttbl
+  dim = SIZE( tbl, /dim )
+  rgmax = dim[0]-1 & azmax = dim[1]-1
+  cnttbl = fltarr(rgmax,azmax,2)
+  for i=0L,rgmax-1 do begin
+  for j=0L,azmax-1 do begin
+    latarr = tbl[ [i,i+1,i+1,i],[j,j,j+1,j+1],0 ]
+    lonarr = tbl[ [i,i+1,i+1,i],[j,j,j+1,j+1],1 ]
+    pos = get_sphcntr( latarr, lonarr)
+    cnttbl[i,j,0]=pos[0] & cnttbl[i,j,1]=pos[1]
+  endfor
+  endfor
+  
+return
+end
+;----------------------------------------------------
 PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   get_support_data=get_support_data, $
   noacknowledgment=noacknowledgment, trange=trange, $
@@ -185,6 +204,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   
   
   ;Load the position table(s) ;;;;;;;;;;;;;;;;;;
+  ;Currently supports SD fitacf CDFs containing up to 3 pos. tables.
   tbl_0='' & tbl_1='' & tbl_2=''
   time_0='' & time_1='' & time_2=''
   tbllist = ['tbl_0', 'tbl_1' , 'tbl_2']
@@ -209,9 +229,12 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
       pvnidx = (WHERE( STRCMP(cdfi.vars.name,pvn ) , nw))[0]
       time = *cdfi.vars[tvnidx].dataptr
       tbl  = *cdfi.vars[pvnidx].dataptr
+      get_pixel_cntr, tbl, cnttbl ;Obtain the pixel centers
       dim = SIZE( tbl, /dim ) & tbl2 = REFORM( tbl, 1, dim[0],dim[1],dim[2] )
+      cnttbl2 = REFORM( cnttbl, 1, dim[0]-1,dim[1]-1,dim[2] )
       rslt=EXECUTE('append_array, time_'+stblno+', [time[0],time[n_elements(time)-1]]')
       rslt=EXECUTE('append_array, tbl_'+stblno+', [tbl2,tbl2]' )
+      rslt=EXECUTE('append_array, cnttbl_'+stblno+', [cnttbl2,cnttbl2]' )
     ENDFOR
   ENDFOR
   
@@ -220,8 +243,11 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     IF n LT 2 THEN CONTINUE
     rslt=EXECUTE('time='+timelist[i])
     rslt=EXECUTE('tbl='+tbllist[i])
+    rslt=EXECUTE('cnttbl='+tbllist[i])
     store_data, prefix+'position_'+tbllist[i], $
       data={x:time_double(time,/epoch), y:tbl}
+    store_data, prefix+'positioncnt_'+tbllist[i], $
+      data={x:time_double(time,/epoch), y:cnttbl}
   ENDFOR
   
   ;Release unused ptrs
