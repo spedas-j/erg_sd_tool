@@ -1,14 +1,31 @@
 ;+
-; set_coords.pro
-; 
-; :Description:
-; Transform the coordinate system of RTI-plot-type tplot variables
-; 
-; 
-; :Author: T. Hori (horit@stelab.nagoya-u.acjp)
+; PROCEDURE set_coords
 ;
-; :History: 2010/11/18
+; :DESCRIPTION:
+;   Transform the coordinate system of SD RTI-plot-type tplot 
+;   variables.
 ;
+; :PARAMS:
+;   tplot_vars: tplot variables to be transformed
+;   coord:      the coordinate system to which tplot variables 
+;               are transformed to. 
+;               Options currently available are:
+;               'mlat', 'gate', 'glat'
+;
+; :EXAMPLES:
+;   set_coords, 'sd_hok_vlos_1', 'mlat'
+;
+; :AUTHOR:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2010/11/18: Created
+;   2011/01/07: added glat to coordinate option
+; 
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
 ;-
 pro set_coords, tplot_vars, coord
 
@@ -23,9 +40,11 @@ pro set_coords, tplot_vars, coord
   ;Initialize
   sd_init
   
+  ;Default coordinate system
   if ~keyword_set(coord) then coord = 'mlat'
   coord = strlowcase(coord)
   
+  ;Check if given tplot var. exists
   tplot_vars = tnames(tplot_vars)
   if tplot_vars[0] eq '' then return
   
@@ -36,7 +55,7 @@ pro set_coords, tplot_vars, coord
     
     if strmid(vn,0,3) ne 'sd_' then continue ;non sd-tplot var
     
-    ;get the radar name and the suffix
+    ;get the radar name and the suffix from the variable name
     stn = vnstr[1] ; radar name code
     prefix = 'sd_'+stn+'_'
     n = min( where( stregex(vnstr, '^((0|1|2|3|4|5|6|7|8|9)+)$') ge 0 ) )
