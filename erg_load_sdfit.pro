@@ -28,17 +28,17 @@
 ;-
 ;---------------------------------------------------
 ;Internal routine to get the table of the pixel 
-;centers from the table of the pixel conors.
+;centers from the table of the pixel corners.
 PRO get_pixel_cntr, tbl, cnttbl
   dim = SIZE( tbl, /dim )
   rgmax = dim[0]-1 & azmax = dim[1]-1
   cnttbl = fltarr(rgmax,azmax,2)
   for i=0L,rgmax-1 do begin
   for j=0L,azmax-1 do begin
-    latarr = tbl[ [i,i+1,i+1,i],[j,j,j+1,j+1],0 ]
-    lonarr = tbl[ [i,i+1,i+1,i],[j,j,j+1,j+1],1 ]
+    latarr = tbl[ [i,i+1,i+1,i],[j,j,j+1,j+1],1 ]
+    lonarr = tbl[ [i,i+1,i+1,i],[j,j,j+1,j+1],0 ]
     pos = get_sphcntr( latarr, lonarr)
-    cnttbl[i,j,0]=pos[0] & cnttbl[i,j,1]=pos[1]
+    cnttbl[i,j,1]=pos[0] & cnttbl[i,j,0]=pos[1]
   endfor
   endfor
   
@@ -243,7 +243,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     IF n LT 2 THEN CONTINUE
     rslt=EXECUTE('time='+timelist[i])
     rslt=EXECUTE('tbl='+tbllist[i])
-    rslt=EXECUTE('cnttbl='+tbllist[i])
+    rslt=EXECUTE('cnttbl=cnt'+tbllist[i])
     store_data, prefix+'position_'+tbllist[i], $
       data={x:time_double(time,/epoch), y:tbl}
     store_data, prefix+'positioncnt_'+tbllist[i], $
