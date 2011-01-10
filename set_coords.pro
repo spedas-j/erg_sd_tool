@@ -27,12 +27,12 @@
 ; $LastChangedRevision:$
 ; $URL:$
 ;-
-pro set_coords, tplot_vars, coord
+pro set_coords, tplot_vars, coord, quiet=quiet
 
   npar = n_params()
   if npar eq 0 then begin
     print, 'Usage:'
-    print, "       set_coords, ['var1','var2'...], {'gate'|'mlat'}"
+    print, "       set_coords, ['var1','var2'...], {'gate'|'glat'|'mlat'}"
     print, "e.g., set_coords, 'sd_hok_vlos_1', 'mlat'"
     return
   endif
@@ -41,7 +41,7 @@ pro set_coords, tplot_vars, coord
   sd_init
   
   ;Default coordinate system
-  if ~keyword_set(coord) then coord = 'mlat'
+  if ~keyword_set(coord) then coord = 'gate'
   coord = strlowcase(coord)
   
   ;Check if given tplot var. exists
@@ -68,18 +68,19 @@ pro set_coords, tplot_vars, coord
     ;Load the data to be drawn and to be used for drawing on a 2-d map
     get_data, vn, data=d, dl=dl, lim=lim
     get_data, prefix+'azim_no_'+suf, data=az
-    get_data, prefix+'position_tbl_'+suf, data=tbl
+    get_data, prefix+'positioncnt_tbl_'+suf, data=tbl
     
     ;Get dimensions of the data/table arrays
-    rgmax = n_elements(tbl.y[0,*,0,0])-1
-    azmmax= n_elements(tbl.y[0,0,*,0])-1
-    glonarr = ( reform( tbl.y[0, 0:(rgmax-1), *, 0]) + 360. ) mod 360. ;Array [rgmax, 17]
-    glatarr = ( reform( tbl.y[0, 0:(rgmax-1), *, 1]) + 360. ) mod 360.
+    rgmax = n_elements(tbl.y[0,*,0,0])
+    azmmax= n_elements(tbl.y[0,0,*,0])
+    ;Transform to arrays of [rgmax,azmmax]
+    glonarr = ( reform( tbl.y[0, *, *, 0]) + 360. ) mod 360.
+    glatarr =   reform( tbl.y[0, *, *, 1])
      
     ;Cases of Multi-tplot var --> call this pro recursively
     if (size(d))[2] eq 7 then begin
       for n=0, n_elements(d)-1 do begin
-        set_coords, d[n], coord
+        set_coords, d[n], coord, quiet=quiet
         ;print, d[n], coord
       endfor
       get_data, d[0], lim=lim
@@ -91,6 +92,9 @@ pro set_coords, tplot_vars, coord
         END
         'mlat': BEGIN
           options, vn, 'ysubtitle','[Mag. Lat]'
+        END
+        'glat': BEGIN
+          options, vn, 'ysubtitle','[GEO Lat]'
         END
       ENDCASE
 
@@ -111,14 +115,17 @@ pro set_coords, tplot_vars, coord
         options, vn, 'ystyle', 1
         options, vn, 'ysubtitle','[range gate]'
         
+        if ~keyword_set(quiet) then $
+          print, vn+': vertical axis --> '+'range gate'
+        
       END
       
       'mlat': begin
         
         if is_azimvar then begin
           azimno = fix( strmid( stregex(vn, 'azim(0|1|2|3|4|5|6|7|8|9){2}', /ext), 4,2 ) )
-          glat = total( reform( glatarr[ *, azimno:(azimno+1)] ), 2) /2. ;simple average
-          glon = total( reform( glonarr[ *, azimno:(azimno+1)] ), 2) /2. ;simple average
+          glat = reform( glatarr[ *, azimno] )
+          glon = reform( glonarr[ *, azimno] )
           ;GEO --> AACGM, assuming 400km
           aacgmconvcoord, glat, glon, replicate(400.,rgmax), mlat,mlon,err,/TO_AACGM
           
@@ -126,8 +133,8 @@ pro set_coords, tplot_vars, coord
           store_data, vn, data=d, dl=dl, lim=lim
           
         endif else begin ;Cases of tplot vars containing all (0-15) beams
-          glat = reform( glatarr[*,0:(azmmax-1)] + glatarr[*,1:azmmax] ) /2.
-          glon = reform( glonarr[*,0:(azmmax-1)] + glonarr[*,1:azmmax] ) /2.
+          glat = glatarr[ *, *]
+          glon = glonarr[ *, *] 
           alt = glat & alt[*,*] = 400. ;km
           aacgmconvcoord, glat,glon,alt, mlat,mlon,err,/TO_AACGM
           if (size(mlat))[0] eq 0 then begin ; For Unix ver. AACGM DLM bug 
@@ -149,10 +156,49 @@ pro set_coords, tplot_vars, coord
         ylim, vn, yr[0],yr[1] 
         options, vn, 'ystyle', 1
         options, vn, ysubtitle='[Mag. Lat]'
+        
+        if ~keyword_set(quiet) then $
+          print, vn+': vertical axis --> '+'AACGM lat.'
+
+      end
+      
+      'glat': begin
+        
+        if is_azimvar then begin
+          azimno = fix( strmid( stregex(vn, 'azim(0|1|2|3|4|5|6|7|8|9){2}', /ext), 4,2 ) )
+          glat = reform( glatarr[ *, azimno] )
+          glon = reform( glonarr[ *, azimno] )
+          
+          str_element, d, 'v', glat, /add_replace
+          store_data, vn, data=d, dl=dl, lim=lim
+          
+        endif else begin ;Cases of tplot vars containing all (0-15) beams
+          glat = glatarr[ *, *]
+          glon = glonarr[ *, *] 
+          
+          newv = d.y & newv[*,*] = !values.f_nan ;Create an array of the same dimension and initialize it 
+          for n=0, azmmax-1 do begin
+            idx = where( az.y eq n ) & if idx[0] eq -1 then continue
+            newv[idx,*] = replicate(1.,n_elements(idx)) # transpose(glat[*,n])
+          endfor
+          
+          str_element, d, 'v', newv, /add_replace
+          store_data, vn, data=d, dl=dl, lim=lim
+          
+        endelse
+        
+        yr = minmax(d.v)
+        ylim, vn, yr[0],yr[1] 
+        options, vn, 'ystyle', 1
+        options, vn, ysubtitle='[GEO Lat]'
+        
+        if ~keyword_set(quiet) then $
+          print, vn+': vertical axis --> '+'Geographical lat.'
+        
       end
       
       ELSE: BEGIN
-        print, "Only 'gate' and 'mlat' are available for keyword COORD"
+        print, "Currently only 'gate','mlat', and 'glat' are available for keyword COORD"
         return
       END
       
