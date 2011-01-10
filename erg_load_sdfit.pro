@@ -158,13 +158,18 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     for n=0L, n_elements(nm)-1 do begin
       get_data, prefix+nm[n]+suf[i], data=d, dl=dl, lim=lim
       get_data, prefix+'echo_flag_'+suf[i], data=flg, dl=flgdl, lim=flglim
+      d_g = d
       idx = where( flg.y eq 1. )
+      if idx[0] ne -1 then d_g.y[idx] = !values.f_nan
+      idx = where( flg.y ne 1. )
       if idx[0] ne -1 then d.y[idx] = !values.f_nan
       maxrg = max(d.v, /nan)+1
-      store_data, prefix+nm[n]+'gscat_'+suf[i], data=d, lim=lim, $
+      store_data, prefix+nm[n]+'iscat_'+suf[i], data=d, lim=lim, $
+        dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1,fill_color:5}
+      store_data, prefix+nm[n]+'gscat_'+suf[i], data=d_g, lim=lim, $
         dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1,fill_color:5}
       store_data, prefix+nm[n]+'bothscat_'+suf[i], $
-        data=[prefix+nm[n]+suf[i],prefix+nm[n]+'gscat_'+suf[i]], $
+        data=[prefix+nm[n]+'iscat_'+suf[i],prefix+nm[n]+'gscat_'+suf[i]], $
         dl={yrange:[0,maxrg]}
     endfor
     
@@ -173,9 +178,9 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     zlim, prefix+'pwr_err_'+suf[i], 0,30
     zlim, prefix+'spec_width_'+suf[i], 0,200
     zlim, prefix+'spec_width_err_'+suf[i], 0,300
-    zlim, prefix+'vlos_'+suf[i], -400,400
-    zlim, prefix+'vnorth_'+suf[i], -400,400
-    zlim, prefix+'veast_'+suf[i], -400,400
+    zlim, prefix+'vlos_*_'+suf[i], -400,400
+    zlim, prefix+'vnorth_*_'+suf[i], -400,400
+    zlim, prefix+'veast_*_'+suf[i], -400,400
     zlim, prefix+'vlos_err_'+suf[i], 0,300
    
     ;Fill values --> NaN 
