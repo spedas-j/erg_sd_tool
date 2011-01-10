@@ -1,19 +1,47 @@
+;+
+; FUNCTION get_sphcntr
+;
+; :DESCRIPTION:
+;    Calculate the center position on the spherical coordinate system
+;    from given points. The function returns a floating-point
+;    array [latitude, longitude] for the center position.
+;
+; :PARAMS:
+;    latarr, lonarr:
+;    Arrays containing latitudes and longitudes, respectively, of
+;    given points on the spherical coordinate system. Any dimension,
+;    size is acceptable as long as both arrays have the same
+;    dimension/size.
+;
+; :EXAMPLES:
+;   To get the center of points [lat1,lon1], [lat2,lon2], and
+;   [lat3,lon3],
+;
+;   pos = get_sphcntr( [lat1,lat2,lat3], [lon1,lon2,lon3] )
+;
+; :AUTHOR:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/01/07: Created
+;
+;-
 FUNCTION get_sphcntr, latarr, lonarr
 
   ;Check the array size
-  if n_elements(latarr) ne n_elements(lonarr) then begin
-    print, 'get_sphcntr: Array size does not match!'
-    return, [!values.f_nan,!values.f_nan] 
-  endif
+  IF N_ELEMENTS(latarr) NE N_ELEMENTS(lonarr) THEN BEGIN
+    PRINT, 'get_sphcntr: Array size does not match!'
+    RETURN, [!values.f_nan,!values.f_nan]
+  ENDIF
   
   phiarr = lonarr*!dtor
   thearr = (90.-latarr)*!dtor
-  x = sin(thearr)*cos(phiarr)
-  y = sin(thearr)*sin(phiarr)
-  z = cos(thearr)
-  ave_x = total(x) & ave_y = total(y) & ave_z = total(z)
+  x = SIN(thearr)*COS(phiarr)
+  y = SIN(thearr)*SIN(phiarr)
+  z = COS(thearr)
+  ave_x = TOTAL(x) & ave_y = TOTAL(y) & ave_z = TOTAL(z)
   xyz_to_polar, [ave_x,ave_y,ave_z], phi=lon, theta=lat, $
     /ph_0_360
-  
-return, [lat,lon]
-end
+    
+  RETURN, [lat,lon]
+END
