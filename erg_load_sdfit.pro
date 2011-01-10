@@ -165,7 +165,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
       if idx[0] ne -1 then d.y[idx] = !values.f_nan
       maxrg = max(d.v, /nan)+1
       store_data, prefix+nm[n]+'iscat_'+suf[i], data=d, lim=lim, $
-        dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1,fill_color:5}
+        dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1}
       store_data, prefix+nm[n]+'gscat_'+suf[i], data=d_g, lim=lim, $
         dl={ytitle:'',ysubtitle:'',ztitle:'',spec:1,fill_color:5}
       store_data, prefix+nm[n]+'bothscat_'+suf[i], $

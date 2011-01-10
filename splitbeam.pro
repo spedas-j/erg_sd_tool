@@ -49,7 +49,7 @@ PRO splitbeam, tvars
         dd = data
         store_data, vn, data={x:dd.x[idx], y:dd.y[idx,*], v:dd.v }, dl=dl, lim=lim
       endif else begin ;Cases of multi-tplot var containing both iono. and ground scatter data 
-        vn_iono = data[ ( where( strpos(data,'gscat') lt 0 ) )[0] ] ;& help, vn_iono
+        vn_iono = data[ ( where( strpos(data,'iscat') ge 0 ) )[0] ] ;& help, vn_iono
         vn_gscat= data[ ( where( strpos(data,'gscat') ge 0 ) )[0] ] ;& help, vn_gscat
         get_data, vn_iono, data=dd, dl=dl, lim=lim
         get_data, vn_gscat, data=ddg, dl=dlg, lim=limg
