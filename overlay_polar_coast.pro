@@ -1,41 +1,43 @@
 ;+
-; PROCEDURE/FUNCTION overlay_polar_coast
+; PROCEDURE overlay_polar_coast
 ;
 ; :Description:
-;		Describe the procedure/function.
-;
+;		Draw the world map on the plot window set up by map_set. 
 ;
 ;
 ;	:Keywords:
-;    south
-;    fill
-;    col
-;    force_year
-;    force_secs
-;    static
-;    time
-;    geo_plot
-;    position
+;    fill:      Set to fill the continents
+;    col:       Set the color index to draw the coast lines with 
+;                 (Usually the time should be set by sd_time)
+;    static:    Set to plot on the MLAT-MLON grid, not the MLAT-MLT. 
+;               This keyword does nothing when keyword geo_plot is set. 
+;    time:      Set the time (in UNIX time) to calculate the AACGM coords 
+;               of the map for. Do nothing with keyword geo_plot on.  
+;    geo_plot:  Set to draw in geographical coordinates
+;    position:  Set to draw the map at the designated position in the plot window
 ;
 ; :EXAMPLES:
+;   overlay_polar_coast     (to draw the map in AACGM)
 ;
 ; :Author:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
-; 	2011/01/11: Created
+; 	2011/11/10: Created
 ;
 ; $LastChangedBy: $
 ; $LastChangedDate: $
 ; $LastChangedRevision: $
 ; $URL: $
 ;-
-PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
-    force_secs=force_secs,static=static,time=time, geo_plot=geo_plot, $
-    position=position
-    
-  OPENR,map_unit,whereami()+'sd_world_data',/GET_LUN
-  ;OPENR,map_unit,'C:/hori/free_soft/cygwin/home/horit/work/IDL_project/SDtool_forERG/sd_world_data',/GET_LUN
+PRO overlay_polar_coast,fill=fill,col=col, $
+      static=static,time=time, geo_plot=geo_plot, $
+      position=position
+
+  stack = SCOPE_TRACEBACK(/structure)
+  filename = stack[SCOPE_LEVEL()-1].filename
+  dir = FILE_DIRNAME(filename)
+  OPENR,map_unit,dir+'/sd_world_data',/GET_LUN
   
   IF KEYWORD_SET(south) THEN hemisphere=-1 ELSE hemisphere=1
   
@@ -55,8 +57,6 @@ PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
   ts = time_struct(time)
   year=ts.year
   year_secs= LONG( (ts.doy-1)*86400L + ts.sod )
-  IF KEYWORD_SET(force_year) THEN year=force_year
-  IF KEYWORD_SET(force_secs) THEN year_secs=force_secs
   
   no_blocks=17
   block_len=INTARR(17)
