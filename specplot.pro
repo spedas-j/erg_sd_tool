@@ -54,6 +54,13 @@
 ; $LastChangedDate: 2009-06-16 16:46:31 -0700 (Tue, 16 Jun 2009) $
 ; $LastChangedRevision: 6230 $
 ; $URL: svn+ssh://thmsvn@ambrosia.ssl.berkeley.edu/repos/ssl_general/tags/tdas_5_20/tplot/specplot.pro $
+; 
+; This procedure (the original version is included in TDAS) has been modified 
+; by Tomo Hori, STE lab. (E-mail: horit@stelab.nagoya-u.ac.jp) to support a 
+; function of painting pixels with a fixed color given as "fill_color" 
+; attribute stored in the dlimit structure in a tplot variable. 
+; This function is to be incorporated into the "official" specplot.pro in the 
+; TDAS distribution in near future (maybe in TDAS ver 6.0).  
 ;-
 pro specplot,x,y,z,limits=lim,data=data,overplot=overplot,overlay=overlay,$
     ps_resolution=ps_res,x_no_interp=x_no_interp,y_no_interp=y_no_interp, $

@@ -5,7 +5,7 @@
 ; Basically this procedure is the same as loadct2.pro except for
 ; yellow (color=5) replaced with grey. In addition, if you run 
 ; this with an argument of 44 (e.g., loadct_sd, 44), then it 
-; loads the Cutlass color table usually used for SuperDARN data. 
+; loads the Cutlass color table often used for SuperDARN data. 
 ; 
 ; :AUTHOR:
 ;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)

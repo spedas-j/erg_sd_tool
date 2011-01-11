@@ -5,12 +5,14 @@
 ;		Describe the procedure/function.
 ;
 ;	:Params:
-;    t
+;    time:  Set the time for which a 2-D scan data is plotted
 ;
 ;	:Keywords:
-;    quiet
+;    quiet:   If not set, then the plot time is shown in the command-line console
 ;
 ; :EXAMPLES:
+;   sd_time, '2007-03-24/14:24' 
+;   sd_time, 1424 
 ;
 ; :Author:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
@@ -23,7 +25,7 @@
 ; $LastChangedRevision: $
 ; $URL: $
 ;-
-PRO sd_time, t, quiet=quiet
+PRO sd_time, time, quiet=quiet
 
 ;Initialize !SDARN system variable
 sd_init
@@ -36,7 +38,7 @@ if npar eq 0 then begin
 endif
 
 ;Adopt only the 1st element if mistakenly given as an array
-t = t[0]
+t = time[0]
 
 ;Set the plot time
 CASE (size(t,/type)) OF

@@ -1,21 +1,31 @@
 ;+
-; :DESCRIPTION:
-;    Describe the procedure.
+;	PROCEDURE overlay_polar_sdfit
 ;
-; :PARAMS:
-;    datvn
+; :Description:
+;    Plot a 2-D scan data of a SD radar on the plot window set up by map_set. 
 ;
-; :KEYWORDS:
-;    time
+; :Params:
+;    datvn:   tplot variable names (as strings) to be plotted
 ;
-; :AUTHOR: T. Hori
-; :HISTORY:
-; 	2010/03/09: Created
-; 	
+; :Keywords:
+;    time:    Set the time (UNIX time) to plot a 2-D scan for
+;    position:  Set the location of the plot frame in the plot window
+;    erase:   Set to forcibly erase the plot window before plotting data
+;    clip:    Set to scale in to get a magnified map 
+;    geo_plot:  Set to plot in the geographical coordinates
+;    nogscat: Set to prevent the ground scatter data from appearing on the plot
+;    notimelabel: Set to prevent the time label from appearing on the plot
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :History:
+; 	2011/01/11: Created
+;   
 ; $LastChangedBy: $
 ; $LastChangedDate: $
 ; $LastChangedRevision: $
-; $URL: $
+; $URL: $;
 ;-
 PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   erase=erase, clip=clip, geo_plot=geo_plot, $
