@@ -25,6 +25,10 @@
 ; :HISTORY:
 ; 	2011/01/07: Created
 ;
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
 ;-
 FUNCTION get_sphcntr, latarr, lonarr
 

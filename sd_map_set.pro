@@ -1,3 +1,35 @@
+;+
+; PROCEDURE/FUNCTION sd_map_set
+;
+; :Description:
+;		Describe the procedure/function.
+;
+;	:Params:
+;    time
+;
+;	:Keywords:
+;    erase
+;    clip
+;    position
+;    center_glat
+;    center_glon
+;    mltlabel
+;    lonlab
+;    force_scale
+;
+; :EXAMPLES:
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/01/11: Created
+;
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
+;-
 PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   center_glat=glatc, center_glon=glonc, $
   mltlabel=mltlabel, lonlab=lonlab, $

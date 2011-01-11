@@ -1,3 +1,35 @@
+;+
+; PROCEDURE/FUNCTION overlay_polar_coast
+;
+; :Description:
+;		Describe the procedure/function.
+;
+;
+;
+;	:Keywords:
+;    south
+;    fill
+;    col
+;    force_year
+;    force_secs
+;    static
+;    time
+;    geo_plot
+;    position
+;
+; :EXAMPLES:
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/01/11: Created
+;
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
+;-
 PRO overlay_polar_coast,south=south,fill=fill,col=col,force_year=force_year, $
     force_secs=force_secs,static=static,time=time, geo_plot=geo_plot, $
     position=position

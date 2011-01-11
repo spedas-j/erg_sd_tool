@@ -1,3 +1,28 @@
+;+
+; PROCEDURE/FUNCTION sd_time
+;
+; :Description:
+;		Describe the procedure/function.
+;
+;	:Params:
+;    t
+;
+;	:Keywords:
+;    quiet
+;
+; :EXAMPLES:
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/01/11: Created
+; 	
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
+;-
 PRO sd_time, t, quiet=quiet
 
 ;Initialize !SDARN system variable

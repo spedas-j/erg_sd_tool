@@ -11,6 +11,11 @@
 ; :AUTHOR: T. Hori
 ; :HISTORY:
 ; 	2010/03/09: Created
+; 	
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
 ;-
 PRO overlay_polar_sdfit, datvn, time=time, position=position, $
   erase=erase, clip=clip, geo_plot=geo_plot, $
