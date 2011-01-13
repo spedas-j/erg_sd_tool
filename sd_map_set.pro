@@ -33,7 +33,8 @@
 PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   center_glat=glatc, center_glon=glonc, $
   mltlabel=mltlabel, lonlab=lonlab, $
-  force_scale=force_scale
+  force_scale=force_scale, $
+  geo_plot=geo_plot
 
   ;Initialize the SD plot environment
   sd_init
@@ -48,6 +49,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     glatc = 89. & glonc = 0.
   endelse
   
+  ;Calculate the rotation angle regarding MLT
+  if ~keyword_set(geo_plot) then begin
   aacgmconvcoord, glatc, glonc,0.1, mlatc,mlonc,err, /TO_AACGM
   ts = time_struct(time) & yrsec = (ts.doy-1)*86400L + long(ts.sod)
   mltc = ( aacgmmlt(ts.year, yrsec, mlonc) + 24. ) mod 24.
@@ -55,7 +58,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   
   rot_angle = (-mltc_lon +360.) mod 360. 
   if rot_angle gt 180. then rot_angle -= 360.
-  
+  endif else rot_angle = 0.
+
   ;Calculate the rotation angle of the north dir in a polar plot
   ;ts = time_struct(time)
   ;aacgm_conv_coord, 60., 0., 400., mlat,mlon,err, /TO_AACGM
@@ -90,12 +94,16 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   
   
   ;Set the lat-lon canvas and draw the continents
+  if ~keyword_set(geo_plot) then begin
   map_set, mlatc, mltc_lon, rot_angle, $
     /satellite, sat_p=[6.6, 0., 0.], scale=scale, $
-  ;map_set, 80., 0., 0,/satellite, sat_p=[2.6, 0., 0.], scale=30e+6, $
     /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
-  ;map_continents, /coast
-  
+  endif else begin
+  map_set, glatc, glonc,  $
+    /satellite, sat_p=[6.6, 0., 0.], scale=scale, $
+    /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
+  endelse
+
   map_grid, latdel=10., londel=15.
   
   ;Resize the canvas size for the position values
