@@ -70,7 +70,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     position = !p.position
   endelse
   if position[0] ge position[2] or position[1] ge position[3] then begin
-    print, 'invalid position: forcely set [0,0,1,1]
+    print, '!p.position is not set, temporally use [0,0,1,1]'
     position = [0.,0.,1.,1.]
   endif
   
