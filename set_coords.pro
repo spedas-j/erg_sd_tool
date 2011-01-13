@@ -137,10 +137,11 @@ pro set_coords, tplot_vars, coord, quiet=quiet
           glon = glonarr[ *, *] 
           alt = glat & alt[*,*] = 400. ;km
           aacgmconvcoord, glat,glon,alt, mlat,mlon,err,/TO_AACGM
-          if (size(mlat))[0] eq 0 then begin ; For Unix ver. AACGM DLM bug 
+          ; For Unix ver. AACGM DLM bug 
+          if (size(mlat))[0] ne (size(glat))[0] then begin 
             mlat = reform(mlat,rgmax,azmmax) & mlon = reform(mlon,rgmax,azmmax)
+            mlat = float(mlat) & mlon = float(mlon)
           endif
-          
           newv = d.y & newv[*,*] = !values.f_nan ;Create an array of the same dimension and initialize it 
           for n=0, azmmax-1 do begin
             idx = where( az.y eq n ) & if idx[0] eq -1 then continue
