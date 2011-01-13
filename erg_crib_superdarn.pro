@@ -19,6 +19,18 @@
 ; $URL: $
 ;-
 
+
+;;;;;;;;;;;;;CAUTION;;;;;;;;;;;;;;
+;Please compile the attached "specplot.pro" first by typing:
+;
+; IDL> .r specplot.pro [ENTER]
+; 
+; in the directory where the plug-in was installed, 
+;then run the following commands. 
+;This is the slightly modified version of the original 
+;one included in TDAS.  
+;;;;;;;;;;;;;CAUTION;;;;;;;;;;;;;;
+
 ;Initialize 
 thm_init 
 
@@ -40,7 +52,6 @@ tlimit, ['2007-06-21/13:00','2007-06-21/15:00']
 
 ;With the L-O-S Doppler velocity data for both ionospheric echoes 
 ;and ground scatter  
-.r specplot.pro  ;Use the modified version included in the SD plug-in
 loadct_sd, 44    ;Use Cutlass color table
 tplot, ['sd_hok_pwr_1', 'sd_hok_vlos_bothscat_1', 'sd_hok_spec_width_1']
 
