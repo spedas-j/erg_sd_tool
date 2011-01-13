@@ -106,7 +106,7 @@ pro set_coords, tplot_vars, coord, quiet=quiet
     
       'gate': BEGIN
         
-        gateno = indgen( rgmax )
+        gateno = 0.5+indgen( rgmax )
         
         str_element, d, 'v', gateno, /add_replace
         store_data, vn, data=d, dl=dl, lim=lim
