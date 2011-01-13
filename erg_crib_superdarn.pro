@@ -26,9 +26,9 @@ thm_init
 timespan, '2007-06-21', 1, /day 
 
 ;Load the data with the position table
-erg_load_sdfit, site='hok', /get_sup 
+erg_load_sdfit, site='hok', /get_support 
 
-;View the loaded data names
+;List the loaded data names
 tplot_names
 
 ;Plot data containing all beams
@@ -67,9 +67,33 @@ tplot, 'sd_hok_'+['elev_angle_1_azim04','scanno_1','smsep_1',$
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Commands for 2-dimensional plotting on the ground map are 
-; still being worked on, comming up soon!
-;
+; Commands for 2-dimensional plotting on the ground map 
+
+;Resize the window and erase the pre-exising panels
+window, 0, xsize=600, ysize=600 & erase
+
+;Initialize some system variables for 2-D plotting
+sd_init
+
+;Set the time for 2-D plotting
+sd_time, 1340
+
+;Define the lat-lon grid and set the center of plot panel 
+;to the designated position and draw the MLT labels
+sd_map_set, /mltlabel, $
+center_glat=68,center_glon=170
+
+;Superpose a 2-D fan plot of SD on the AACGM grid
+overlay_polar_sdfit,'sd_hok_vlos_bothscat_1'
+
+;Plot only the ionospheric echoes. Please note that sd_map_set 
+;is run with "erase" keyword to clear the plot window. 
+sd_map_set, /erase, /clip, /mltlabel, $
+center_glat=68,center_glon=170
+overlay_polar_sdfit,'sd_hok_vlos_iscat_1'
+
+;Superpose the world map in AACGM
+overlay_polar_coast
 
 end
 
