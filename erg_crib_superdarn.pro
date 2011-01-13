@@ -69,8 +69,8 @@ tplot, 'sd_hok_'+['elev_angle_1_azim04','scanno_1','smsep_1',$
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Commands for 2-dimensional plotting on the ground map 
 
-;Resize the window and erase the pre-exising panels
-window, 0, xsize=600, ysize=600 & erase
+;Create a new window 
+window, 1, xsize=600, ysize=600 & erase
 
 ;Initialize some system variables for 2-D plotting
 sd_init
@@ -94,6 +94,26 @@ overlay_polar_sdfit,'sd_hok_vlos_iscat_1'
 
 ;Superpose the world map in AACGM
 overlay_polar_coast
+
+;An exmaple of plotting THM ASI and SD on the same map
+;CAUTION!!!
+;Loading THM ASI data might take a long time.
+
+;Load SD data
+timespan, '2008-04-03'
+erg_load_sdfit, site='hok',/get_support
+
+;Generate a ASI mosaic plot
+thm_asi_create_mosaic, '2008-04-03/11:51:00', $
+central_lat=70,central_lon=170,/thumb
+
+;Superpose SD data in geographical coords after restoring 
+;the Cutlass color table
+loadct_sd, 44
+sd_time, 1151
+overlay_polar_sdfit,'sd_hok_vlos_iscat_1', /geo_plot
+overlay_polar_coast, /geo_plot  ;redraw the coast lines
+
 
 end
 
