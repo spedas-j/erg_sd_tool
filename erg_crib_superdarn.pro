@@ -81,7 +81,7 @@ sd_time, 1340
 ;Define the lat-lon grid and set the center of plot panel 
 ;to the designated position and draw the MLT labels
 sd_map_set, /mltlabel, $
-center_glat=68,center_glon=170
+center_glat=70,center_glon=170
 
 ;Superpose a 2-D fan plot of SD on the AACGM grid
 overlay_polar_sdfit,'sd_hok_vlos_bothscat_1'
@@ -89,7 +89,7 @@ overlay_polar_sdfit,'sd_hok_vlos_bothscat_1'
 ;Plot only the ionospheric echoes. Please note that sd_map_set 
 ;is run with "erase" keyword to clear the plot window. 
 sd_map_set, /erase, /clip, /mltlabel, $
-center_glat=68,center_glon=170
+center_glat=70,center_glon=170
 overlay_polar_sdfit,'sd_hok_vlos_iscat_1'
 
 ;Superpose the world map in AACGM
