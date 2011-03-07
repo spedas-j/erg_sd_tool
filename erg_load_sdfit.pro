@@ -21,6 +21,23 @@
 ;   2010/07/01: now work for hok and ksr
 ;   2010/09/10: added some keywords
 ;
+;---------------------------------------------------------------------------
+;!!!!! NOTICE !!!!!
+;Japanese SuperDARN radar data (HOK,KSR,SYE,SYS) in CDF are distributed
+;by Energization and Radiation in Geospace Science Center (ERG-SC) at
+;Solar-Terrestrial Environment Laboratory, Nagoya University, in
+;collaboration with Japanese SuperDARN PI groups.
+;
+;Access to these data are currently restricted to only users in Japan.
+;The data will be open to foreign researchers in future upon
+;confirmation by the SuperDARN PI committee.
+;
+;As for questions and request for the data, please feel free to contact
+;the ERG-SC office (E-mail:  erg-sc-core at st4a.stelab.nagoya-u.ac.jp,
+;please replace “ at ” by “@”).
+;------------------------------------------------------------------------------
+;
+;
 ; $LastChangedBy:$
 ; $LastChangedDate:$
 ; $LastChangedRevision:$
