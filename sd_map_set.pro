@@ -8,17 +8,21 @@
 ;    time
 ;
 ;	:Keywords:
-;    erase
-;    clip
-;    position
-;    center_glat
-;    center_glon
-;    mltlabel
-;    lonlab
-;    force_scale
+;    erase:   set to erase pre-existing graphics on the plot window.
+;    clip:    set to zoom in roughly to a region encompassing a field of view of one radar. 
+;             Actually 30e+6 (clip is on) or 50e+6 (off) is put is "scale" keyword of map_set. 
+;    position:  gives the position of a plot panel on the plot window as the normal coordinates.
+;    center_glat: geographical latitude at which a plot region is centered.  
+;    center_glon: geographical longitude at which a plot region is centered. 
+;                 (both center_glat and center_glon should be given, otherwise ignored)
+;    mltlabel:    set to draw the MLT labels every 2 hour. 
+;    lonlab:      a latitude from which (toward the poles) the MLT labels are drawn.
+;    force_scale:   Forcibly put a given value in "scale" of map_set.
 ;
 ; :EXAMPLES:
-;
+;    sd_map_set 
+;    sd_map_set, /clip, center_glat=70., center_glon=180., /mltlabel, lonlab=74. 
+;    
 ; :Author:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
 ;
