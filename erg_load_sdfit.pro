@@ -1,7 +1,7 @@
 ;+
-; erg_load_sdfit
+; PROCEDURE erg_load_sdfit
 ;
-; :DESCRIPTION:
+; PURPOSE:
 ;    Load fitacf CDF files of SuperDARN as tplot variables.
 ;
 ;
@@ -15,7 +15,8 @@
 ;    trange: time range for which data are loaded. 
 ;            e.g., ['2008-10-01/00:00:00','2008-10-02/00:00:00'] 
 ;
-; :AUTHOR: T. Hori
+; :AUTHOR: 
+;     Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
 ; :HISTORY:
 ;   2010/03/09: Created as a draft version
 ;   2010/07/01: now work for hok and ksr
