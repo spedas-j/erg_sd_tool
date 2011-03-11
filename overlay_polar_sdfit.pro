@@ -173,7 +173,8 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
           IF ~FINITE(val) THEN CONTINUE ;Skip drawing for NaN
           
           ;Color level for val
-          IF FIX(echflgarr[j]) EQ 1 THEN BEGIN
+          IF FIX(echflgarr[j]) EQ 1 OR strpos(datvn,'_pwr') ge 0 $
+            OR strpos(datvn,'spec_width') ge 0 THEN BEGIN
             ;ionospheric echo case
             clvl = clmin + cnum*(val-valrng[0])/(valrng[1]-valrng[0])
             clvl = (clvl > clmin)
