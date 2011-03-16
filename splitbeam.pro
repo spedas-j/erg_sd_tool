@@ -17,6 +17,9 @@
 ;-
 PRO splitbeam, tvars
 
+  tvars = tnames(tvars)
+  if strlen(tvars[0]) lt 6 then return
+  
   FOR n = 0, N_ELEMENTS(tvars)-1 DO BEGIN
   
     ;Does tvar exist?
