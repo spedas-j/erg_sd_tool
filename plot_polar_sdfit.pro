@@ -17,7 +17,7 @@
 ;    lonlab:      a latitude from which (toward the poles) the MLT labels are drawn
 ;    force_scale: Forcibly put a given value in "scale" of map_set
 ;    geo_plot:    Set to plot in the geographical coordinates
-;    fcoast:      Set to superpose the world map on the plot
+;    coast:      Set to superpose the world map on the plot
 ;
 ; :EXAMPLES:
 ;   plot_polar_sdfit, 'sd_hok_vlos_bothscat'
@@ -40,7 +40,7 @@ PRO plot_polar_sdfit, var $
     , lonlab=lonlab $
     , force_scale=force_scale $
     , geo_plot=geo_plot $
-    , fcoast=fcoast
+    , coast=coast
     
     
   ;the tplot var exists?
@@ -67,7 +67,7 @@ PRO plot_polar_sdfit, var $
     nogscat=nogscat
     
   ;Draw the world map
-  IF KEYWORD_SET(fcoast) THEN BEGIN
+  IF KEYWORD_SET(coast) THEN BEGIN
     overlay_polar_coast, geo_plot=geo_plot, position=position
   ENDIF
   
