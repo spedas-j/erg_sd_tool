@@ -110,7 +110,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
       PRINT, 'Cannot find any of the data file(s): ', cdffn
       RETURN
     ENDIF
-    ;;sites=''
+    IF KEYWORD_SET(sites) THEN stn = sites[0] ELSE sites='stn'
   ENDELSE
   
   ;for the case of "donwload only"
