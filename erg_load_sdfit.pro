@@ -123,7 +123,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     /convert_int1_to_int2
  
   ;Quit if no data have been loaded 
-  if n_elements(tnames(prefix+'*') ) lt 1 then begin
+  if strlen((tnames(prefix+'*'))[0] ) lt 7 then begin
     print, 'No tplot var loaded.'
     return
   endif
