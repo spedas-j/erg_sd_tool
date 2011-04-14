@@ -35,7 +35,7 @@
 ;
 ;As for questions and request for the data, please feel free to contact
 ;the ERG-SC office (E-mail:  erg-sc-core at st4a.stelab.nagoya-u.ac.jp,
-;please replace “ at ” by “@”).
+;please replace "at" by "@").
 ;------------------------------------------------------------------------------
 ;
 ;
