@@ -110,7 +110,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
       PRINT, 'Cannot find any of the data file(s): ', cdffn
       RETURN
     ENDIF
-    IF KEYWORD_SET(sites) THEN stn = sites[0] ELSE sites='stn'
+    IF KEYWORD_SET(sites) THEN stn = sites[0] ELSE stn='stn'
   ENDELSE
   
   ;for the case of "donwload only"
@@ -227,11 +227,11 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   
   
   ;Load the position table(s) ;;;;;;;;;;;;;;;;;;
-  ;Currently supports SD fitacf CDFs containing up to 3 pos. tables.
-  tbl_0='' & tbl_1='' & tbl_2=''
-  time_0='' & time_1='' & time_2=''
-  tbllist = ['tbl_0', 'tbl_1' , 'tbl_2']
-  timelist = ['time_0','time_1','time_2']
+  ;Currently supports SD fitacf CDFs containing up to 4 pos. tables.
+  tbl_0='' & tbl_1='' & tbl_2='' &tbl_3=''
+  time_0='' & time_1='' & time_2='' & time_3=''
+  tbllist = ['tbl_0', 'tbl_1' , 'tbl_2', 'tbl_3']
+  timelist = ['time_0','time_1','time_2','time_3']
   FOR i=0L, N_ELEMENTS(datfiles)-1 DO BEGIN
     cdfi = cdf_load_vars( datfiles[i], varformat='*',/convert_int1_to_int2 )
     timevn = strfilter( cdfi.vars.name, 'Epoch_?' )
