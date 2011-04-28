@@ -120,10 +120,10 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   prefix='sd_' + stn + '_'
   cdf2tplot,file=datfiles, prefix=prefix, $
     get_support_data=get_support_data, $
-    /convert_int1_to_int2
+    /convert_int1_to_int2, tplotnames=tplotn
  
   ;Quit if no data have been loaded 
-  if strlen((tnames(prefix+'*'))[0] ) lt 7 then begin
+  if strlen( tplotn[0] ) lt 7 then begin
     print, 'No tplot var loaded.'
     return
   endif
@@ -136,7 +136,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   endif
   
   ;For the case of a CDF including multiple range gate data
-  suf = strmid( tnames(prefix+'pwr_?'), 0, 1, /reverse )
+  suf = strmid( tplotn[ where( strpos(tplotn, prefix+'azim_no_') ne -1) ], 0, 1, /reverse )
   for i=0, n_elements(suf)-1 do begin
   
     ;Set labels for some tplot variables
