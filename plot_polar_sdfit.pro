@@ -40,7 +40,8 @@ PRO plot_polar_sdfit, var $
     , lonlab=lonlab $
     , force_scale=force_scale $
     , geo_plot=geo_plot $
-    , coast=coast
+    , coast=coast $
+    , gscatmaskoff=gscatmaskoff
     
     
   ;the tplot var exists?
@@ -64,7 +65,7 @@ PRO plot_polar_sdfit, var $
   overlay_polar_sdfit, var, $
     position=position, $
     erase=(~KEYWORD_SET(noerase)), clip=clip, geo_plot=geo_plot, $
-    nogscat=nogscat
+    nogscat=nogscat, gscatmaskoff=gscatmaskoff
     
   ;Draw the world map
   IF KEYWORD_SET(coast) THEN BEGIN

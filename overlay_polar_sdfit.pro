@@ -29,7 +29,7 @@
 ;-
 PRO overlay_polar_sdfit, datvn, time=time, position=position, $
     erase=erase, clip=clip, geo_plot=geo_plot, $
-    nogscat=nogscat, $
+    nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     notimelabel=notimelabel
     
   ;Initialize SDARN system variable and get the default charsize
@@ -182,7 +182,9 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
           ENDIF ELSE BEGIN
             ;ground echo case
             IF KEYWORD_SET(nogscat) THEN CONTINUE ;skip plotting if nogscat keyword i set
-            if fill_color ge 0 then clvl = fill_color else clvl = 5
+            if ~keyword_set(gscatmaskoff) then begin
+              if fill_color ge 0 then clvl = fill_color else clvl = 5
+            endif
           ENDELSE
           
           ;Lon and Lat for a square to be filled
