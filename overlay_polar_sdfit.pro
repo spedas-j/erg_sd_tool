@@ -15,6 +15,9 @@
 ;    geo_plot:  Set to plot in the geographical coordinates
 ;    nogscat: Set to prevent the ground scatter data from appearing on the plot
 ;    notimelabel: Set to prevent the time label from appearing on the plot
+;    nocolorscale: Set to surpress drawing the color scale 
+;    colorscalepos: Set the position of the color scale in the noraml 
+;                   coordinates. Default: [0.85, 0.1, 0.87, 0.45] 
 ;
 ; :AUTHOR:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
@@ -30,7 +33,8 @@
 PRO overlay_polar_sdfit, datvn, time=time, position=position, $
     erase=erase, clip=clip, geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
-    notimelabel=notimelabel
+    notimelabel=notimelabel, $
+    nocolorscale=nocolorscale, colorscalepos=colorscalepos
     
   ;Initialize SDARN system variable and get the default charsize
   sd_init
@@ -210,6 +214,20 @@ PRO overlay_polar_sdfit, datvn, time=time, position=position, $
     XYOUTS, !x.window[0]+0.02, !y.window[0]+0.02, tstr, /normal, $
       font=1, charsize=charsz*2.5
   ENDIF
+  
+  ;Color scale
+  if ~keyword_set(nocolorscale) then begin
+    str_element, lim, 'ztitle', val=ztitle, success=s
+    if s eq 0 then ztitle = ''
+    str_element, lim, 'zrange', val=zrange, success=s
+    if s eq 0 then zrange = [-1000,1000]
+    if keyword_set(colorscalepos) then cspos=colorscalepos $
+      else cspos = [0.85,0.1,0.87,0.45]
+    
+    draw_color_scale, range=zrange,$
+      pos=cspos,$
+      title=ztitle
+  endif
   
   
   ;Resotre the original plot position

@@ -18,6 +18,9 @@
 ;    force_scale: Forcibly put a given value in "scale" of map_set
 ;    geo_plot:    Set to plot in the geographical coordinates
 ;    coast:      Set to superpose the world map on the plot
+;    nocolorscale: Set to surpress drawing the color scale 
+;    colorscalepos: Set the position of the color scale in the noraml 
+;                   coordinates. Default: [0.85, 0.1, 0.87, 0.45] 
 ;
 ; :EXAMPLES:
 ;   plot_polar_sdfit, 'sd_hok_vlos_bothscat'
@@ -41,7 +44,9 @@ PRO plot_polar_sdfit, var $
     , force_scale=force_scale $
     , geo_plot=geo_plot $
     , coast=coast $
-    , gscatmaskoff=gscatmaskoff
+    , gscatmaskoff=gscatmaskoff $
+    , nocolorscale=nocolorscale $
+    , colorscalepos=colorscalepos
     
     
   ;the tplot var exists?
@@ -65,7 +70,8 @@ PRO plot_polar_sdfit, var $
   overlay_polar_sdfit, var, $
     position=position, $
     erase=(~KEYWORD_SET(noerase)), clip=clip, geo_plot=geo_plot, $
-    nogscat=nogscat, gscatmaskoff=gscatmaskoff
+    nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
+    nocolorscale=nocolorscale, colorscalepos=colorscalepos
     
   ;Draw the world map
   IF KEYWORD_SET(coast) THEN BEGIN
