@@ -1,5 +1,5 @@
 ;+
-; PROCEDURE plot_polar_sdfit
+; PROCEDURE plot_map_sdfit
 ;
 ; PURPOSE:
 ;		Draw a fan plot of SD data on the world map
@@ -23,8 +23,8 @@
 ;                   coordinates. Default: [0.85, 0.1, 0.87, 0.45] 
 ;
 ; :EXAMPLES:
-;   plot_polar_sdfit, 'sd_hok_vlos_bothscat'
-;   plot_polar_sdfit, 'sd_hok_vlos_bothscat', center_glat=70., center_glon=180. 
+;   plot_map_sdfit, 'sd_hok_vlos_bothscat'
+;   plot_map_sdfit, 'sd_hok_vlos_bothscat', center_glat=70., center_glon=180. 
 ;   
 ; :Author:
 ; 	Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
@@ -33,7 +33,7 @@
 ; 	2011/03/11: Created
 ;
 ;-
-PRO plot_polar_sdfit, var $
+PRO plot_map_sdfit, var $
     , noerase=noerase $
     , clip=clip $
     , position=position $
@@ -67,7 +67,7 @@ PRO plot_polar_sdfit, var $
     
     
   ;Draw a fan plot on map
-  overlay_polar_sdfit, var, $
+  overlay_map_sdfit, var, $
     position=position, $
     erase=(~KEYWORD_SET(noerase)), clip=clip, geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
@@ -75,7 +75,7 @@ PRO plot_polar_sdfit, var $
     
   ;Draw the world map
   IF KEYWORD_SET(coast) THEN BEGIN
-    overlay_polar_coast, geo_plot=geo_plot, position=position
+    overlay_map_coast, geo_plot=geo_plot, position=position
   ENDIF
   
   ;Draw the color scale on the right in screen

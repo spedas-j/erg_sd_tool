@@ -1,5 +1,5 @@
 ;+
-;	PROCEDURE overlay_polar_sdfit
+;	PROCEDURE overlay_map_sdfit
 ;
 ; :DESCRIPTION:
 ;    Plot a 2-D scan data of a SD radar on the plot window set up by map_set.
@@ -30,7 +30,7 @@
 ; $LastChangedRevision: $
 ; $URL: $;
 ;-
-PRO overlay_polar_sdfit, datvn, time=time, position=position, $
+PRO overlay_map_sdfit, datvn, time=time, position=position, $
     erase=erase, clip=clip, geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     notimelabel=notimelabel, $

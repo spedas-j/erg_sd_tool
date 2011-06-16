@@ -95,16 +95,16 @@ sd_map_set, /mltlabel, $
 center_glat=70,center_glon=170
 
 ;Superpose a 2-D fan plot of SD on the AACGM grid
-overlay_polar_sdfit,'sd_hok_vlos_bothscat_1'
+overlay_map_sdfit,'sd_hok_vlos_bothscat_1'
 
 ;Plot only the ionospheric echoes. Please note that sd_map_set 
 ;is run with "erase" keyword to clear the plot window. 
 sd_map_set, /erase, /clip, /mltlabel, $
 center_glat=70,center_glon=170
-overlay_polar_sdfit,'sd_hok_vlos_iscat_1'
+overlay_map_sdfit,'sd_hok_vlos_iscat_1'
 
 ;Superpose the world map in AACGM
-overlay_polar_coast
+overlay_map_coast
 
 ;An exmaple of plotting THM ASI and SD on the same map
 ;CAUTION!!!
@@ -122,8 +122,8 @@ central_lat=70,central_lon=170,/thumb
 ;the Cutlass color table
 loadct_sd, 44
 sd_time, 1151
-overlay_polar_sdfit,'sd_hok_vlos_iscat_1', /geo_plot
-overlay_polar_coast, /geo_plot  ;redraw the coast lines
+overlay_map_sdfit,'sd_hok_vlos_iscat_1', /geo_plot
+overlay_map_coast, /geo_plot  ;redraw the coast lines
 
 
 end

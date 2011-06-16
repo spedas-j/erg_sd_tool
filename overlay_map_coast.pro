@@ -1,5 +1,5 @@
 ;+
-; PROCEDURE overlay_polar_coast
+; PROCEDURE overlay_map_coast
 ;
 ; :Description:
 ;		Draw the world map on the plot window set up by map_set. 
@@ -17,7 +17,7 @@
 ;    position:  Set to draw the map at the designated position in the plot window
 ;
 ; :EXAMPLES:
-;   overlay_polar_coast     (to draw the map in AACGM)
+;   overlay_map_coast     (to draw the map in AACGM)
 ;
 ; :Author:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
@@ -30,7 +30,7 @@
 ; $LastChangedRevision: $
 ; $URL: $
 ;-
-PRO overlay_polar_coast,fill=fill,col=col, $
+PRO overlay_map_coast,fill=fill,col=col, $
       static=static,time=time, geo_plot=geo_plot, $
       position=position
 
