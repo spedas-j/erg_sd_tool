@@ -1,0 +1,40 @@
+PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix
+
+  ;Check the arguments
+  n_par = n_params()
+  if n_par ne 3 then begin
+    print, 'Usage: '
+    print, "    make_fanplot_pictures, 'sd_hok_vlos_bothscat1', HHMM1, HHMM2"
+    print, '     HHMM1: start time, HHMM2: end time'
+    return
+  endif
+  if strlen(tnames(varn)) lt 6 then begin
+    print, 'Cannot find a tplot var: ', varn
+    return
+  endif
+  if ~keyword_set(prefix) then prefix=''
+  if strpos(prefix, '/') ne -1 or strpos(prefix,'\') $
+    then mkdir=1 else mkdir=0
+  
+  get_timespan, tr & ts = tr[0]
+  shh = shhmm / 100 & smm = shhmm mod 100 
+  ehh = ehhmm / 100 & emm = ehhmm mod 100 
+  stime = time_string(ts, tfor='YYYY-MM-DD')+'/'+string(shh,smm,'(I2.2,":",I2.2)')
+  etime = time_string(ts, tfor='YYYY-MM-DD')+'/'+string(ehh,emm,'(I2.2,":",I2.2)')
+  stime = time_double(stime) & etime = time_double(etime) 
+  
+  i = 0L
+  for time=stime, etime, 120. do begin
+    sd_time, time
+    plot_map_sdfit, varn, /coast,/clip, center_gla=70,center_glon=180,/mltla
+    strhhmm = time_string(time, tfor='hhmm')
+    filename = prefix+strhhmm
+    filename = prefix+string(i,'(I03)')
+    makepng, filename, mkdir=mkdir
+    i ++
+  endfor
+  
+  
+
+  return
+end
