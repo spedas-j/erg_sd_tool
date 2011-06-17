@@ -24,6 +24,7 @@
 ;
 ; :HISTORY:
 ; 	2011/01/11: Created
+; 	2011/06/15: renamed to overlay_map_sdfit
 ;
 ; $LastChangedBy: $
 ; $LastChangedDate: $

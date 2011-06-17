@@ -17,13 +17,14 @@
 ;    position:  Set to draw the map at the designated position in the plot window
 ;
 ; :EXAMPLES:
-;   overlay_map_coast     (to draw the map in AACGM)
+;   overlay_map_coast     (to draw the world map in AACGM)
 ;
 ; :Author:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/11/10: Created
+; 	2011/06/15: renamed to overlay_map_coast
 ;
 ; $LastChangedBy: $
 ; $LastChangedDate: $

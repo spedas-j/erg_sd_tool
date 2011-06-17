@@ -31,6 +31,7 @@
 ;
 ; :HISTORY:
 ; 	2011/03/11: Created
+; 	2011/06/15: Renamed to plot_map_sdfit
 ;
 ;-
 PRO plot_map_sdfit, var $
