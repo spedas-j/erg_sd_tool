@@ -91,14 +91,14 @@ pro set_coords, tplot_vars, coord, quiet=quiet
           options, vn, 'ysubtitle','[range gate]'
         END
         'mlat': BEGIN
-          options, vn, 'ysubtitle','[Mag. Lat]'
+          options, vn, 'ysubtitle','Mag. Lat [deg]'
         END
         'glat': BEGIN
-          options, vn, 'ysubtitle','[GEO Lat]'
+          options, vn, 'ysubtitle','GEO Lat [deg]'
         END
       ENDCASE
 
-      return
+      continue
     endif
     
     ;;;;;;;
@@ -156,7 +156,7 @@ pro set_coords, tplot_vars, coord, quiet=quiet
         yr = minmax(d.v)
         ylim, vn, yr[0],yr[1] 
         options, vn, 'ystyle', 1
-        options, vn, ysubtitle='[Mag. Lat]'
+        options, vn, ysubtitle='Mag. Lat [deg]'
         
         if ~keyword_set(quiet) then $
           print, vn+': vertical axis --> '+'AACGM lat.'
@@ -191,7 +191,7 @@ pro set_coords, tplot_vars, coord, quiet=quiet
         yr = minmax(d.v)
         ylim, vn, yr[0],yr[1] 
         options, vn, 'ystyle', 1
-        options, vn, ysubtitle='[GEO Lat]'
+        options, vn, ysubtitle='GEO Lat [deg]'
         
         if ~keyword_set(quiet) then $
           print, vn+': vertical axis --> '+'Geographical lat.'
