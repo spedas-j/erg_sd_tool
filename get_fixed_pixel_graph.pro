@@ -1,23 +1,33 @@
 ;+
 ; PROCEDURE get_fixed_pixel_graph
 ;
-; :Description:
-; 	Describe the procedure/function.
+; :DESCRIPTION:
+; 	Generate a tplot variable containing data values for 
+; 	a fixed pixel, with given beam number and range gate number. 
 ;
-;
-;
-;
-;
+; :PARAMS:
+;   vn: name of the tplot variable from which values for a fixed pixel are extracted 
+; 
+; :KEYWORDS:
+;   beam: beam number for a pixel to be extracted
+;   range_gate: range gate number for a pixel to be extracted
+;   newvn: if a string is set, the new tplot variable is generated with a name given by this keyword
+;    
 ; :EXAMPLES:
+;   get_fixed_pixel_graph, 'sd_hok_vlos_1', beam=3, range_gate=65
 ;
-; :Author:
+; :AUTHOR:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/06/22: Created
 ;
+; $LastChangedBy: $
+; $LastChangedDate: $
+; $LastChangedRevision: $
+; $URL: $
 ;-
-PRO get_fixed_pixel_graph, vn, beam=beam, range_gate=rgate
+PRO get_fixed_pixel_graph, vn, beam=beam, range_gate=rgate, newvn=newvn
   
   ;Check the arguments and keywords
   npar = n_params()
@@ -49,7 +59,8 @@ PRO get_fixed_pixel_graph, vn, beam=beam, range_gate=rgate
   newvar = var[idx_bm,rgate]
   if (size(var_v))[0] eq 2 then new_v=var_v[idx_bm,*] else new_v=var_v
   
-  newvn = vn +'_bm'+string(beam,'(I02)')+'rg'+string(rgate,'(I03)')
+  if ~keyword_set(newvn) then $
+    newvn = vn +'_bm'+string(beam,'(I02)')+'rg'+string(rgate,'(I03)')
   store_data, newvn, $
     data={x:newtime, y:newvar, v:new_v}, $
     lim={ytitle:'bm:'+string(beam,'(I02)')+',rg:'+string(rgate,'(I03)')+'!C'+var_lim.ztitle, $
