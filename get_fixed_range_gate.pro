@@ -1,4 +1,23 @@
-PRO get_fixed_range_gate, vn, beam=beam, range_gate=rgate
+;+
+; PROCEDURE get_fixed_pixel_graph
+;
+; :Description:
+; 	Describe the procedure/function.
+;
+;
+;
+;
+;
+; :EXAMPLES:
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/06/22: Created
+;
+;-
+PRO get_fixed_pixel_graph, vn, beam=beam, range_gate=rgate
   
   ;Check the arguments and keywords
   npar = n_params()
@@ -6,7 +25,8 @@ PRO get_fixed_range_gate, vn, beam=beam, range_gate=rgate
   if ~keyword_set(beam) or ~keyword_set(rgate) then return
   beam = fix(beam) & rgate = fix(rgate)
   if beam lt 0 or beam gt 22 or rgate lt 0 or rgate gt 220 then return
-  if (tnames(vn))[0] eq '' then return
+  vn = tnames(vn)
+  if vn[0] eq '' then return
   
   ;strings consisting of variable names
   prefix = strmid(vn, 0,7) ;e.g, 'sd_hok_'
@@ -32,7 +52,8 @@ PRO get_fixed_range_gate, vn, beam=beam, range_gate=rgate
   newvn = vn +'_bm'+string(beam,'(I02)')+'rg'+string(rgate,'(I03)')
   store_data, newvn, $
     data={x:newtime, y:newvar, v:new_v}, $
-    lim={ytitle:var_lim.ztitle, yrange:var_lim.zrange}
+    lim={ytitle:'bm:'+string(beam,'(I02)')+',rg:'+string(rgate,'(I03)')+'!C'+var_lim.ztitle, $
+      yrange:var_lim.zrange}
    
   return
 end
