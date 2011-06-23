@@ -41,6 +41,8 @@ pro aacgmconvcoord, glat,glon,alt,mlat,mlon,err, TO_AACGM=TO_AACGM, TO_GEO=TO_GE
 help, name='!sdarn',out=out
 if out eq '' then sd_init
 
+glon = (glon + 360.) mod 360.
+
 if !sdarn.aacgm_dlm_exists then begin 
   ;print, 'using AACGM_DLM'
   aacgm_conv_coord, glat,glon,alt,mlat,mlon,err,$
@@ -55,6 +57,8 @@ endif else begin
     ;print, glat[i],glon[i],alt[i],'   ',mlat[i],mlon[i],r,err
   endfor
 endelse
+
+mlon = (mlon + 360.) mod 360.
 
 return
 end
