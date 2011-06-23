@@ -35,7 +35,8 @@ FUNCTION get_scan_struc_arr, vn
     tscan = scan[i]
     idx = where(scanno eq tscan)
     if idx[0] ne -1 then begin
-      timearr[i] = min( vartime[idx] )
+      timearr[i] = mean( vartime[idx] ) 
+                  ;Time label is the average for tplot drawing
       tazmno = azmno[idx]
       tvar = transpose(var[idx,*])
       for j=0, n_elements(tazmno)-1 do begin
