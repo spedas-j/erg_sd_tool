@@ -178,19 +178,17 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
           IF ~FINITE(val) THEN CONTINUE ;Skip drawing for NaN
           
           ;Color level for val
-          IF FIX(echflgarr[j]) EQ 1 OR strpos(datvn,'_pwr') ge 0 $
-            OR strpos(datvn,'spec_width') ge 0 THEN BEGIN
-            ;ionospheric echo case
-            clvl = clmin + cnum*(val-valrng[0])/(valrng[1]-valrng[0])
-            clvl = (clvl > clmin)
-            clvl = (clvl < clmax) ; clmin <= color level <= clmax
-          ENDIF ELSE BEGIN
+          clvl = clmin + cnum*(val-valrng[0])/(valrng[1]-valrng[0])
+          clvl = (clvl > clmin)
+          clvl = (clvl < clmax) ; clmin <= color level <= clmax
+          IF FIX(echflgarr[j]) ne 1 AND strpos(datvn,'_pwr') lt 0 $
+            AND strpos(datvn,'spec_width') lt 0 THEN BEGIN
             ;ground echo case
             IF KEYWORD_SET(nogscat) THEN CONTINUE ;skip plotting if nogscat keyword i set
             if ~keyword_set(gscatmaskoff) then begin
-              if fill_color ge 0 then clvl = fill_color else clvl = 5
+              if fill_color ge 0 then clvl = fill_color else clvl=5 
             endif
-          ENDELSE
+          ENDIF
           
           ;Lon and Lat for a square to be filled
           lon = [ pos_plt[j,0,0], pos_plt[j,1,0], pos_plt[j+1,1,0], pos_plt[j+1,0,0] ]
