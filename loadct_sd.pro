@@ -77,6 +77,67 @@ PRO cut_col_tab
 END
 
 ;-----------------------------------------------------------------------
+PRO cut_col_tab2, bottom_c 
+  
+  if n_params() ne 1 then bottom_c = 7 ;default
+  
+  ;Load the Cutlass table first
+  cut_col_tab
+  
+  ;Obtain RGB values for the color table
+  tvlct, r, g, b, /get
+  top_c = !d.table_size-2   ; color=!d.table_size-1 is assigned to white in TDAS
+  
+  negative_top = bottom_c + fix(ceil((top_c - bottom_c)/2.)) -1  
+  positive_bottom = negative_top + 1
+  
+  ;For debugging
+  print, 'bottom_c=',bottom_c
+  print, 'negative_top=', negative_top
+  print, 'positive_bottom=', positive_bottom
+  print, 'top_c=', top_c
+  print, '# of negative colors=', negative_top - bottom_c +1
+  print, '# of positive colors=', top_c - positive_bottom +1
+  
+  ;Initialize
+  red  =INTARR(top_c+2)
+  green=INTARR(top_c+2)
+  blue =INTARR(top_c+2)
+  
+  ;Stretch the negative part of the Cutlass color scale to fit in that of the new one
+  bot = 1 & top = 110
+  neg_r = reverse(r[bot:top])
+  neg_g = reverse(g[bot:top])
+  neg_b = reverse(b[bot:top])
+  for i=0, negative_top-bottom_c do begin
+    idx = fix( float(top-bot) * i / (negative_top-bottom_c)    )
+    red[i+bottom_c] = neg_r[idx]
+    green[i+bottom_c]=neg_g[idx]
+    blue[i+bottom_c] =neg_b[idx]
+  endfor
+  ;Stretch the positive part of the Cutlass color scale to fit in that of the new one
+  bot = 160 & top = 225
+  pos_r = reverse(r[bot:top])
+  pos_g = reverse(g[bot:top])
+  pos_b = reverse(b[bot:top])
+  for i=0, top_c-positive_bottom do begin
+    idx = fix( float(top-bot) * i / (top_c-positive_bottom)    )
+    red[i+positive_bottom] = pos_r[idx]
+    green[i+positive_bottom]=pos_g[idx]
+    blue[i+positive_bottom] =pos_b[idx]
+  endfor
+   
+  
+  
+  IF !D.NAME NE 'NULL' AND !d.name NE 'HP'THEN BEGIN
+  
+    TVLCT,red,green,blue
+    
+  ENDIF
+  
+END
+
+;-----------------------------------------------------------------------
 
 PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct
   COMMON colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
@@ -111,13 +172,16 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct
     RETURN
   ENDIF
   
-  IF ct NE 44 THEN BEGIN
+  IF ct LT 44 THEN BEGIN
     loadct,ct,bottom=bottom_c,file=file,/silent
     PRINT, '% Loading table SD-Special'
-  ENDIF ELSE BEGIN
+  ENDIF ELSE IF ct EQ 44 THEN BEGIN
     cut_col_tab
-    print, '% Loading table Cutlass color bar for SD' 
-  ENDELSE
+    print, '% Loading table Cutlass color bar for SD'
+  ENDIF ELSE IF ct EQ 45 THEN BEGIN
+    cut_col_tab2, bottom_c
+    print, '% Loading the color bar similar to the default in JHU/APL SD site'
+  ENDIF
   color_table = ct
   
   top_c = !d.table_size-2
