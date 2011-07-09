@@ -40,7 +40,9 @@ FUNCTION get_scan_struc_arr, vn
       tazmno = azmno[idx]
       tvar = transpose(var[idx,*])
       for j=0, n_elements(tazmno)-1 do begin
-        vararr[i,*,j] = reform( tvar[*, (sort(tazmno))[j]], 1,nrang,1)
+        az = tazmno[j]
+        if az lt 0 and az ge azmmax then continue ;beam number is invalid!
+        vararr[i,*,az] = reform( tvar[*, j], 1,nrang,1)
         ;debugging
         ;if (i mod 100) eq 0 then print, tscan,tazmno[(sort(tazmno))[j]]
       endfor
