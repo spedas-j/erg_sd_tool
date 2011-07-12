@@ -35,11 +35,15 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
     erase=erase, clip=clip, geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     notimelabel=notimelabel, $
-    nocolorscale=nocolorscale, colorscalepos=colorscalepos
+    nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
+    charscale=charscale
     
   ;Initialize SDARN system variable and get the default charsize
   sd_init
-  charsz = !sdarn.sd_polar.charsize
+  
+  ;Size of characters
+  if ~keyword_set(charscale) then charscale=1.0
+  charsz = !sdarn.sd_polar.charsize * charscale
   
   ;Check argument and keyword
   npar=N_PARAMS()

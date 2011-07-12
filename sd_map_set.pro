@@ -40,7 +40,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   mltlabel=mltlabel, lonlab=lonlab, $
   force_scale=force_scale, $
   geo_plot=geo_plot, $
-  stereo=stereo
+  stereo=stereo, $
+  charscale=charscale
 
   ;Initialize the SD plot environment
   sd_init
@@ -131,6 +132,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   charsz = 1.4 * (keyword_set(clip) ? 50./30. : 1. ) * scl
   !sdarn.sd_polar.charsize = charsz
   
+  ;Scale for characters applied only in sd_map_set
+  if ~keyword_set(charscale) then charscale=1.0
   
   if keyword_set(mltlabel) then begin
     ;Write the MLT labels
@@ -147,7 +150,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
       if nrmcord[0] le pos[0] or nrmcord[0] ge pos[2] or $
         nrmcord[1] le pos[1] or nrmcord[1] ge pos[3] then continue
       xyouts, lons[i], lonlab, lonnames[i], orientation=ori[i], $
-        font=1, charsize=charsz
+        font=1, charsize=charsz*charscale
       
     endfor
     
