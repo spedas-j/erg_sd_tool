@@ -34,7 +34,7 @@
 PRO overlay_map_sdfit, datvn, time=time, position=position, $
     erase=erase, clip=clip, geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
-    notimelabel=notimelabel, $
+    notimelabel=notimelabel, timelabelpos=timelabelpos, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
     charscale=charscale
     
@@ -213,8 +213,15 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
   ;Time label
   IF ~KEYWORD_SET(notimelabel) THEN BEGIN
     t = time
+    if keyword_set(timelabelpos) then begin ;Customizable by user
+      x = !x.window[0] + (!x.window[1]-!x.window[0])*timelabelpos[0] 
+      y = !y.window[0] + (!y.window[1]-!y.window[0])*timelabelpos[1]
+    endif else begin  ;Default position
+      x = !x.window[0]+0.02 & y = !y.window[0]+0.02
+    endelse
+    
     tstr = time_string(t, tfor='hh:mm')+' UT'
-    XYOUTS, !x.window[0]+0.02, !y.window[0]+0.02, tstr, /normal, $
+    XYOUTS, x, y, tstr, /normal, $
       font=1, charsize=charsz*2.5
   ENDIF
   
@@ -224,12 +231,21 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
     if s eq 0 then ztitle = ''
     str_element, lim, 'zrange', val=zrange, success=s
     if s eq 0 then zrange = [-1000,1000]
-    if keyword_set(colorscalepos) then cspos=colorscalepos $
-      else cspos = [0.85,0.1,0.87,0.45]
+    if keyword_set(colorscalepos) then begin
+      cp = colorscalepos
+      x0 = !x.window[0] & xs = !x.window[1]-!x.window[0]
+      y0 = !y.window[0] & ys = !y.window[1]-!y.window[0]
+      cspos= [ x0 + xs * cp[0], $
+               y0 + ys * cp[1], $
+               x0 + xs * cp[2], $
+               y0 + ys * cp[3] ]
+    endif else begin
+      cspos = [0.85,0.1,0.87,0.45]
+    endelse
     
     draw_color_scale, range=zrange,$
       pos=cspos,$
-      title=ztitle
+      title=ztitle, charsize=charsz*1.0
   endif
   
   
