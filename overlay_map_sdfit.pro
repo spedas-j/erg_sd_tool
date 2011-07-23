@@ -243,9 +243,13 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
       cspos = [0.85,0.1,0.87,0.45]
     endelse
     
+    pre_yticklen = !y.ticklen
+    !y.ticklen = 0.25
     draw_color_scale, range=zrange,$
       pos=cspos,$
-      title=ztitle, charsize=charsz*1.0
+      title=ztitle, charsize=charsz*0.7
+    !y.ticklen = pre_yticklen
+    
   endif
   
   
