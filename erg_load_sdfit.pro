@@ -71,15 +71,25 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   ;Initialize the TDAS environment
   thm_init
 
+  ;Set the list of the available sites
+  valid_sites = [ 'hok','ksr','sye','sys','bks' ]
+
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
 
-    ;Currently only 'hok' is put in array "sites". 
-    ;This part should be implemented in future to take multiple sites 
-    ;with thm_valid_names() and a for loop of stn. 
-    IF ~KEYWORD_SET(sites) THEN sites = 'hok'
-   
-    stn = sites[0] 
+    ;Check the site name 
+    stns = thm_check_valid_name( sites, valid_sites )
+    ;If multiple radars are set, call this procedure recursively for each radar
+    if n_elements(stns) gt 1 then begin
+      for i=0, n_elements(stns)-1 do begin
+        erg_load_sdfit, sites=stns[i], get_support_data=get_support_data,$
+          noacknowledgment=noacknowledgment, trange=trange,$
+          downloadonly=downloadonly, no_download=no_download
+      endfor
+      return
+    endif
+
+    stn = stns[0] 
  
     source = file_retrieve(/struct)
     source.local_data_dir = root_data_dir()+'ergsc/ground/radar/sd/fitacf/'+stn+'/'
