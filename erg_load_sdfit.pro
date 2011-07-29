@@ -78,7 +78,12 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
 
     ;Check the site name 
-    stns = thm_check_valid_name( sites, valid_sites )
+    stns = thm_check_valid_name( sites, valid_sites, /ignore_case, /include_all )
+    if strlen(stns[0]) eq 0 then begin
+      print, 'Data currently available: '+valid_sites
+      return
+    endif
+    
     ;If multiple radars are set, call this procedure recursively for each radar
     if n_elements(stns) gt 1 then begin
       for i=0, n_elements(stns)-1 do begin
