@@ -77,10 +77,18 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
 
+    ;Check sites keyword
+    if ~keyword_set(sites) then begin
+      print, 'Please give a radar name with sites keyword.'
+      print, 'Data currently available: ',valid_sites
+      return
+    endif
+    
     ;Check the site name 
     stns = thm_check_valid_name( sites, valid_sites, /ignore_case, /include_all )
     if strlen(stns[0]) eq 0 then begin
-      print, 'Data currently available: '+valid_sites
+      print, 'No valid radar name in sites!'
+      print, 'Data currently available: ',valid_sites
       return
     endif
     
