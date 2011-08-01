@@ -1,3 +1,30 @@
+;+
+; FUNCTION get_sd_ave
+;
+; :Description:
+; 	Obtain a tplot variable-type structure storing a time series of the values 
+; 	averaged over the given latitude/longitude range.  
+;
+; :PARAMTERS:
+; vn : a tplot variable the values in which are to be averaged
+; 
+; :KEYWORD:
+; latrng: the geographical latitude range for which the given values are averaged
+; lonrng: the geographical longitude range for averaging
+; maglat: Set this keyword if you give the latrng in magnetic latitude
+; new_vn: Set a string to create a new tplot variable containing the averaged values
+;
+; :EXAMPLES:
+;   erg_load_sdfit, site='hok',/get
+;   dat = get_sd_ave( 'sd_hok_vlos_1', latrng=[60,70], lonrng=[140,170] 
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/07/03: Created
+;
+;-
 FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, new_vn=new_vn
   
   

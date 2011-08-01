@@ -1,10 +1,34 @@
+;+
+; PROCEDURE make_fanplot_pictures
+;
+; :Description:
+;		Generate a set of fan plots for specified time period
+;
+;	:Params:
+;    varn:  a tplot variable for which fan plots are generated
+;    shhmm: start time in HHMM format for fan plots
+;    ehhmm: end time  for fan plots
+;
+;	:Keywords:
+;    prefix:  prefix string added to the file path of fan plots
+;
+; :EXAMPLES:
+;   make_fanplot_pictures, 'sd_hok_vlos_bothscat_1', 0230, 0300, prefix='pngdir/sd_hok_'
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/07/01: Created
+;
+;-
 PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix
 
   ;Check the arguments
   n_par = n_params()
   if n_par ne 3 then begin
     print, 'Usage: '
-    print, "    make_fanplot_pictures, 'sd_hok_vlos_bothscat1', HHMM1, HHMM2"
+    print, "    make_fanplot_pictures, 'sd_hok_vlos_bothscat_1', HHMM1, HHMM2"
     print, '     HHMM1: start time, HHMM2: end time'
     return
   endif

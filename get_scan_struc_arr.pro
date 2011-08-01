@@ -1,3 +1,20 @@
+;+
+; FUNCTION get_scan_struc_arr
+;
+; :Description:
+; 	Obtain a structure storing SD data sorted by scan
+;
+; :EXAMPLES:
+;   dat = get_scan_struc_arr( 'sd_hok_vlos_1' )
+;
+; :Author:
+; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+; 	2011/07/01: Created
+;
+;-
+
 FUNCTION get_scan_struc_arr, vn 
   
   ;Check the argument
