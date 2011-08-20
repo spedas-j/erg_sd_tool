@@ -20,17 +20,6 @@
 ;-
 
 
-;;;;;;;;;;;;;CAUTION;;;;;;;;;;;;;;
-;Please compile the attached "specplot.pro" first by typing:
-;
-; IDL> .r specplot.pro [ENTER]
-; 
-; in the directory where the plug-in was installed, 
-;then run the following commands. 
-;This is the slightly modified version of the original 
-;one included in TDAS.  
-;;;;;;;;;;;;;CAUTION;;;;;;;;;;;;;;
-
 ;Initialize 
 thm_init 
 
