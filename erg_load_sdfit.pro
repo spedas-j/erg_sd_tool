@@ -256,6 +256,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   tbllist = ['tbl_0', 'tbl_1' , 'tbl_2', 'tbl_3']
   timelist = ['time_0','time_1','time_2','time_3']
   FOR i=0L, N_ELEMENTS(datfiles)-1 DO BEGIN
+    if ~file_test(datfiles[i]) then continue
     cdfi = cdf_load_vars( datfiles[i], varformat='*',/convert_int1_to_int2 )
     timevn = strfilter( cdfi.vars.name, 'Epoch_?' )
     ptblvn = strfilter( cdfi.vars.name, 'position_tbl_?' )
