@@ -2,10 +2,13 @@
 ; PROCEDURE/FUNCTION sd_map_set
 ;
 ; :Description:
-;		Describe the procedure/function.
+;		A wrapper routine for the IDL original "map_set" enabling some 
+;		annotations regarding the visualization of SD data.
 ;
 ;	:Params:
-;    time
+;    time:   time (in double Unix time) for which the magnetic local time for the 
+;            world map is calculated. In AACGM plots, the magnetic local noon comes 
+;            on top in plot.  
 ;
 ;	:Keywords:
 ;    erase:   set to erase pre-existing graphics on the plot window.
