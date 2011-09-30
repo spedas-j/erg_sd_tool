@@ -165,6 +165,13 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct
   
   IF ~KEYWORD_SET(ct) THEN ct = 43 ;FAST-Special
   
+  ;Error check for ct
+  if ct lt 0 or ct gt 44 then begin
+    print, 'The number of currently available color tables are 0-44.'
+    print, 'Please specify a table number of the above range.'
+    return
+  endif 
+  
   IF N_ELEMENTS(color_table) EQ 0 THEN color_table=ct
   previous_ct =  color_table
   IF !d.name EQ 'NULL' OR !d.name EQ 'HP' THEN BEGIN   ; NULL device and HP device do not support loadct
@@ -172,7 +179,9 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct
     RETURN
   ENDIF
   
-  IF ct LT 44 THEN BEGIN
+  IF ct LT 43 THEN BEGIN
+    loadct,ct,bottom=bottom_c,file=file
+  ENDIF ELSE IF ct EQ 43 THEN BEGIN
     loadct,ct,bottom=bottom_c,file=file,/silent
     PRINT, '% Loading table SD-Special'
   ENDIF ELSE IF ct EQ 44 THEN BEGIN
