@@ -53,7 +53,7 @@ endif else begin
 endelse
 
 ;Just compile the AACGM wrapper pro/fun
-sd_aacgmlib
+;sd_aacgmlib
 
 return
 end
