@@ -1,9 +1,9 @@
 ;+
-; PROCEDURE sd_aacgmlib 
+; FUNCTION aacgmmlong 
 ; 
-; :DESCRIPTION:
-; A dummy procedure to compile the AACGM wrapper procedure/function 
-; defined below by just type "sd_aacgmlib" 
+; :PURPOSE:
+; A wrapper procedure to choose AACGM DLM or IDL-native routines 
+; to convert a AACGM MLT to AACGM longitude.   
 ; 
 ; The wrapper procedures/functions check !sdarn.aacgm_dlm_exists 
 ; (if not defined, then define it by sd_init) to select appropriate 
@@ -11,9 +11,17 @@
 ; 
 ; :AUTHOR: 
 ;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 
+; :Params:
+;   yr:     4-digit year for which MLT is calculated.
+;   t0:     Second of year for which MLT is calculated.
+;   mlt:   AACGM MLT to be converted to AACGM longitude.
+; 
+; :Examples:
+;   mlon = aacgmmlong( yr, t0, mlt )
 ;   
 ; :HISTORY:
-;   2010/12/02: created and got through the initial bug fixes
+;   2011/10/04: created and got through the initial bug fixes
 ;
 ; $LastChangedBy: $
 ; $LastChangedDate: $
