@@ -52,8 +52,5 @@ endif else begin
   aacgmidl
 endelse
 
-;Just compile the AACGM wrapper pro/fun
-;sd_aacgmlib
-
 return
 end
