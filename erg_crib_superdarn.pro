@@ -1,4 +1,6 @@
 ;+
+;PROCEDURE: erg_crib_superdarn
+; 
 ; :DESCRIPTION:
 ;    A crib sheet to demonstrate how procedures/functions for 
 ;    SuperDARN data work.
