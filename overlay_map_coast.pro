@@ -33,7 +33,7 @@
 ;-
 PRO overlay_map_coast,fill=fill,col=col, $
       static=static,time=time, geo_plot=geo_plot, $
-      position=position
+      position=position, south=south
 
   stack = SCOPE_TRACEBACK(/structure)
   filename = stack[SCOPE_LEVEL()-1].filename
@@ -83,7 +83,7 @@ PRO overlay_map_coast,fill=fill,col=col, $
   FOR i=0,pts-1 DO BEGIN
     IF (coast(0,i) NE 0 OR coast(1,i) NE 0) THEN BEGIN
     
-      IF coast(0,i)*hemisphere GT 0 THEN BEGIN
+      ;IF coast(0,i)*hemisphere GT 0 THEN BEGIN
       
         if ~keyword_set(geo_plot) then begin  ;For plotting in AACGM
           aacgmconvcoord,coast[0,i],coast[1,i],400.,mlat,mlon,err,/TO_AACGM
@@ -119,7 +119,7 @@ PRO overlay_map_coast,fill=fill,col=col, $
         plot_pts=plot_pts+1
         
         
-      ENDIF
+      ;ENDIF
     ENDIF ELSE BEGIN
       IF plot_pts GT 0 THEN BEGIN
         IF KEYWORD_SET(fill) THEN BEGIN
