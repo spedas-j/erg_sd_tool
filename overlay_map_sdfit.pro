@@ -58,7 +58,7 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
   
   ;if datvn is the index number for tplot var
   datvn = tnames(datvn)
-  IF datvn EQ '' THEN BEGIN
+  IF total(datvn eq '') gt 0 THEN BEGIN
     PRINT, 'Given tplot var(s) does not exist?'
     RETURN
   ENDIF

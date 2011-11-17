@@ -51,7 +51,7 @@ PRO plot_map_sdfit, var $
     
     
   ;the tplot var exists?
-  IF STRLEN(tnames(var)) EQ 0 THEN BEGIN
+  IF TOTAL(tnames(var) eq '') GT 0 THEN BEGIN
     PRINT, 'Not find the tplot variable: '+var
     RETURN
   ENDIF
