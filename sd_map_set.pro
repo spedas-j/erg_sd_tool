@@ -70,12 +70,12 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     mltc = ( tmltc + 24. ) MOD 24.
     mltc_lon = 360./24.* mltc
     
-    rot_angle = (-mltc_lon +360.) MOD 360.
+    rot_angle = (-mltc_lon*hemis +360.) MOD 360.
     IF rot_angle GT 180. THEN rot_angle -= 360.
     
     ;Rotate oppositely for the S. hemis.
     if hemis lt 0 then begin 
-      ;rot_angle = ( rot_angle + 180. ) mod 360.
+      rot_angle = ( rot_angle + 180. ) mod 360.
       ;rot_angle *= (-1.)
       rot_angle = (rot_angle+360.) mod 360.
       if rot_angle gt 180. then rot_angle -= 360.
@@ -152,19 +152,31 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   
   IF KEYWORD_SET(mltlabel) THEN BEGIN
     ;Write the MLT labels
-    lons = 15.*FINDGEN(24)
-    ori = lons + 90 & ori[WHERE(ori GT 180)] -= 360.
-    
-    idx=WHERE(lons GT 180. ) & lons[idx] -= 360.
+    mlts = 15.*FINDGEN(24) ;[deg]
     lonnames=['00hMLT','','02hMLT','','04hMLT','','06hMLT','','08hMLT','','10hMLT','','12hMLT','', $
       '14hMLT','','16hMLT','','18hMLT','','20hMLT','','22hMLT','']
     IF ~KEYWORD_SET(lonlab) THEN lonlab = 77.
-    FOR i=0,N_ELEMENTS(lons)-1 DO BEGIN
-      nrmcord = CONVERT_COORD(lons[i],lonlab,/data,/to_normal)
+    
+    ;Calculate the orientation of the MTL labels
+    lonlabs0 = replicate(lonlab,n_elements(mlts))
+    if hemis eq 1 then lonlabs1 = replicate( (lonlab+10.) < 89.5,n_elements(mlts)) $
+    else lonlabs1 = replicate( (lonlab-10.) > (-89.5),n_elements(mlts))
+    nrmcord0 = CONVERT_COORD(mlts,lonlabs0,/data,/to_normal)
+    nrmcord1 = CONVERT_COORD(mlts,lonlabs1,/data,/to_normal)
+    ori = transpose( atan( nrmcord1[1,*]-nrmcord0[1,*], nrmcord1[0,*]-nrmcord0[0,*] )*!radeg )
+    ori = ( ori + 360. ) mod 360. 
+    
+    ;ori = lons + 90 & ori[WHERE(ori GT 180)] -= 360.
+    
+    ;idx=WHERE(lons GT 180. ) & lons[idx] -= 360.
+
+    FOR i=0,N_ELEMENTS(mlts)-1 DO BEGIN
+      
+      nrmcord = reform(nrmcord0[*,i]) 
       pos = [!x.window[0],!y.window[0],!x.window[1],!y.window[1]]
       IF nrmcord[0] LE pos[0] OR nrmcord[0] GE pos[2] OR $
         nrmcord[1] LE pos[1] OR nrmcord[1] GE pos[3] THEN CONTINUE
-      XYOUTS, lons[i], lonlab, lonnames[i], orientation=ori[i], $
+      XYOUTS, mlts[i], lonlab, lonnames[i], orientation=ori[i], $
         font=1, charsize=charsz*charscale
         
     ENDFOR
