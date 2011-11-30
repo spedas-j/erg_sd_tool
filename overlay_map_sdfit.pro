@@ -36,7 +36,7 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     notimelabel=notimelabel, timelabelpos=timelabelpos, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
-    charscale=charscale
+    charscale=charscale, force_nhemis=force_nhemis
     
   ;Initialize SDARN system variable and get the default charsize
   sd_init
@@ -171,6 +171,9 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
             mlt_arr = reform(mlt_arr, n_elements(mlon[*,0]), n_elements(mlon[0,*]) )
           endif
           plt_lon = ( (mlt_arr + 24.) MOD 24. ) * 180./12.
+          
+          ;to draw a fan plot forcibly on the N hemis
+          if keyword_set(force_nhemis) then mlat=abs(mlat)
           
           pos_plt = pos ;replicate as an array with same numbers of elements
           pos_plt[*,*,0] = plt_lon

@@ -47,7 +47,8 @@ PRO plot_map_sdfit, var $
     , coast=coast $
     , gscatmaskoff=gscatmaskoff $
     , nocolorscale=nocolorscale $
-    , colorscalepos=colorscalepos
+    , colorscalepos=colorscalepos $
+    , force_nhemis=force_nhemis
     
     
   ;the tplot var exists?
@@ -72,7 +73,8 @@ PRO plot_map_sdfit, var $
     position=position, $
     erase=(~KEYWORD_SET(noerase)), clip=clip, geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
-    nocolorscale=nocolorscale, colorscalepos=colorscalepos
+    nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
+    force_nhemis=force_nhemis
     
   ;Draw the world map
   IF KEYWORD_SET(coast) THEN BEGIN
