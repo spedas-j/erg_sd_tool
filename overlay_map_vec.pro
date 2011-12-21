@@ -5,6 +5,8 @@
 ; dlon: the longitudinal component of the vector to be drawn
 ; arclength: length of the vector in deg. dlat and dlon are normalized 
 ;            by this value 
+; 
+; ex)   overlay_map_vec, 65., 270., -0.,-3, 18., linethick=1.5
 ;-
 PRO overlay_map_vec, lat0, lon0, dlat, dlon, arclength, $
   linethick=linethick, color=color
