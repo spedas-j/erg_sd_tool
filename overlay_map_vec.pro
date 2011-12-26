@@ -1,12 +1,13 @@
 ;+
 ; lat0: latitude of the start point [deg]
 ; lon0: longitude of the start point [deg]
-; dlat: the latitudinal component of the vector to be drawn
-; dlon: the longitudinal component of the vector to be drawn
-; arclength: length of the vector in deg. dlat and dlon are normalized 
-;            by this value 
+; dlat: the latitudinal component of the vector to be drawn (positive: north)
+; dlon: the longitudinal component of the vector to be drawn (positive: east)
+; arclength: length of the vector in degree with which the vector is drawn. 
+;            dlat and dlon are normalized by this value. Thus the absolute 
+;            values of dlat and dlon are ignored. Only the ratio is concerned.  
 ; 
-; ex)   overlay_map_vec, 65., 270., -0.,-3, 18., linethick=1.5
+; ex)   overlay_map_vec, 65., 270., 1.,-3, 18., linethick=1.5
 ;-
 PRO overlay_map_vec, lat0, lon0, dlat, dlon, arclength, $
   linethick=linethick, color=color
