@@ -19,7 +19,7 @@
 ;-
 PRO overlay_map_thmgmag_vec, site=site, $
   ave_time_range=ave_time_range, bscale=bscale, $
-  rot90=rot90, rot270=rot270 
+  rot90=rot90, rot270=rot270, dataarr=dataarr 
   
   ;Check the arguments
   if ~keyword_set(site) then return
@@ -27,6 +27,9 @@ PRO overlay_map_thmgmag_vec, site=site, $
   
   ;Initialize !sdarn system variable
   sd_init
+  
+  ;Initialize dataarr 
+  if keyword_set(dataarr) then dataarr=''
   
   for i=0, n_elements(site)-1 do begin
     
@@ -81,6 +84,8 @@ PRO overlay_map_thmgmag_vec, site=site, $
       format='(5A,1X,5F6.1)'
     overlay_map_vec, lat0, lon0, blat,blon,$
       vec_len[idx], linethick=1.5
+    
+    append_array, dataarr, transpose([lat0, blat, blon])
     
   endfor
   
