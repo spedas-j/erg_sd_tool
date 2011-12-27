@@ -15,6 +15,8 @@
 ;               of the map for. Do nothing with keyword geo_plot on.  
 ;    geo_plot:  Set to draw in geographical coordinates
 ;    position:  Set to draw the map at the designated position in the plot window
+;    height:    Set a height in [km] for which the AACGM conversion is made. 
+;               Default: 400 km. DO NOT set zero or negative otherwise it crashes. 
 ;
 ; :EXAMPLES:
 ;   overlay_map_coast     (to draw the world map in AACGM)
@@ -33,7 +35,7 @@
 ;-
 PRO overlay_map_coast,fill=fill,col=col, $
       static=static,time=time, geo_plot=geo_plot, $
-      position=position, south=south
+      position=position, south=south, height=height 
 
   stack = SCOPE_TRACEBACK(/structure)
   filename = stack[SCOPE_LEVEL()-1].filename
@@ -43,6 +45,8 @@ PRO overlay_map_coast,fill=fill,col=col, $
   IF KEYWORD_SET(south) THEN hemisphere=-1 ELSE hemisphere=1
   
   IF NOT KEYWORD_SET(col) THEN col=0
+  
+  IF NOT KEYWORD_SET(height) then height = 400. ; [km]
   
   ;Initialize the SD environment
   sd_init
@@ -86,7 +90,7 @@ PRO overlay_map_coast,fill=fill,col=col, $
       ;IF coast(0,i)*hemisphere GT 0 THEN BEGIN
       
         if ~keyword_set(geo_plot) then begin  ;For plotting in AACGM
-          aacgmconvcoord,coast[0,i],coast[1,i],400.,mlat,mlon,err,/TO_AACGM
+          aacgmconvcoord,coast[0,i],coast[1,i],height,mlat,mlon,err,/TO_AACGM
           mag_pos = [mlat, mlon]
           ;mag_pos=cnvcoord(coast(0,i),coast(1,i),1)
           
