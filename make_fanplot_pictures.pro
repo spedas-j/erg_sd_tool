@@ -8,7 +8,10 @@
 ;    varn:  a tplot variable for which fan plots are generated
 ;    shhmm: start time in HHMM format for fan plots
 ;    ehhmm: end time  for fan plots
-;
+;    center_glat: a geographic latitude in deg at which a fanplot is centered
+;    center_glon: a geographic longitude in deg at which a fanplot is centered
+;    gscatmaskoff: set to prevent ground scatter pixels from being filled with grey
+;     
 ;	:Keywords:
 ;    prefix:  prefix string added to the file path of fan plots
 ;
@@ -22,7 +25,8 @@
 ; 	2011/07/01: Created
 ;
 ;-
-PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix
+PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix, $
+  center_glat=center_glat, center_glon=center_glon, gscatmaskoff=gscatmaskoff
 
   ;Check the arguments
   n_par = n_params()
@@ -51,10 +55,13 @@ PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix
   for time=stime, etime, 60. do begin
     sd_time, time
     plot_map_sdfit, varn, /coast,$
-      /clip, center_gla=70,center_glon=180,/mltla, /gscatmaskoff
+      /clip, center_gla=center_glat,center_glon=center_glon, $
+      /mltlabel, $
+      gscatmaskoff=gscatmaskoff
+    
     strhhmm = time_string(time, tfor='hhmm')
     filename = prefix+strhhmm
-    filename = prefix+string(i,'(I03)')
+    ;filename = prefix+string(i,'(I03)')
     makepng, filename, mkdir=mkdir
     i ++
   endfor
