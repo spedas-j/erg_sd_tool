@@ -48,9 +48,10 @@ PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix
   stime = time_double(stime) & etime = time_double(etime) 
   
   i = 0L
-  for time=stime, etime, 120. do begin
+  for time=stime, etime, 60. do begin
     sd_time, time
-    plot_map_sdfit, varn, /coast,/clip, center_gla=70,center_glon=180,/mltla
+    plot_map_sdfit, varn, /coast,$
+      /clip, center_gla=70,center_glon=180,/mltla, /gscatmaskoff
     strhhmm = time_string(time, tfor='hhmm')
     filename = prefix+strhhmm
     filename = prefix+string(i,'(I03)')
