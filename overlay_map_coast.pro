@@ -16,7 +16,7 @@
 ;    geo_plot:  Set to draw in geographical coordinates
 ;    position:  Set to draw the map at the designated position in the plot window
 ;    height:    Set a height in [km] for which the AACGM conversion is made. 
-;               Default: 400 km. DO NOT set zero or negative otherwise it crashes. 
+;               Default: 0.01 km. DO NOT set zero or negative otherwise it crashes. 
 ;
 ; :EXAMPLES:
 ;   overlay_map_coast     (to draw the world map in AACGM)
@@ -46,7 +46,7 @@ PRO overlay_map_coast,fill=fill,col=col, $
   
   IF NOT KEYWORD_SET(col) THEN col=0
   
-  IF NOT KEYWORD_SET(height) then height = 400. ; [km]
+  IF NOT KEYWORD_SET(height) then height = 0.01 ; [km]
   
   ;Initialize the SD environment
   sd_init
