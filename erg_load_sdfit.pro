@@ -72,7 +72,8 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   thm_init
 
   ;Set the list of the available sites
-  valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig' ]
+  valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
+    'kod' ]
 
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
