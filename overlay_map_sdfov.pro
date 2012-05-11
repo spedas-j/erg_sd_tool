@@ -2,7 +2,8 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     geo_plot=geo_plot, linestyle=linestyle
     
   ;Set the list of the available sites
-  valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig' ]
+  valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
+    'kod','inv','han','pyk', 'cve', 'cvw', 'fhe', 'fhw' ]
   
   ;Check the site name
   IF ~KEYWORD_SET(site) THEN BEGIN

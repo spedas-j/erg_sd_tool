@@ -73,7 +73,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
 
   ;Set the list of the available sites
   valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
-    'kod','inv','han','pyk' ]
+    'kod','inv','han','pyk', 'cve', 'cvw', 'fhe', 'fhw' ]
 
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
@@ -253,9 +253,13 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   ;Load the position table(s) ;;;;;;;;;;;;;;;;;;
   ;Currently supports SD fitacf CDFs containing up to 4 pos. tables.
   tbl_0='' & tbl_1='' & tbl_2='' &tbl_3='' & tbl_4=''
+  tbl_5='' & tbl_6='' & tbl_7='' &tbl_8=''
   time_0='' & time_1='' & time_2='' & time_3='' & time_4=''
-  tbllist = ['tbl_0', 'tbl_1' , 'tbl_2', 'tbl_3', 'tbl_4']
-  timelist = ['time_0','time_1','time_2','time_3', 'time_4']
+  time_5='' & time_6='' & time_7='' & time_8=''
+  tbllist = ['tbl_0', 'tbl_1' , 'tbl_2', 'tbl_3', 'tbl_4', $
+    'tbl_5', 'tbl_6' , 'tbl_7', 'tbl_8' ]
+  timelist = ['time_0','time_1','time_2','time_3', 'time_4', $
+    'time_5','time_6','time_7','time_8']
   FOR i=0L, N_ELEMENTS(datfiles)-1 DO BEGIN
     if ~file_test(datfiles[i]) then continue
     cdfi = cdf_load_vars( datfiles[i], varformat='*',/convert_int1_to_int2 )

@@ -103,9 +103,9 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
       ;Choose data for the time given by keyword
       idx = nn( scno.x, time_double(time) )
       if scno.y[idx] lt 0 then begin  ; Increment idx if the selected beam is a camp beam (beam_scan=-1).
-        for tmp_beamno=idx,idx+16 do if scno.y[tmp_beamno] ge 0 then break
+        for tmp_beamno=idx,idx+24 do if scno.y[tmp_beamno] ge 0 then break
+        idx = tmp_beamno
       endif
-      idx = tmp_beamno
       bmno = WHERE( scno.y EQ scno.y[idx] )
       
       ;;for debugging
