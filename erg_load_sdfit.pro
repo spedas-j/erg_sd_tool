@@ -9,7 +9,9 @@
 ; :KEYWORDS:
 ;    sites: 3-letter code of SD radar name. 
 ;           Currently only the following codes work: 
-;           'hok', 'ksr'  
+;           'hok','ksr','sye','sys','bks','rkn','unw','tig', $
+;           'kod','inv','han','pyk', 'cve', 'cvw', 'fhe', 'fhw', $
+;           'sas', 'pgr', 'kap', 'gbr', 'sto', 'wal'
 ;    cdffn: File path of a CDF file if given explicitly. 
 ;    get_support_data: Turn this on to load the supporting data 
 ;    trange: time range for which data are loaded. 
@@ -73,8 +75,8 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
 
   ;Set the list of the available sites
   valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
-    'kod','inv','han','pyk', 'cve', 'cvw', 'fhe', 'fhw', 'sas', 'pgr', $
-    'gbr', 'kap', 'sto', 'wal' ]
+    'kod','inv','han','pyk', 'cve', 'cvw', 'fhe', 'fhw', $
+    'sas', 'pgr', 'kap', 'gbr', 'sto', 'wal' ]
 
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
