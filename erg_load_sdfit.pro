@@ -72,6 +72,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
 
   ;Initialize the TDAS environment
   thm_init
+  sd_init
 
   ;Set the list of the available sites
   valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
@@ -110,7 +111,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
  
     source = file_retrieve(/struct)
     source.local_data_dir = root_data_dir()+'ergsc/ground/radar/sd/fitacf/'+stn+'/'
-    source.remote_data_dir = 'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/'+stn+'/'
+    source.remote_data_dir = !sdarn.remote_data_dir+stn+'/'
     source.min_age_limit = 900
     if keyword_set(downloadonly) then source.downloadonly = 1
     if keyword_set(no_download) then begin

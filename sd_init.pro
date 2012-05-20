@@ -32,6 +32,7 @@ if (not keyword_set(exists)) or (keyword_set(reset)) then begin
                   plot_time: 0.D, $
                   charsize: 1.0 $
                 } $
+      ,remote_data_dir:'http://gemsissc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/' $
     }
     
 endif
