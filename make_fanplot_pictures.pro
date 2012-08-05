@@ -36,7 +36,7 @@ PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix, $
     print, '     HHMM1: start time, HHMM2: end time'
     return
   endif
-  if strlen(tnames(varn)) lt 6 then begin
+  if max(strlen(tnames(varn))) lt 6 then begin
     print, 'Cannot find a tplot var: ', varn
     return
   endif
