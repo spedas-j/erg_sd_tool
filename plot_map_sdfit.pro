@@ -21,6 +21,7 @@
 ;    nocolorscale: Set to surpress drawing the color scale 
 ;    colorscalepos: Set the position of the color scale in the noraml 
 ;                   coordinates. Default: [0.85, 0.1, 0.87, 0.45] 
+;    pixel_scale: Set a values of range 0.0-1.0 to scale pixels drawn on a 2D map plot
 ;
 ; :EXAMPLES:
 ;   plot_map_sdfit, 'sd_hok_vlos_bothscat'
@@ -48,7 +49,8 @@ PRO plot_map_sdfit, var $
     , gscatmaskoff=gscatmaskoff $
     , nocolorscale=nocolorscale $
     , colorscalepos=colorscalepos $
-    , force_nhemis=force_nhemis
+    , force_nhemis=force_nhemis $
+    , pixel_scale=pixel_scale
     
     
   ;the tplot var exists?
@@ -74,7 +76,7 @@ PRO plot_map_sdfit, var $
     erase=(~KEYWORD_SET(noerase)), clip=clip, geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
-    force_nhemis=force_nhemis
+    force_nhemis=force_nhemis, pixel_scale=pixel_scale
     
   ;Draw the world map
   IF KEYWORD_SET(coast) THEN BEGIN
