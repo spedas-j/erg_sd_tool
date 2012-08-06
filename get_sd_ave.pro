@@ -40,7 +40,7 @@ FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, new_vn=new
   ;Initialize the AACGM environment
   if is_maglat then begin
     sd_init
-    aacgmloadcoef, 2005
+    ;aacgmloadcoef, 2005
   endif
   
   ;Obtain parts of the variable name
@@ -89,7 +89,7 @@ FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, new_vn=new
   if keyword_set(new_vn) then begin
     if (size(new_vn))[1] eq 7 then begin
       store_data, new_vn, data={x:scant, y:val}, $
-        lim={ytitle:vn_lim.ytitle }
+        lim={ytitle:vn_lim.ytitle, yrange:vn_lim.zrange, constant:0 }
     endif
   endif
   
