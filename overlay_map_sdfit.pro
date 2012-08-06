@@ -108,14 +108,14 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
   tmp_datvn = datvn
   FOR nv=0L, N_ELEMENTS(tmp_datvn)-1 DO BEGIN
   
-    datvn = tmp_datvn[nv]
+    tdatvn = tmp_datvn[nv]
     
     ;get the radar name and the suffix
-    stn = STRMID(datvn, 3,3)
-    suf = STRMID(datvn, 0,1,/reverse)
+    stn = STRMID(tdatvn, 3,3)
+    suf = STRMID(tdatvn, 0,1,/reverse)
     
     ;Load the data to be drawn and to be used for drawing on a 2-d map
-    get_data, datvn, data=tmp_d, dl=dl, lim=lim
+    get_data, tdatvn, data=tmp_d, dl=dl, lim=lim
     ;;if (size(d))[2] ne 8 then get_data, d[0], data=d, dl=dl, lim=lim ;For multi-tplot vars
     
     ;Loop for processing a multi-tplot vars
@@ -234,8 +234,8 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
           clvl = clmin + cnum*(val-valrng[0])/(valrng[1]-valrng[0])
           clvl = (clvl > clmin)
           clvl = (clvl < clmax) ; clmin <= color level <= clmax
-          IF FIX(echflgarr[j]) ne 1 AND strpos(datvn,'_pwr') lt 0 $
-            AND strpos(datvn,'spec_width') lt 0 THEN BEGIN
+          IF FIX(echflgarr[j]) ne 1 AND strpos(tdatvn,'_pwr') lt 0 $
+            AND strpos(tdatvn,'spec_width') lt 0 THEN BEGIN
             ;ground echo case
             IF KEYWORD_SET(nogscat) THEN CONTINUE ;skip plotting if nogscat keyword i set
             if ~keyword_set(gscatmaskoff) then begin
