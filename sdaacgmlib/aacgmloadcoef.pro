@@ -33,10 +33,20 @@ pro aacgmloadcoef, year
 help, name='!sdarn',out=out
 if out eq '' then sd_init
 
+;Exit unless the argument is given
+npar = n_params()
+if npar ne 1 then return
+
 ;Only AACGM DLM has a subroutine to load the S-H coefficients for given year
 if !sdarn.aacgm_dlm_exists then begin 
   ;print, 'using AACGM_DLM'
-  aacgm_load_coef, year
+  
+  ;Choose the coef. file of the year closest to the one given as an argument
+  yrlist = [ 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010 ] 
+  yr_selected = yrlist[ nn( yrlist, year ) ]
+ 
+  aacgm_load_coef, yr_selected
+  
 endif 
 
 return
