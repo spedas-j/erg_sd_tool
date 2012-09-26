@@ -1,21 +1,34 @@
 PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
+  linethick=linethick, $
   fill=fill, $
   color=color 
   
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;nh_list = strsplit('bks brt cve cvw ekb fhe fhw gbr han hok inv kap kod ksr mge mgw pgr pyk rkn sas sto wal', /ext )
+  nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok inv kap kod ksr pgr pyk rkn sas sto wal', /ext )
+  sh_list = strsplit('fir hal ker mcm san sye sys tig unw zho', /ext )
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  
   ;Check the keywords and generate the station list to be plotted
   stns = ''
-  if keyword_set(nh) then append_array, stns, strsplit('hok ksr', /ext )
-  if keyword_set(sh) then append_array, stns, strsplit('sye sys', /ext )
+  if keyword_set(nh) then append_array, stns, nh_list
+  if keyword_set(sh) then append_array, stns, sh_list
   if keyword_set(site) then append_array, stns, site 
   if stns[0] eq '' then return
   print, stns 
   
-  if ~keyword_set(color) then color = 0
+  if ~keyword_set(color) then color = 0 ;default color
   
   
   ;Initialize !sdarn system variable
   sd_init
   
+  ;Prepare for AACGM conversion
+  if ~keyword_set(geo_plot) then begin
+    ts = time_struct( !sdarn.sd_polar.plot_time)
+    yrsec = long( (ts.doy-1)*86400L + ts.sod )
+    aacgmloadcoef, ts.year 
+  endif
   
   ;Obtain the directory path where overlay_map_precal_sdfov.pro and save files are located.
   stack = SCOPE_TRACEBACK(/structure)
@@ -40,16 +53,25 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
     if keyword_set(geo_plot) then begin
       lats = glats & lons = glons 
     endif else begin
-    
+      ;AACGM conversion
+      alt = glats & alt[*] = 400. ;[km]
+      aacgmconvcoord, glats,glons,alt, mlats,mlons, err, /TO_AACGM
+      years = long( glats ) & years[*] = ts.year 
+      yrsecs = long( glats) & yrsecs[*] = yrsec
+      mlts = aacgmmlt( years, yrsecs,  (mlons+360.) mod 360  )
+      
+      lats = mlats & lons = mlts /24. * 360.
     endelse
     
-    plots, lons, lats, color=color
-    
+    ;Draw the f-o-v with the color given by "color" keyword
+    plots, lons, lats, color=color, thick=linethick
+    ;Fill the f-o-v with the color given by "color" keyword
+    if keyword_set(fill) then polyfill, lons, lats, color=color
     
     
   endfor
   
-  
+   
   
   return
 end
