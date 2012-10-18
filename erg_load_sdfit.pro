@@ -68,7 +68,8 @@ end
 PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   get_support_data=get_support_data, $
   noacknowledgment=noacknowledgment, trange=trange, $
-  downloadonly=downloadonly, no_download=no_download
+  downloadonly=downloadonly, no_download=no_download, $
+  compact=compact
 
   ;Initialize the TDAS environment
   thm_init
@@ -102,7 +103,8 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
       for i=0, n_elements(stns)-1 do begin
         erg_load_sdfit, sites=stns[i], get_support_data=get_support_data,$
           noacknowledgment=noacknowledgment, trange=trange,$
-          downloadonly=downloadonly, no_download=no_download
+          downloadonly=downloadonly, no_download=no_download, $
+          compact=compact
       endfor
       return
     endif
@@ -334,6 +336,16 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     endif
   endif
   
+  ;Leave only minimal set of the variables if keyword "compact" is set.
+  if keyword_set(compact) then begin
+    varn1= 'cpid channel int_time azim_no pwr_err spec_width_err vlos_err elev_angle elev_angle_err '
+    varn2= 'phi0 phi0_err echo_flag quality quality_flag scanno scanstartflag '
+    varn3= 'lagfr smsep nrang_max tfreq noise num_ave txpl vnorth veast '
+    varn4= 'vlos_bothscat vlos_iscat vlos_gscat vnorth_iscat vnorth_gscat vnorth_bothscat '
+    varn5= 'veast_iscat veast_gscat veast_bothscat position_tbl positioncnt_tbl '
+    varn_removed = strsplit(varn1+varn2+varn3+varn4+varn5, /ext )
+    store_data, 'sd_'+stn+'_'+varn_removed+'_?', /delete
+  endif
   
   ;Normal end
   RETURN
