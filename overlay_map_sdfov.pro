@@ -52,10 +52,10 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     n_rg = N_ELEMENTS(mlat[*,0])-1
     n_az = N_ELEMENTS(mlat[0,*])-1
     
-    PLOTS,tmlt[0,0:n_az],mlat[0,0:n_az], linestyle=linestyle, linecolor=linecolor
-    PLOTS,tmlt[0:n_rg,n_az],mlat[0:n_rg,n_az], linestyle=linestyle, linecolor=linecolor
-    PLOTS,tmlt[n_rg,0:n_az],mlat[n_rg,0:n_az], linestyle=linestyle, linecolor=linecolor
-    PLOTS,tmlt[0:n_rg,0],mlat[0:n_rg,0], linestyle=linestyle, linecolor=linecolor
+    PLOTS,tmlt[0,0:n_az],mlat[0,0:n_az], linestyle=linestyle, color=linecolor
+    PLOTS,tmlt[0:n_rg,n_az],mlat[0:n_rg,n_az], linestyle=linestyle, color=linecolor
+    PLOTS,tmlt[n_rg,0:n_az],mlat[n_rg,0:n_az], linestyle=linestyle, color=linecolor
+    PLOTS,tmlt[0:n_rg,0],mlat[0:n_rg,0], linestyle=linestyle, color=linecolor
     
     ;Draw selected beams
     if total(size(beams)) gt 0 then begin
@@ -63,8 +63,8 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
       for n=0L, n_elements(beams)-1 do begin
         bm = beams[n]
         if bm ge n_az or bm lt 0 then continue
-        PLOTS,tmlt[0:n_rg,bm],mlat[0:n_rg,bm], linestyle=linestyle, linecolor=linecolor
-        PLOTS,tmlt[0:n_rg,bm+1],mlat[0:n_rg,bm+1], linestyle=linestyle, linecolor=linecolor
+        PLOTS,tmlt[0:n_rg,bm],mlat[0:n_rg,bm], linestyle=linestyle, color=linecolor
+        PLOTS,tmlt[0:n_rg,bm+1],mlat[0:n_rg,bm+1], linestyle=linestyle, color=linecolor
       endfor
     endif
     
