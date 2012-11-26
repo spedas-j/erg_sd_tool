@@ -161,8 +161,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     lonlabs0 = replicate(lonlab,n_elements(mlts))
     if hemis eq 1 then lonlabs1 = replicate( (lonlab+10.) < 89.5,n_elements(mlts)) $
     else lonlabs1 = replicate( (lonlab-10.) > (-89.5),n_elements(mlts))
-    nrmcord0 = CONVERT_COORD(mlts,lonlabs0,/data,/to_normal)
-    nrmcord1 = CONVERT_COORD(mlts,lonlabs1,/data,/to_normal)
+    nrmcord0 = CONVERT_COORD(mlts,lonlabs0,/data,/to_device)
+    nrmcord1 = CONVERT_COORD(mlts,lonlabs1,/data,/to_device)
     ori = transpose( atan( nrmcord1[1,*]-nrmcord0[1,*], nrmcord1[0,*]-nrmcord0[0,*] )*!radeg )
     ori = ( ori + 360. ) mod 360. 
     
