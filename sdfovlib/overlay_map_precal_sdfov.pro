@@ -5,7 +5,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;nh_list = strsplit('bks brt cve cvw ekb fhe fhw gbr han hok inv kap kod ksr mge mgw pgr pyk rkn sas sto wal', /ext )
-  nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok inv kap kod ksr pgr pyk rkn sas sto wal', /ext )
+  nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok inv kap kod ksr pgr pyk rkn sas sto wal ade adw', /ext )
   sh_list = strsplit('fir hal ker mcm san sye sys tig unw zho', /ext )
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   
