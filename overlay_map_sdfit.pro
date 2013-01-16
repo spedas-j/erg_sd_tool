@@ -10,8 +10,6 @@
 ; :KEYWORDS:
 ;    time:    Set the time (UNIX time) to plot a 2-D scan for
 ;    position:  Set the location of the plot frame in the plot window
-;    erase:   Set to forcibly erase the plot window before plotting data
-;    clip:    Set to scale in to get a magnified map
 ;    geo_plot:  Set to plot in the geographical coordinates
 ;    nogscat: Set to prevent the ground scatter data from appearing on the plot
 ;    notimelabel: Set to prevent the time label from appearing on the plot
