@@ -73,7 +73,7 @@ PRO plot_map_sdfit, var $
   ;Draw a fan plot on map
   overlay_map_sdfit, var, $
     position=position, $
-    erase=(~KEYWORD_SET(noerase)), clip=clip, geo_plot=geo_plot, $
+    geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
     force_nhemis=force_nhemis, pixel_scale=pixel_scale
