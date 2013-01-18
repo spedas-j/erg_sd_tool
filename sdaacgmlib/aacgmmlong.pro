@@ -3,7 +3,9 @@
 ; 
 ; :PURPOSE:
 ; A wrapper procedure to choose AACGM DLM or IDL-native routines 
-; to convert a AACGM MLT to AACGM longitude.   
+; to convert a AACGM MLT to AACGM longitude. Please be aware that 
+; this wrapper works with AACGM DLM of ver. 4.0 or older, in which 
+; AACGM_MLONG() uses year and second of year (+ mlt) as arguments.   
 ; 
 ; The wrapper procedures/functions check !sdarn.aacgm_dlm_exists 
 ; (if not defined, then define it by sd_init) to select appropriate 
