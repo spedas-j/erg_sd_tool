@@ -5,6 +5,9 @@ PRO get_sd_lat_profile, vn, latrng=latrng, lonrng=lonrng, dlat=dlat, maglat=magl
   
   ;Check the arguments and keywords
   if tnames(vn[0]) eq '' then return
+  vn0 = tnames(vn[0])
+  vn = vn0
+  
   if ~keyword_set(latrng) or ~keyword_set(lonrng) then return
   
   if ~keyword_set(dlat) then dlat = 1.
