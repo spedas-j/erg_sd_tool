@@ -1,6 +1,6 @@
 PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     geo_plot=geo_plot, linestyle=linestyle, beams=beams, linecolor=linecolor, $
-    linethick=linethick
+    linethick=linethick, draw_beamnum=draw_beamnum
     
   ;Set the list of the available sites
     valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
@@ -68,8 +68,17 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
       for n=0L, n_elements(beams)-1 do begin
         bm = beams[n]
         if bm ge n_az or bm lt 0 then continue
-        PLOTS,tmlt[0:n_rg,bm],mlat[0:n_rg,bm], linestyle=linestyle, color=linecolor
-        PLOTS,tmlt[0:n_rg,bm+1],mlat[0:n_rg,bm+1], linestyle=linestyle, color=linecolor
+        PLOTS,tmlt[0:n_rg,bm],mlat[0:n_rg,bm], linestyle=linestyle, color=linecolor, thick=linethick
+        PLOTS,tmlt[0:n_rg,bm+1],mlat[0:n_rg,bm+1], linestyle=linestyle, color=linecolor, thick=linethick
+        
+        if keyword_set(draw_beamnum) then begin
+          xyouts,  $
+            (tmlt[n_rg,bm]+tmlt[n_rg,bm+1])/2, $
+            (mlat[n_rg,bm]+mlat[n_rg,bm+1])/2, $
+            'bm'+string(bm,'(I2.2)'), $
+            alignment=0.5
+          endif
+          
       endfor
     endif
     
