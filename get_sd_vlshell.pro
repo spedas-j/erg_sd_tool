@@ -1,9 +1,22 @@
-PRO get_sd_vlshell, stn, angle_var=angle_var, exclude_angle=exclude_angle, glatp=glatp,glonp=glonp,glatm=glatm,glonm=glonm
+PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, glatp=glatp,glonp=glonp,glatm=glatm,glonm=glonm
   
   ;Check the argument
   npar = n_params()
   if npar ne 1 then return
-  vlos_vn = tnames('sd_'+strlowcase(stn)+'_vlos_?')
+  
+  vlos_vn = tnames(vlos_vn)
+  if strlen( vlos_vn[0] ) lt 6 then return
+  
+  ;For multiple vlos_vn variables
+  if n_elements(vlos_vn) gt 1 then begin
+    for i=0L, n_elements(vlos_vn)-1 do begin
+      vn = vlos_vn[i]
+      get_sd_vlshell, vn, angle_var=angle_var, exclude_angle=exclude_angle, glatp=glatp,glonp=glonp,glatm=glatm,glonm=glonm
+    endfor
+    return
+  endif
+  
+  stn = strmid( strmid(vlos_vn, 0,6), 3, 3 )
   if strlen(tnames(vlos_vn)) lt 6 then begin
     print, 'Cannnot find the vlos variable: '+vlos_vn
     return
@@ -11,7 +24,9 @@ PRO get_sd_vlshell, stn, angle_var=angle_var, exclude_angle=exclude_angle, glatp
 
   ;Inisitalize the AACGM lib
   sd_init
-  aacgmloadcoef, 2005
+  get_data, vlos_vn, data=d
+  ts = time_struct( d.x[0] )
+  aacgmloadcoef, ts.year
   
   ;Variable names
   prefix = 'sd_'+strlowcase(stn)+'_'
@@ -131,7 +146,7 @@ PRO get_sd_vlshell, stn, angle_var=angle_var, exclude_angle=exclude_angle, glatp
     data={x: vlos_time, y: vlshell, v: vlos_v}, $
     dl={spec:1}, $
     lim={ytitle:vlos_lim.ytitle, ysubtitle:vlos_lim.ysubtitle, $
-      ztitle:'V_Lshell [m/s]', zrange:[-200.,200.] }
+      ztitle:'V_Lshell [m/s]', zrange:[-1000.,1000.] }
   
   if keyword_set(angle_var) then begin
     angle_var_vn = prefix+'mltdir-bmdir_angle_'+suf
