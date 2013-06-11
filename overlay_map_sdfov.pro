@@ -22,7 +22,7 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
   ;The loop to draw fovs of multiple stations
   FOR i=0, N_ELEMENTS(stns)-1 DO BEGIN
     stn = stns[i]
-    ptbl_vn = tnames('sd_'+STRLOWCASE(stn)+'_position_tbl_?')
+    ptbl_vn = (tnames('sd_'+STRLOWCASE(stn)+'_position_tbl_?'))[0]
     IF STRLEN(ptbl_vn) LT 10 THEN CONTINUE
     
     
