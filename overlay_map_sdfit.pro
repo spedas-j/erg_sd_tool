@@ -149,8 +149,13 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
       
       ;;for debugging
       bm_rng = minmax(bmno)
+      PRINT,'====== '+tdatvn+' ======'
       PRINT, '             time by sd_time: '+time_string(time)
       PRINT, 'time range of selected beams: '+time_string(scno.x[bm_rng[0]])+' -- '+time_string(scno.x[bm_rng[1]])
+      if time lt scno.x[bm_rng[0]] OR time gt scno.x[bm_rng[1]] then begin
+        PRINT, 'sd_time is out of the selected beams. The data NOT DRAWN!'
+        continue
+      endif
       ;print, 'scan no: ',scno.y[idx]
       ;print, 'beam no:', bmno
       ;print, 'scan time: '+time_string(min(scno.x[bmno]))+' -- '+time_string(max(scno.x[bmno]))
