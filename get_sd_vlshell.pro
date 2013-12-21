@@ -132,7 +132,7 @@ PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, g
     xm = r*cos(glatm*!dtor)*cos(glonm*!dtor)
     ym = r*cos(glatm*!dtor)*sin(glonm*!dtor)
     zm = r*sin(glatm*!dtor)
-    mlatdir_dx_geo = xp-xm   ;AACGM MLT dir at the center of each pixel in GEO
+    mlatdir_dx_geo = xp-xm   ;AACGM MLat dir at the center of each pixel in GEO
     mlatdir_dy_geo = yp-ym   ;Positive is eastward
     mlatdir_dz_geo = zp-zm
     t = sqrt(mlatdir_dx_geo^2+mlatdir_dy_geo^2+mlatdir_dz_geo^2)
@@ -210,14 +210,21 @@ PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, g
     ztitle:'V_Lshell [m/s]', zrange:[-1000.,1000.] }
     
   if keyword_set(angle_var) then begin
+    ; This tplot variable contains angles between the beam direction (bmdir) and 
+    ; the local MLT direction for each pixel. The resultant angle is a positive 
+    ; value if the beam direction has a positive northward component in AACGM
+    ; and a negative value if it has a southward component in AACGM. 
+    ; For example, bmdir_mlat = 10 and bmdir_mlt = 10 then the angle should be +45 deg., and 
+    ; bmdir_mlat = -10 and bmdir_mlt = 10 then the angle should be -45 deg. 
     angle_var_vn = prefix+'mltdir-bmdir_angle_'+suf
     if strlen(tnames(angle_var_vn)) gt 6 then store_data,del=angle_var_vn
     store_data, angle_var_vn, $
-      data={x: vlos_time, y: acos(cos_vlos_mltdir_arr)*!radeg, $
+      data={x: vlos_time, $
+      y: acos(cos_vlos_mltdir_arr)*!radeg *sign(cos_vlos_mlatdir_arr), $
       v: vlos_v}, $
       dl={spec:1}, $
       lim={ytitle:vlos_lim.ytitle, ysubtitle:vlos_lim.ysubtitle, $
-      ztitle:'MLTdir-bmdir!Cangle [deg]', zrange:[0.,180.] }
+      ztitle:'MLTdir-bmdir!Cangle [deg]', zrange:[-180.,180.] }
   endif
   
   return
