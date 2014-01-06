@@ -1,6 +1,7 @@
 PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     geo_plot=geo_plot, linestyle=linestyle, beams=beams, linecolor=linecolor, $
-    linethick=linethick, draw_beamnum=draw_beamnum
+    linethick=linethick, draw_beamnum=draw_beamnum, $
+    rgrange=rgrange, pixelonly=pixelonly  
     
   ;Set the list of the available sites
     valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
@@ -68,8 +69,10 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
       for n=0L, n_elements(beams)-1 do begin
         bm = beams[n]
         if bm ge n_az or bm lt 0 then continue
-        PLOTS,tmlt[0:n_rg,bm],mlat[0:n_rg,bm], linestyle=linestyle, color=linecolor, thick=linethick
-        PLOTS,tmlt[0:n_rg,bm+1],mlat[0:n_rg,bm+1], linestyle=linestyle, color=linecolor, thick=linethick
+        if ~keyword_set(pixelonly) then begin
+          PLOTS,tmlt[0:n_rg,bm],mlat[0:n_rg,bm], linestyle=linestyle, color=linecolor, thick=linethick
+          PLOTS,tmlt[0:n_rg,bm+1],mlat[0:n_rg,bm+1], linestyle=linestyle, color=linecolor, thick=linethick
+        endif
         
         if keyword_set(draw_beamnum) then begin
           xyouts,  $
@@ -78,6 +81,30 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
             'bm'+string(bm,'(I2.2)'), $
             alignment=0.5
           endif
+          
+          if keyword_set(rgrange) then begin
+            rgn = rgrange
+            if n_elements(rgn) eq 1 then begin
+              if min(rgn) ge 0 and max(rgn) lt n_rg then begin
+                PLOTS,tmlt[rgn,bm:(bm+1)],mlat[rgn, bm:(bm+1)], linestyle=linestyle, color=linecolor, thick=linethick
+                PLOTS,tmlt[rgn+1,bm:(bm+1)],mlat[rgn+1, bm:(bm+1)], linestyle=linestyle, color=linecolor, thick=linethick
+                PLOTS,tmlt[rgn:(rgn+1), bm], mlat[rgn:(rgn+1), bm], linestyle=linestyle, color=linecolor, thick=linethick
+                PLOTS,tmlt[rgn:(rgn+1), bm+1], mlat[rgn:(rgn+1), bm+1], linestyle=linestyle, color=linecolor, thick=linethick
+              endif
+            endif
+            if n_elements(rgn) eq 2 then begin
+              rgn = minmax(rgn)
+              if rgn[0] ge 0 and rgn[1] lt n_rg then begin
+                for ii = rgn[0], rgn[1] do begin
+                  PLOTS,tmlt[ii, bm:(bm+1)],mlat[ii, bm:(bm+1)], linestyle=linestyle, color=linecolor, thick=linethick
+                  PLOTS,tmlt[ii+1, bm:(bm+1)],mlat[ii+1, bm:(bm+1)], linestyle=linestyle, color=linecolor, thick=linethick
+                  PLOTS,tmlt[ii:(ii+1), bm], mlat[ii:(ii+1), bm], linestyle=linestyle, color=linecolor, thick=linethick
+                  PLOTS,tmlt[ii:(ii+1), bm+1], mlat[ii:(ii+1), bm+1], linestyle=linestyle, color=linecolor, thick=linethick
+                endfor
+              endif
+            endif
+
+          endif ; if keyword_set(rgrange) then begin
           
       endfor
     endif
