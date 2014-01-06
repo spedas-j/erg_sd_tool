@@ -45,6 +45,8 @@ FUNCTION get_scan_struc_arr, vn
   ;Create a 2-D scan array and its time array
   vararr = fltarr( n_elements(scan), nrang, azmmax )
   timearr = dblarr(n_elements(scan))
+  beamtarr = dblarr(n_elements(scan), 2)
+  nbeamarr = intarr(n_elements(scan))
   vararr[*] = !values.f_nan
   
   ;Store data into the 2-D scan array
@@ -54,7 +56,10 @@ FUNCTION get_scan_struc_arr, vn
     if idx[0] ne -1 then begin
       timearr[i] = mean( vartime[idx] ) 
                   ;Time label is the average for tplot drawing
+      beamt = minmax( vartime[idx] ) 
+      beamtarr[i,*] = transpose( [ beamt[0], beamt[1] ] ) ; Start and end time of each scan 
       tazmno = azmno[idx]
+      nbeamarr[i] = n_elements(tazmno) 
       tvar = transpose(var[idx,*])
       for j=0, n_elements(tazmno)-1 do begin
         az = tazmno[j]
@@ -66,7 +71,7 @@ FUNCTION get_scan_struc_arr, vn
     endif
   endfor
   
-  return, {x:timearr, y:vararr}
+  return, {x:timearr, y:vararr, beamt:beamtarr, nbeam:nbeamarr }
 end
 
       
