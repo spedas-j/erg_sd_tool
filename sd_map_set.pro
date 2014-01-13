@@ -44,7 +44,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     force_scale=force_scale, $
     geo_plot=geo_plot, $
     stereo=stereo, $
-    charscale=charscale
+    charscale=charscale, $
+    nogrid=nogrid, twohourmltgrid=twohourmltgrid
     
   ;Initialize the SD plot environment
   sd_init
@@ -140,7 +141,10 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     ENDELSE
   ENDELSE
   
-  map_grid, latdel=10., londel=15.
+  if ~keyword_set(nogird) then begin
+    if ~keyword_set(twohourmltgrid) then map_grid, latdel=10., londel=15. $
+      else map_grid, latdel=10., londel=30.
+  endif
   
   ;Resize the canvas size for the position values
   scl = (!x.window[1]-!x.window[0]) < (!y.window[1]-!y.window[0])
