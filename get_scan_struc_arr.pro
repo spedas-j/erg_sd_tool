@@ -2,17 +2,22 @@
 ; FUNCTION get_scan_struc_arr
 ;
 ; :Description:
-; 	Obtain a structure storing SD data sorted by scan
+; 	Obtain a structure storing SD data sorted by scan. Usually this function is 
+; 	used by the other routines. 
 ;
 ; :EXAMPLES:
 ;   dat = get_scan_struc_arr( 'sd_hok_vlos_1' )
 ;
 ; :Author:
-; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
-; 	2011/07/01: Created
-;
+; 	2011/07/01: Initial release
+; 	
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$;
 ;-
 
 FUNCTION get_scan_struc_arr, vn 

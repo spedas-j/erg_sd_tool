@@ -14,7 +14,7 @@
 ;   asciidump_scan, 'sd_hok_vlos_1'
 ;   
 ; :History:
-; 2014-01-06: Initial release
+; 2014/01/06: Initial release
 ;
 ; :Author:
 ;   Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)

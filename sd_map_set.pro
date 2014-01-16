@@ -21,7 +21,9 @@
 ;    mltlabel:    set to draw the MLT labels every 2 hour.
 ;    lonlab:      a latitude from which (toward the poles) the MLT labels are drawn.
 ;    force_scale:   Forcibly put a given value in "scale" of map_set.
-;    stereo: Use the stereographic mapping, instead of satellite mapping (default)
+;    stereo: Use the stereographic projection, instead of satellite projection (default)
+;    nogrid: Set to prevent from drawing the lat-lon mesh
+;    twohourmltgrid: Set to draw the MLT lines for every other hour, instead of every hour (default)
 ;
 ; :EXAMPLES:
 ;    sd_map_set

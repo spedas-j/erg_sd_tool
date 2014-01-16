@@ -24,6 +24,10 @@
 ; :HISTORY:
 ; 	2011/07/01: Created
 ;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
 ;-
 PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix, $
   center_glat=center_glat, center_glon=center_glon, gscatmaskoff=gscatmaskoff, $

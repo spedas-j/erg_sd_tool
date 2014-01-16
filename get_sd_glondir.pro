@@ -1,4 +1,31 @@
-PRO get_sd_glondir, vlos_vn, glatp=glatp,glonp=glonp,glatm=glatm,glonm=glonm
+;+
+; PRO get_sd_glondir
+;
+; :Description:
+;    Generate a tplot variable containing angles between the beam direction and local geographical
+;    longitude direction for each pixel. 
+;
+; :Params:
+; vlos_vn:  Name of tplot variable for LOSV data. 
+;
+; :Keywords:
+; 
+;
+; :Examples:
+;   get_sd_glondir, 'sd_hok_vlos_1'
+;
+; :History:
+; 2014/01/06: Initial release
+;
+; :Author:
+;   Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
+;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
+;-
+PRO get_sd_glondir, vlos_vn
 
   ;Check the argument
   npar = N_PARAMS()

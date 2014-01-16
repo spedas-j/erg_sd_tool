@@ -1,3 +1,39 @@
+;+
+; PRO get_sd_vlshell
+;
+; :Description:
+;    Generate tplot variables cotaining true velocities by assuming that the true velocity is aligned to 
+;    the L-shell direction.  
+;
+; :Params:
+; vlos_vn:  Name of tplot variable for LOSV data (sd_???_vlos_?).
+;
+; :Keywords:
+; angle_var: Set this keyword to generate a tplot variable containing the angles 
+;                 between the beam direction and the local MLT direction for each pixel. 
+;                 See the comment at Line 247 for details. 
+; exclude_angle: Set an angle range, say [85.,95.], to substitute the L-shell assumed true velocities 
+;                       for pixels with beam-MLT angles falling in this range, with NaN.  
+; vmag:     additionally generate the V_MLAT (the MLAT component of LOSV) and 
+;               V_MLT (the MLT component of LOSV) tplot variables
+;
+; Currently glatp,glatm,glonp, and glonm are used only for debugging. 
+; 
+; :Examples:
+;   get_sd_vlshell, 'sd_hok_vlos_1', exclude_angle=[85,95], /angle_var, /vmag 
+;
+; :History:
+; 2013/02/06: Initial release
+; 2013/11/01: implemented vmag keyword
+;
+; :Author:
+;   Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
+;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
+;-
 PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, glatp=glatp,glonp=glonp,glatm=glatm,glonm=glonm, $
   vmag=vmag
   
