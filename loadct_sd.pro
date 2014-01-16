@@ -92,12 +92,12 @@ PRO cut_col_tab2, bottom_c
   positive_bottom = negative_top + 1
   
   ;For debugging
-  print, 'bottom_c=',bottom_c
-  print, 'negative_top=', negative_top
-  print, 'positive_bottom=', positive_bottom
-  print, 'top_c=', top_c
-  print, '# of negative colors=', negative_top - bottom_c +1
-  print, '# of positive colors=', top_c - positive_bottom +1
+;  print, 'bottom_c=',bottom_c
+;  print, 'negative_top=', negative_top
+;  print, 'positive_bottom=', positive_bottom
+;  print, 'top_c=', top_c
+;  print, '# of negative colors=', negative_top - bottom_c +1
+;  print, '# of positive colors=', top_c - positive_bottom +1
   
   ;Initialize
   red  =INTARR(top_c+2)
