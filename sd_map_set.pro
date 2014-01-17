@@ -144,8 +144,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   ENDELSE
   
   if ~keyword_set(nogird) then begin
-    if ~keyword_set(twohourmltgrid) then map_grid, latdel=10., londel=15. $
-      else map_grid, latdel=10., londel=30.
+    if ~keyword_set(twohourmltgrid) then sd_latlt_grid, dlat=10., dlt=1  $
+      else sd_latlt_grid, dlat=10., dlt=2
   endif
   
   ;Resize the canvas size for the position values
