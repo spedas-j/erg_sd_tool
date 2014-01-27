@@ -8,10 +8,11 @@
 ;
 ; :KEYWORDS:
 ;    sites: 3-letter code of SD radar name. 
-;           Currently only the following codes work: 
-;           'hok','ksr','sye','sys','bks','rkn','unw','tig', $
-;           'kod','inv','han','pyk', 'cve', 'cvw', 'fhe', 'fhw', $
-;           'sas', 'pgr', 'kap', 'gbr', 'sto', 'wal'
+;           Currently only the following station codes work: 
+;                 'ade', 'adw', 'bks', 'cly', 'cve', 'cvw', 'dce', 'fhe', 
+;                  'fhw', 'gbr', 'hal', 'han', 'hok', 'inv', 'kap', 'kod', 
+;                  'ksr', 'pgr', 'pyk', 'rkn', 'san', 'sas', 'sto', 'sye', 
+;                  'sys', 'tig', 'unw', 'wal', 'zho' 
 ;    cdffn: File path of a CDF file if given explicitly. 
 ;    get_support_data: Turn this on to load the supporting data 
 ;    trange: time range for which data are loaded. 
@@ -76,9 +77,10 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   sd_init
 
   ;Set the list of the available sites
-  valid_sites = [ 'hok','ksr','sye','sys','bks','rkn','unw','tig', $
-    'kod','inv','han','pyk', 'cve', 'cvw', 'fhe', 'fhw', $
-    'sas', 'pgr', 'kap', 'gbr', 'sto', 'wal' , 'ade', 'adw']
+  valid_sites = [ 'ade', 'adw', 'bks', 'cly', 'cve', 'cvw', 'dce', 'fhe', $
+                  'fhw', 'gbr', 'hal', 'han', 'hok', 'inv', 'kap', 'kod', $
+                  'ksr', 'pgr', 'pyk', 'rkn', 'san', 'sas', 'sto', 'sye', $
+                  'sys', 'tig', 'unw', 'wal', 'zho' ]
 
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
@@ -127,7 +129,8 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     datfileformat = 'YYYY/sd_fitacf_l2_'+stn+'_YYYYMMDD*cdf'
     relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
     
-    datfiles = file_retrieve(relfnames, _extra=source)
+    datfiles = file_retrieve(relfnames, $
+        local_data_dir=source.local_data_dir,remote_data_dir=source.remote_data_dir)
     IF total(file_test(datfiles)) eq 0 THEN BEGIN
       print, 'Cannot download/find data file: '+datfiles
       PRINT, 'No data was loaded!'
