@@ -130,7 +130,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
     
     datfiles = file_retrieve(relfnames, $
-        local_data_dir=source.local_data_dir,remote_data_dir=source.remote_data_dir)
+        local_data_dir=source.local_data_dir,remote_data_dir=source.remote_data_dir, _extra=source)
     IF total(file_test(datfiles)) eq 0 THEN BEGIN
       print, 'Cannot download/find data file: '+datfiles
       PRINT, 'No data was loaded!'
