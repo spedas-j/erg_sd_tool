@@ -35,7 +35,8 @@
 
 ;-
 PRO overlay_map_vec, lat0, lon0, dlat, dlon, arclength, $
-  linethick=linethick, color=color
+  linethick=linethick, color=color, $
+  nooriginpoint=nooriginpoint
   
   ;Check the arguments
   npar = n_params()
@@ -49,7 +50,7 @@ PRO overlay_map_vec, lat0, lon0, dlat, dlon, arclength, $
   
   
   ;Plot!
-  plots, lon0,lat0, psym=4, symsize=1.2
+  if ~keyword_set(nooriginpoint) then plots, lon0,lat0, psym=4, symsize=1.2
   plots, [lon0,lon1], [lat0,lat1], thick=linethick, color=color
 
 
