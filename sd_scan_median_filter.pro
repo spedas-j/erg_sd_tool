@@ -1,4 +1,20 @@
-pro sd_scan_median_filter, vns, swidth=swidth, clipval=clipval
+;+
+;  PROCEDURE sd_scan_median_filter 
+;  
+; :Description:
+;    Detrend LOSV data by interpolating them by spatially median-filtering, then subtracting the smoothed-in-time trend. 
+;
+; :Params:
+;    vns: a tplot variable to be median-filtered. Currently only sd_???_vlos_? is acceptable. 
+;
+; :Keywords:
+;    swidth:  Spatial width in a 2D scan with which LOSV values are median-filtered 
+;    clipval:   a value to clip the input data. Data beyond +/- this value are replaced by NaN, then ignored. 
+;    detrend_t:   Time interval for which the median-interpolated data are running-averaged. 
+;
+; :Author: horit
+;-
+pro sd_scan_median_filter, vns, swidth=swidth, clipval=clipval, detrend_t=detrend_t 
 
   npar = n_params()
   if npar ne 1 then return
@@ -14,6 +30,7 @@ pro sd_scan_median_filter, vns, swidth=swidth, clipval=clipval
   ;;tsmooth_in_time
   if ~keyword_set(swidth) then swidth = 3
   if ~keyword_set(clipval) then clipval = 1000. ;[m/s]
+  if ~keyword_set(detrend_t) then detrend_t = 1000.  ;[sec] 
   
   vn = (tnames(vns))[0]
   prefix = strmid( vn, 0, 7 )
@@ -54,7 +71,15 @@ pro sd_scan_median_filter, vns, swidth=swidth, clipval=clipval
     
    endfor
     
-    store_data, trunk+'_filtered_'+suf, data={x:bmtime, y:newval, v:v}, dl=dl, lim=lim
+    store_data, trunk+'_med-interp_'+suf, data={x:bmtime, y:newval, v:v}, dl=dl, lim=lim
+    
+    tsmooth_in_time, trunk+'_med-interp_'+suf, detrend_t, newname='tmp' 
+    
+    get_data, vn, data=d, dl=dl, lim=lim
+    get_data, 'tmp', data=ds, dl=dls, lim=lims 
+    store_Data, trunk+'_detrended_'+suf, data={x:d.x, y:d.y-ds.y, v:d.v}, dl=dl, lim=lim
+    store_data, delete='tmp'
+    tplot_names, trunk+'_detrended_'+suf
     
     return
   end
