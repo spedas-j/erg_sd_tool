@@ -36,11 +36,15 @@
 ;-
 PRO overlay_map_vec, lat0, lon0, dlat, dlon, arclength, $
   linethick=linethick, color=color, $
+  psym=psym, symsize=symsize, $
   nooriginpoint=nooriginpoint
   
   ;Check the arguments
   npar = n_params()
   if npar ne 5 then return 
+  
+  if ~keyword_set(psym) then psym = 4 
+  if ~keyword_set(symsize) then symsize = 0.8 
   
   ;Calculate the end point of a vector with given arclength
   the0 = 90. - lat0 & dthe = (-1.)*dlat
@@ -50,7 +54,7 @@ PRO overlay_map_vec, lat0, lon0, dlat, dlon, arclength, $
   
   
   ;Plot!
-  if ~keyword_set(nooriginpoint) then plots, lon0,lat0, psym=4, symsize=0.8, color=color
+  if ~keyword_set(nooriginpoint) then plots, lon0,lat0, psym=psym, symsize=symsize, color=color
   plots, [lon0,lon1], [lat0,lat1], thick=linethick, color=color
 
 
