@@ -143,7 +143,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     ENDELSE
   ENDELSE
   
-  if ~keyword_set(nogird) then begin
+  if ~keyword_set(nogrid) then begin
     if ~keyword_set(twohourmltgrid) then sd_latlt_grid, dlat=10., dlt=1  $
       else sd_latlt_grid, dlat=10., dlt=2
   endif
