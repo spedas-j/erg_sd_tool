@@ -40,7 +40,15 @@ if out eq '' then sd_init
 
 if !sdarn.aacgm_dlm_exists then begin 
   ;print, 'using AACGM_DLM'
-  return, aacgm_mlt(yr,t0,mlon)
+  mlt_tmp = aacgm_mlt(yr,t0,mlon)
+  mlt = mlon 
+  if (size(mlt[0]))[1] eq 4 then begin 
+    mlt[*] = float( mlt_tmp[*] )
+  endif else begin
+    mlt[*] = mlt_tmp[*]
+  endelse 
+  return, (mlt+24.) mod 24 
+  
 endif else begin
   mlt=mlon
   mlt[*]=0.
@@ -50,7 +58,7 @@ endif else begin
     ;print, 'cnv_aacgm was executed'
     ;print, glat[i],glon[i],alt[i],'   ',mlat[i],mlon[i],r,err
   endfor
-  return, mlt
+  return, (mlt+24.) mod 24 
 endelse
 
 return, !values.f_nan ;error 
