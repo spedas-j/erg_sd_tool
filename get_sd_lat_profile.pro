@@ -1,3 +1,36 @@
+;+
+; FUNCTION get_sd_lat_profile
+;
+; :Description:
+;   Obtain a tplot variable storing a time series of the values
+;   averaged over the given latitude/longitude range, to be plotted as a RTI-type plot.
+;   This procedure calls get_sd_ave() internally. 
+;
+; :PARAMTERS:
+; vn : a tplot variable the values in which are to be averaged
+;
+; :KEYWORD:
+; latrng: the geographical latitude range for which the given values are averaged
+; dlat:   latitudial width of each latitudinal bin for which the average values are obtained.  
+; lonrng: the geographical longitude range for averaging
+; maglat: Set this keyword if you give the latrng in magnetic latitude, not in geographical latitude. 
+; new_vn: Set a string to create a new tplot variable containing the averaged values
+;
+; :EXAMPLES:
+;   erg_load_sdfit, site='hok',/get
+;   get_sd_lat_profile, 'sd_hok_vlos_1', latrng=[60,70], lonrng=[140,170], dlat=2., /maglat
+;
+; :Author:
+;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;
+; :HISTORY:
+;   2011/07/03: Created
+;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
+;-
 PRO get_sd_lat_profile, vn, latrng=latrng, lonrng=lonrng, dlat=dlat, maglat=maglat, new_vn=new_vn
   
   ;Currently this procedure can take as an argument:

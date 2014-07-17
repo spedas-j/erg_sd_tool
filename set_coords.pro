@@ -32,7 +32,7 @@ pro set_coords, tplot_vars, coord, quiet=quiet
   npar = n_params()
   if npar eq 0 then begin
     print, 'Usage:'
-    print, "       set_coords, ['var1','var2'...], {'gate'|'glat'|'mlat'}"
+    print, "       set_coords, ['var1','var2'...], {'gate'|'glat'|'mlat'|'mlt'}"
     print, "e.g., set_coords, 'sd_hok_vlos_1', 'mlat'"
     return
   endif
@@ -95,6 +95,9 @@ pro set_coords, tplot_vars, coord, quiet=quiet
         END
         'glat': BEGIN
           options, vn, 'ysubtitle','GEO Lat [deg]'
+        END
+        'mlt': BEGIN
+          options, vn, 'ysubtitle','MLT [hr]'
         END
       ENDCASE
 
@@ -161,6 +164,61 @@ pro set_coords, tplot_vars, coord, quiet=quiet
         if ~keyword_set(quiet) then $
           print, vn+': vertical axis --> '+'AACGM lat.'
 
+      end
+      
+      'mlt': begin
+      
+        if is_azimvar then begin
+          azimno = fix( strmid( stregex(vn, 'azim(0|1|2|3|4|5|6|7|8|9){2}', /ext), 4,2 ) )
+          glat = reform( glatarr[ *, azimno] )
+          glon = reform( glonarr[ *, azimno] )
+          ;GEO --> AACGM, assuming 400km
+          aacgmconvcoord, glat, glon, replicate(400.,rgmax), mlat,mlon,err,/TO_AACGM
+          
+          mlonarr = replicate(1., n_elements(d.x)) # transpose(mlon) ; No. of time x rg
+          ts = time_struct(d.x) & yrsec = long( (ts.doy-1)*86400. + ts.sod )
+          yrarr = ts.year # transpose(replicate(1.,rgmax))
+          yrsecarr = yrsec # transpose(replicate(1.,rgmax))
+          mltarr = aacgmmlt( yrarr, yrsecarr, mlonarr )
+          mlonarr[*] = mltarr[*]  ;a workaround to avoid a bug of Unix AACGM DLM
+          
+          str_element, d, 'v', mlonarr, /add_replace
+          store_data, vn, data=d, dl=dl, lim=lim
+          
+        endif else begin ;Cases of tplot vars containing all (0-15) beams
+          glat = glatarr[ *, *]
+          glon = glonarr[ *, *]
+          alt = glat & alt[*,*] = 400. ;km
+          aacgmconvcoord, glat,glon,alt, mlat,mlon,err,/TO_AACGM
+          ; For Unix ver. AACGM DLM bug
+          if (size(mlat))[0] ne (size(glat))[0] then begin
+            mlat = reform(mlat,rgmax,azmmax) & mlon = reform(mlon,rgmax,azmmax)
+            mlat = float(mlat) & mlon = float(mlon)
+          endif
+          ;newv = d.y & newv[*,*] = !values.f_nan ;Create an array of the same dimension and initialize it
+          mlonarr = d.y & mlonarr[*,*] = !values.f_nan 
+          for n=0, azmmax-1 do begin
+            idx = where( az.y eq n ) & if idx[0] eq -1 then continue
+            mlonarr[idx,*] = replicate(1.,n_elements(idx)) # transpose(mlon[*,n])
+          endfor
+          ts = time_struct(d.x) & yrsec = long( (ts.doy-1)*86400. + ts.sod )
+          yrarr = ts.year # transpose(replicate(1.,rgmax))
+          yrsecarr = yrsec # transpose(replicate(1.,rgmax))
+          mltarr = aacgmmlt( yrarr, yrsecarr, mlonarr )
+          mlonarr[*] = mltarr[*]  ;a workaround to avoid a bug of Unix AACGM DLM
+          str_element, d, 'v', mlonarr, /add_replace
+          store_data, vn, data=d, dl=dl, lim=lim
+          
+        endelse
+        
+        yr = minmax(d.v)
+        ylim, vn, 0,24
+        options, vn, 'ystyle', 1
+        options, vn, ysubtitle='MLT [hr]'
+        
+        if ~keyword_set(quiet) then $
+          print, vn+': vertical axis --> '+'AACGM MLT'
+          
       end
       
       'glat': begin

@@ -16,7 +16,8 @@
 ;    nocolorscale: Set to surpress drawing the color scale 
 ;    colorscalepos: Set the position of the color scale in the noraml 
 ;                   coordinates. Default: [0.85, 0.1, 0.87, 0.45] 
-;    pixel_scale: Set a values of range 0.0-1.0 to scale pixels drawn on a 2D map plot
+;    pixel_scale: Set a value of range 0.0-1.0 to scale pixels drawn on a 2D map plot
+;    charscale: Set a value of font size to write the time label and letters for the color scale
 ;
 ; :AUTHOR:
 ; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
@@ -236,7 +237,7 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
           ;Color level for val
           clvl = clmin + cnum*(val-valrng[0])/(valrng[1]-valrng[0])
           clvl = (clvl > clmin)
-          clvl = (clvl < clmax) ; clmin <= color level <= clmax
+          clvl = (clvl < (clmax-1) ) ; clmin <= color level <= clmax-1
           IF FIX(echflgarr[j]) ne 1 AND strpos(tdatvn,'_pwr') lt 0 $
             AND strpos(tdatvn,'spec_width') lt 0 THEN BEGIN
             ;ground echo case

@@ -21,7 +21,9 @@
 ;    mltlabel:    set to draw the MLT labels every 2 hour.
 ;    lonlab:      a latitude from which (toward the poles) the MLT labels are drawn.
 ;    force_scale:   Forcibly put a given value in "scale" of map_set.
-;    stereo: Use the stereographic mapping, instead of satellite mapping (default)
+;    stereo: Use the stereographic projection, instead of satellite projection (default)
+;    nogrid: Set to prevent from drawing the lat-lon mesh
+;    twohourmltgrid: Set to draw the MLT lines for every other hour, instead of every hour (default)
 ;
 ; :EXAMPLES:
 ;    sd_map_set
@@ -44,7 +46,8 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     force_scale=force_scale, $
     geo_plot=geo_plot, $
     stereo=stereo, $
-    charscale=charscale
+    charscale=charscale, $
+    nogrid=nogrid, twohourmltgrid=twohourmltgrid
     
   ;Initialize the SD plot environment
   sd_init
@@ -140,7 +143,10 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     ENDELSE
   ENDELSE
   
-  map_grid, latdel=10., londel=15.
+  if ~keyword_set(nogrid) then begin
+    if ~keyword_set(twohourmltgrid) then sd_latlt_grid, dlat=10., dlt=1  $
+      else sd_latlt_grid, dlat=10., dlt=2
+  endif
   
   ;Resize the canvas size for the position values
   scl = (!x.window[1]-!x.window[0]) < (!y.window[1]-!y.window[0])

@@ -1,6 +1,42 @@
+;+
+; PRO get_sd_vlshell
+;
+; :Description:
+;    Generate tplot variables cotaining true velocities by assuming that the true velocity is aligned to 
+;    the L-shell direction.  
+;
+; :Params:
+; vlos_vn:  Name of tplot variable for LOSV data (sd_???_vlos_?).
+;
+; :Keywords:
+; angle_var: Set this keyword to generate a tplot variable containing the angles 
+;                 between the beam direction and the local MLT direction for each pixel. 
+;                 See the comment at Line 247 for details. 
+; exclude_angle: Set an angle range, say [85.,95.], to substitute the L-shell assumed true velocities 
+;                       for pixels with beam-MLT angles falling in this range, with NaN.  
+; vmag:     additionally generate the V_MLAT (the MLAT component of LOSV) and 
+;               V_MLT (the MLT component of LOSV) tplot variables
+;
+; Currently glatp,glatm,glonp, and glonm are used only for debugging. 
+; 
+; :Examples:
+;   get_sd_vlshell, 'sd_hok_vlos_1', exclude_angle=[85,95], /angle_var, /vmag 
+;
+; :History:
+; 2013/02/06: Initial release
+; 2013/11/01: implemented vmag keyword
+;
+; :Author:
+;   Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
+;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
+;-
 PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, glatp=glatp,glonp=glonp,glatm=glatm,glonm=glonm, $
-    vmag=vmag
-    
+  vmag=vmag
+  
   ;Check the argument
   npar = n_params()
   if npar ne 1 then return
@@ -114,40 +150,42 @@ PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, g
     + beam_dz_geo*mltdir_dz_geo   ;as a 2-D array in [nrang,azmax]
     
   ;;; Generate the Vmlat and Vmlt tplot vars
+  
+  ;;;Get unit vectors of the "AACGM LAT direction" in GEO
+  glat = ctbl[*,*,1] & glon = ctbl[*,*,0]
+  altarr = glat & altarr[*,*] = alt
+  aacgmconvcoord, glat,glon,altarr, mlat,mlon,err,/TO_AACGM
+  mlon = ( mlon + 360. ) mod 360.
+  mlatp = (mlat + 0.1) < 90.0
+  mlatm = (mlat - 0.1) > (-90.0)
+  aacgmconvcoord, mlatp,mlon,altarr,glatp,glonp,err, /TO_GEO
+  aacgmconvcoord, mlatm,mlon,altarr,glatm,glonm,err, /TO_GEO
+  ;return
+  xp = r*cos(glatp*!dtor)*cos(glonp*!dtor)
+  yp = r*cos(glatp*!dtor)*sin(glonp*!dtor)
+  zp = r*sin(glatp*!dtor)
+  xm = r*cos(glatm*!dtor)*cos(glonm*!dtor)
+  ym = r*cos(glatm*!dtor)*sin(glonm*!dtor)
+  zm = r*sin(glatm*!dtor)
+  mlatdir_dx_geo = xp-xm   ;AACGM MLat dir at the center of each pixel in GEO
+  mlatdir_dy_geo = yp-ym   ;Positive is eastward
+  mlatdir_dz_geo = zp-zm
+  t = sqrt(mlatdir_dx_geo^2+mlatdir_dy_geo^2+mlatdir_dz_geo^2)
+  mlatdir_dx_geo /= t & mlatdir_dy_geo /= t & mlatdir_dz_geo /= t ;normalized
+  
+  ;;;Get an angle between VLOS and MLAT dir
+  cos_vlos_mlatdir = beam_dx_geo*mlatdir_dx_geo + beam_dy_geo*mlatdir_dy_geo $
+    + beam_dz_geo*mlatdir_dz_geo   ;as a 2-D array in [nrang,azmax]
+
+    
+  ;;;Get Vmlat and Vmlt
+  cos_vlos_mlatdir_arr = (transpose(cos_vlos_mlatdir))[azmno, * ]
+  cos_vlos_mltdir_arr = (transpose(cos_vlos_mltdir))[ azmno, * ]
+  vmlat = -vlos * cos_vlos_mlatdir_arr
+  vmlt = -vlos * cos_vlos_mltdir_arr
+  
   if keyword_set(vmag) then begin
   
-    ;;;Get unit vectors of the "AACGM LAT direction" in GEO
-    glat = ctbl[*,*,1] & glon = ctbl[*,*,0]
-    altarr = glat & altarr[*,*] = alt
-    aacgmconvcoord, glat,glon,altarr, mlat,mlon,err,/TO_AACGM
-    mlon = ( mlon + 360. ) mod 360.
-    mlatp = (mlat + 0.1) < 90.0
-    mlatm = (mlat - 0.1) > (-90.0)
-    aacgmconvcoord, mlatp,mlon,altarr,glatp,glonp,err, /TO_GEO
-    aacgmconvcoord, mlatm,mlon,altarr,glatm,glonm,err, /TO_GEO
-    ;return
-    xp = r*cos(glatp*!dtor)*cos(glonp*!dtor)
-    yp = r*cos(glatp*!dtor)*sin(glonp*!dtor)
-    zp = r*sin(glatp*!dtor)
-    xm = r*cos(glatm*!dtor)*cos(glonm*!dtor)
-    ym = r*cos(glatm*!dtor)*sin(glonm*!dtor)
-    zm = r*sin(glatm*!dtor)
-    mlatdir_dx_geo = xp-xm   ;AACGM MLT dir at the center of each pixel in GEO
-    mlatdir_dy_geo = yp-ym   ;Positive is eastward
-    mlatdir_dz_geo = zp-zm
-    t = sqrt(mlatdir_dx_geo^2+mlatdir_dy_geo^2+mlatdir_dz_geo^2)
-    mlatdir_dx_geo /= t & mlatdir_dy_geo /= t & mlatdir_dz_geo /= t ;normalized
-    
-    ;;;Get an angle between VLOS and MLAT dir
-    cos_vlos_mlatdir = beam_dx_geo*mlatdir_dx_geo + beam_dy_geo*mlatdir_dy_geo $
-      + beam_dz_geo*mlatdir_dz_geo   ;as a 2-D array in [nrang,azmax]
-      
-    ;;;Get Vmlat and Vmlt
-    cos_vlos_mlatdir_arr = (transpose(cos_vlos_mlatdir))[azmno, * ]
-    cos_vlos_mltdir_arr = (transpose(cos_vlos_mltdir))[ azmno, * ]
-    vmlat = -vlos * cos_vlos_mlatdir_arr
-    vmlt = -vlos * cos_vlos_mltdir_arr
-    
     ;;;Store into a tplot variable
     vmlat_vn = prefix+'vmlat_'+suf
     if strlen(tnames(vmlat_vn)) gt 6 then $
@@ -159,7 +197,7 @@ PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, g
       lim={ytitle:vlos_lim.ytitle, ysubtitle:vlos_lim.ysubtitle, $
       ztitle:'V_Mlat [m/s]', zrange:[-1000.,1000.] }
       
-      vmlt_vn = prefix+'vmlt_'+suf
+    vmlt_vn = prefix+'vmlt_'+suf
     if strlen(tnames(vmlt_vn)) gt 6 then $
       store_data, delete=vmlt_vn
       
@@ -210,14 +248,21 @@ PRO get_sd_vlshell, vlos_vn, angle_var=angle_var, exclude_angle=exclude_angle, g
     ztitle:'V_Lshell [m/s]', zrange:[-1000.,1000.] }
     
   if keyword_set(angle_var) then begin
+    ; This tplot variable contains angles between the beam direction (bmdir) and 
+    ; the local MLT direction for each pixel. The resultant angle is a positive 
+    ; value if the beam direction has a positive northward component in AACGM
+    ; and a negative value if it has a southward component in AACGM. 
+    ; For example, bmdir_mlat = 10 and bmdir_mlt = 10 then the angle should be +45 deg., and 
+    ; bmdir_mlat = -10 and bmdir_mlt = 10 then the angle should be -45 deg. 
     angle_var_vn = prefix+'mltdir-bmdir_angle_'+suf
     if strlen(tnames(angle_var_vn)) gt 6 then store_data,del=angle_var_vn
     store_data, angle_var_vn, $
-      data={x: vlos_time, y: acos(cos_vlos_mltdir_arr)*!radeg, $
+      data={x: vlos_time, $
+      y: acos(cos_vlos_mltdir_arr)*!radeg *sign(cos_vlos_mlatdir_arr), $
       v: vlos_v}, $
       dl={spec:1}, $
       lim={ytitle:vlos_lim.ytitle, ysubtitle:vlos_lim.ysubtitle, $
-      ztitle:'MLTdir-bmdir!Cangle [deg]', zrange:[0.,180.] }
+      ztitle:'MLTdir-bmdir!Cangle [deg]', zrange:[-180.,180.] }
   endif
   
   return

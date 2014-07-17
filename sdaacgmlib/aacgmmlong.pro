@@ -41,7 +41,14 @@ if !sdarn.aacgm_dlm_exists then begin
   ;print, 'using AACGM_DLM'
   tmlon = aacgm_mlong(yr,t0,mlt)
   tmlon = ( tmlon + 360. ) mod 360.
-  return, tmlon
+  mlon = mlt 
+  if (size(mlt[0]))[1] eq 4 then begin
+    mlon[*] = float( tmlon[*] ) 
+  endif else begin
+    mlon[*] = tmlon[*] 
+  endelse
+  return, mlon
+  
 endif else begin
   cnv_aacgm,0.0,0.0,0.001,mlat0,mlon0,r,err,/geo
   mlon0 = ( mlon0 + 360. ) mod 360.

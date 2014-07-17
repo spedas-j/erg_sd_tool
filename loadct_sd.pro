@@ -6,6 +6,8 @@
 ; yellow (color=5) replaced with grey. In addition, if you run 
 ; this with an argument of 44 (e.g., loadct_sd, 44), then it 
 ; loads the Cutlass color table often used for SuperDARN data. 
+; Using this with 45 as an argument gives you a color table similar to 
+; the one that was used in the JHU/APL SD site. 
 ; 
 ; :AUTHOR:
 ;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
@@ -92,12 +94,12 @@ PRO cut_col_tab2, bottom_c
   positive_bottom = negative_top + 1
   
   ;For debugging
-  print, 'bottom_c=',bottom_c
-  print, 'negative_top=', negative_top
-  print, 'positive_bottom=', positive_bottom
-  print, 'top_c=', top_c
-  print, '# of negative colors=', negative_top - bottom_c +1
-  print, '# of positive colors=', top_c - positive_bottom +1
+;  print, 'bottom_c=',bottom_c
+;  print, 'negative_top=', negative_top
+;  print, 'positive_bottom=', positive_bottom
+;  print, 'top_c=', top_c
+;  print, '# of negative colors=', negative_top - bottom_c +1
+;  print, '# of positive colors=', top_c - positive_bottom +1
   
   ;Initialize
   red  =INTARR(top_c+2)

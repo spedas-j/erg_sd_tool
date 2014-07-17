@@ -24,6 +24,10 @@
 ; :HISTORY:
 ; 	2011/07/03: Created
 ;
+; $LastChangedBy:$
+; $LastChangedDate:$
+; $LastChangedRevision:$
+; $URL:$
 ;-
 FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, new_vn=new_vn
   
