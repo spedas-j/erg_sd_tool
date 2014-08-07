@@ -141,7 +141,8 @@ END
 
 ;-----------------------------------------------------------------------
 
-PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct
+PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct, $
+  center_hatched=center_hatched, hatched_color=hatched_color 
   COMMON colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   @colors_com
   
@@ -212,6 +213,25 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct
   r[cols] = BYTE([0,1,0,0,0,0.553,1,1]*255)
   g[cols] = BYTE([0,0,0,1,1,0.553,0,1]*255)
   b[cols] = BYTE([0,1,1,1,0,0.553,0,1]*255)
+  
+  ;Hatch the colors around the center of the table
+  if keyword_set(center_hatched) then begin
+    hwidth = fix(21)  ; elements in a color table. This should be an odd number. 
+    halfwidth = (hwidth-1)/2  
+    cnt_c = round( (top_c + bottom_c)/2. ) 
+    cols = indgen(hwidth) + cnt_c - halfwidth  
+    dis = ( cols - cnt_c ) / float(halfwidth) 
+    
+    r_hatched = byte(  r[cols] + (255-r[cols])*(1.-abs(dis)^2)  ) 
+    r[cols] = r_hatched 
+    g_hatched = byte(  g[cols] + (255-g[cols])*(1.-abs(dis)^2)  )
+    g[cols] = g_hatched
+    b_hatched = byte(  b[cols] + (255-b[cols])*(1.-abs(dis)^2)  )
+    b[cols] = b_hatched
+
+  endif
+  
+  ;Redefine the color table using the newly contructed RGB values 
   TVLCT,r,g,b
   
   r_curr = r  ;Important!  Update the colors common block.
