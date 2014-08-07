@@ -142,7 +142,7 @@ END
 ;-----------------------------------------------------------------------
 
 PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct, $
-  center_hatched=center_hatched, hatched_color=hatched_color 
+  center_hatched=center_hatched, hatched_width=hatched_width, hatched_color=hatched_color 
   COMMON colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   @colors_com
   
@@ -216,7 +216,11 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
   
   ;Hatch the colors around the center of the table
   if keyword_set(center_hatched) then begin
-    hwidth = fix(21)  ; elements in a color table. This should be an odd number. 
+    if ~keyword_set(hatched_width) then begin
+      hwidth = fix(21)  ; elements in a color table. This should be an odd number. 
+    endif else hwidth = fix(hatched_width) 
+    if (hwidth mod 2) eq 0 then hwidth++
+    
     halfwidth = (hwidth-1)/2  
     cnt_c = round( (top_c + bottom_c)/2. ) 
     cols = indgen(hwidth) + cnt_c - halfwidth  
