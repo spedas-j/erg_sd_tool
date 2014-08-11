@@ -1,26 +1,26 @@
 ;+
 ; PROCEDURE loadct_sd
-; 
+;
 ; :DESCRIPTION:
 ; Basically this procedure is the same as loadct2.pro except for
-; yellow (color=5) replaced with grey. In addition, if you run 
-; this with an argument of 44 (e.g., loadct_sd, 44), then it 
-; loads the Cutlass color table often used for SuperDARN data. 
-; Using this with 45 as an argument gives you a color table similar to 
-; the one that was used in the JHU/APL SD site. 
-; 
+; yellow (color=5) replaced with grey. In addition, if you run
+; this with an argument of 44 (e.g., loadct_sd, 44), then it
+; loads the Cutlass color table often used for SuperDARN data.
+; Using this with 45 as an argument gives you a color table similar to
+; the one that was used in the JHU/APL SD site.
+;
 ; :AUTHOR:
 ;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
 ; :HISTORY:
-;   2010/11/20: created 
-; 
+;   2010/11/20: created
+;
 ; $LastChangedBy: $
 ; $LastChangedDate: $
 ; $LastChangedRevision: $
 ; $URL: $
 ;-
 
-;To define the cutlass color table. The RGB values are loaded 
+;To define the cutlass color table. The RGB values are loaded
 ;from cut_col_tab.dat which should be placed in the same directory.
 PRO cut_col_tab
 
@@ -30,7 +30,7 @@ PRO cut_col_tab
   red  =INTARR(ncol)
   green=INTARR(ncol)
   blue =INTARR(ncol)
-    
+  
   colour_table=INTARR(4,256)
   
   stack = SCOPE_TRACEBACK(/structure)
@@ -60,7 +60,7 @@ PRO cut_col_tab
     indx=indx+skip
   ENDFOR
   
-  ; Swap colour bar so that color goes red -> yellow -> green -> blue 
+  ; Swap colour bar so that color goes red -> yellow -> green -> blue
   red_swap  =red
   blue_swap =blue
   green_swap=green
@@ -79,8 +79,8 @@ PRO cut_col_tab
 END
 
 ;-----------------------------------------------------------------------
-PRO cut_col_tab2, bottom_c 
-  
+PRO cut_col_tab2, bottom_c
+
   if n_params() ne 1 then bottom_c = 7 ;default
   
   ;Load the Cutlass table first
@@ -90,16 +90,16 @@ PRO cut_col_tab2, bottom_c
   tvlct, r, g, b, /get
   top_c = !d.table_size-2   ; color=!d.table_size-1 is assigned to white in TDAS
   
-  negative_top = bottom_c + fix(ceil((top_c - bottom_c)/2.)) -1  
+  negative_top = bottom_c + fix(ceil((top_c - bottom_c)/2.)) -1
   positive_bottom = negative_top + 1
   
   ;For debugging
-;  print, 'bottom_c=',bottom_c
-;  print, 'negative_top=', negative_top
-;  print, 'positive_bottom=', positive_bottom
-;  print, 'top_c=', top_c
-;  print, '# of negative colors=', negative_top - bottom_c +1
-;  print, '# of positive colors=', top_c - positive_bottom +1
+  ;  print, 'bottom_c=',bottom_c
+  ;  print, 'negative_top=', negative_top
+  ;  print, 'positive_bottom=', positive_bottom
+  ;  print, 'top_c=', top_c
+  ;  print, '# of negative colors=', negative_top - bottom_c +1
+  ;  print, '# of positive colors=', top_c - positive_bottom +1
   
   ;Initialize
   red  =INTARR(top_c+2)
@@ -128,7 +128,7 @@ PRO cut_col_tab2, bottom_c
     green[i+positive_bottom]=pos_g[idx]
     blue[i+positive_bottom] =pos_b[idx]
   endfor
-   
+  
   
   
   IF !D.NAME NE 'NULL' AND !d.name NE 'HP'THEN BEGIN
@@ -142,7 +142,7 @@ END
 ;-----------------------------------------------------------------------
 
 PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct, $
-  center_hatched=center_hatched, hatched_width=hatched_width, hatched_color=hatched_color 
+  center_hatched=center_hatched, hatched_width=hatched_width, hatched_color=hatched_color
   COMMON colors, r_orig, g_orig, b_orig, r_curr, g_curr, b_curr
   @colors_com
   
@@ -153,7 +153,7 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
     dir = FILE_DIRNAME(filename)
     deffile = FILE_SEARCH(dir+'/col_tbl/'+'colors*.tbl',count=nf)
     IF nf GT 0 THEN deffile=deffile[nf-1]              ; Use last one found
-  ;dprint,'Using color table: ',deffile,dlevel=3
+    ;dprint,'Using color table: ',deffile,dlevel=3
   ENDIF
   IF NOT KEYWORD_SET(file) AND KEYWORD_SET(deffile) THEN file=deffile
   
@@ -173,7 +173,7 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
     print, 'The number of currently available color tables are 0-45.'
     print, 'Please specify a table number of the above range.'
     return
-  endif 
+  endif
   
   IF N_ELEMENTS(color_table) EQ 0 THEN color_table=ct
   previous_ct =  color_table
@@ -217,25 +217,42 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
   ;Hatch the colors around the center of the table
   if keyword_set(center_hatched) then begin
     if ~keyword_set(hatched_width) then begin
-      hwidth = fix(21)  ; elements in a color table. This should be an odd number. 
-    endif else hwidth = fix(hatched_width) 
+      hwidth = fix(21)  ; elements in a color table. This should be an odd number.
+    endif else hwidth = fix(hatched_width)
     if (hwidth mod 2) eq 0 then hwidth++
+    if ~keyword_set(hatched_color) then begin
+      r_h = 255 & g_h = 255 & b_h = 255  ;White
+    endif else begin
+      if n_elements(hatched_color) eq 3 then begin ;given as [r,g,b] 
+        r_h = hatched_color[0] & g_h = hatched_color[1] & b_h = hatched_color[2]
+      endif else begin  ;given as a scalar
+        if hatched_color lt 0 or hatched_color ge n_elements(r) then begin
+          r_h = 255 & g_h = 255 & b_h = 255  ;White
+        endif else begin
+          r_h = r[hatched_color] & g_h = g[hatched_color] & b_h = b[hatched_color]
+        endelse
+      endelse
+    endelse
     
-    halfwidth = (hwidth-1)/2  
-    cnt_c = round( (top_c + bottom_c)/2. ) 
-    cols = indgen(hwidth) + cnt_c - halfwidth  
-    dis = ( cols - cnt_c ) / float(halfwidth) 
+    halfwidth = (hwidth-1)/2
+    cnt_c = round( (top_c + bottom_c)/2. )
+    cols = indgen(hwidth) + cnt_c - halfwidth
+    mincols = min(cols) & maxcols = max(cols)
+    dis = ( cols - cnt_c ) / float(halfwidth)
+    basecol = cols
+    basecol[where(cols lt cnt_c)] = mincols
+    basecol[where(cols ge cnt_c)] = maxcols
     
-    r_hatched = byte(  r[cols] + (255-r[cols])*(1.-abs(dis)^2)  ) 
-    r[cols] = r_hatched 
-    g_hatched = byte(  g[cols] + (255-g[cols])*(1.-abs(dis)^2)  )
+    r_hatched = byte(  r[basecol] + (fix(r_h)-r[basecol])*(1.-abs(dis)^2)  )
+    r[cols] = r_hatched
+    g_hatched = byte(  g[basecol] + (fix(g_h)-g[basecol])*(1.-abs(dis)^2)  )
     g[cols] = g_hatched
-    b_hatched = byte(  b[cols] + (255-b[cols])*(1.-abs(dis)^2)  )
+    b_hatched = byte(  b[basecol] + (fix(b_h)-b[basecol])*(1.-abs(dis)^2)  )
     b[cols] = b_hatched
-
+    
   endif
   
-  ;Redefine the color table using the newly contructed RGB values 
+  ;Redefine the color table using the newly contructed RGB values
   TVLCT,r,g,b
   
   r_curr = r  ;Important!  Update the colors common block.
