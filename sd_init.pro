@@ -23,7 +23,7 @@
 pro sd_init, reset=reset
 
 ;Initialize the map2d environment 
-map2d_init 
+map2d_init  ; To set only the AACGM DLM flag for now
 
 defsysv,'!sdarn',exists=exists
 if (not keyword_set(exists)) or (keyword_set(reset)) then begin

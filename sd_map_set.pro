@@ -50,17 +50,43 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     nogrid=nogrid, twohourmltgrid=twohourmltgrid
     
   ;Initialize the SD plot environment
-  sd_init
+  sd_init  ;Currently including map2d_init 
   
+  ; Set the time for which the AACGM LAT-MLT coord is set. 
   npar = N_PARAMS()
-  IF npar LT 1 THEN time = !sdarn.sd_polar.plot_time
+  IF npar LT 1 THEN time = !map2d.time
   
-  IF ((size(glatc, /type) gt 0) AND (size(glatc, /type) lt 6)) AND $
-   ((size(glonc, /type) gt 0) AND (size(glonc, /type) lt 6)) THEN BEGIN
+  ; AACGM flag 
+  aacgm = ~keyword_set(geo_plot) 
+  
+  ; Set the scale for roughly clipping a field of view for one radar 
+  IF KEYWORD_SET(clip) THEN scale=30e+6 ELSE scale=50e+6
+  IF KEYWORD_SET(force_scale) THEN scale = force_scale 
+  
+  ; Set charscale 
+  if ~keyword_set(charscale) then charscale = 1.0 
+  charsize = !sdarn.sd_polar.charsize * charscale 
+  
+  ;Set the map2d mapping  
+  map2d_set, $
+    glatc=glatc, glonc=glonc, $
+    erase=erase, scale=scale, position=position, $
+    stereo=stereo, charsize=charsize, $
+    aacgm=aacgm, set_time=time, $
+    mltlabel=mltlabel, lonlab=lonlab, $
+    nogrid=nogrid
+  
+  
+  
+  
+  
+  IF keyword_set(glatc) AND keyword_set(glonc) AND $
+     ((size(glatc, /type) gt 0) AND (size(glatc, /type) lt 6)) AND $
+      ((size(glonc, /type) gt 0) AND (size(glonc, /type) lt 6)) THEN BEGIN
     glonc = (glonc+360.) MOD 360.
     IF glonc GT 180. THEN glonc -= 360.
   ENDIF ELSE BEGIN
-    glatc = 89. & glonc = 0.
+    glatc = !map2d.glatc & glonc = !map2d.glonc
   ENDELSE
   
   ;Hemisphere flag
