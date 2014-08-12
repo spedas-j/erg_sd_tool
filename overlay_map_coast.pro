@@ -52,7 +52,7 @@ PRO overlay_map_coast,fill=fill,col=col, $
   sd_init
   
   IF ~KEYWORD_SET(time) THEN BEGIN
-    t0 = !sdarn.sd_polar.plot_time
+    t0 = !map2d.time
     get_timespan, tr
     IF t0 GE tr[0] AND t0 LE tr[1] THEN time = t0 ELSE BEGIN
       time = (tr[0]+tr[1])/2.  ; Take the center of the designated time range
