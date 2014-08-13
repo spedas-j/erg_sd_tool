@@ -47,10 +47,15 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     geo_plot=geo_plot, $
     stereo=stereo, $
     charscale=charscale, $
-    nogrid=nogrid, twohourmltgrid=twohourmltgrid
+    nogrid=nogrid, twohourmltgrid=twohourmltgrid, $
+    dlat_grid=dlat_grid, dlon_grid=dlon_grid, color_grid=color_grid, $
+    linethick_grid=linethick_grid
     
   ;Initialize the SD plot environment
   sd_init  ;Currently including map2d_init 
+  
+  ;Preserve the original position array 
+  pre_pos = !p.position 
   
   ; Set the time for which the AACGM LAT-MLT coord is set. 
   npar = N_PARAMS()
@@ -67,17 +72,19 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   if ~keyword_set(charscale) then charscale = 1.0 
   charsize = !sdarn.sd_polar.charsize * charscale 
   
+  ;Longitudinal grid interval
+  if keyword_set(twohourmltgrid) then dlon_grid = 30. 
+  
   ;Set the map2d mapping  
   map2d_set, $
     glatc=glatc, glonc=glonc, $
     erase=erase, scale=scale, position=position, $
     stereo=stereo, charsize=charsize, $
     aacgm=aacgm, set_time=time, $
-    mltlabel=mltlabel, lonlab=lonlab, $
-    nogrid=nogrid
-  
-  
-  
+    mltlabel=0, lonlab=lonlab, $
+    nogrid=nogrid, $
+    dlat_grid=dlat_grid, dlon_grid=dlon_grid, color_grid=color_grid, $
+    linethick_grid=linethick_grid 
   
   
   IF keyword_set(glatc) AND keyword_set(glonc) AND $
@@ -92,87 +99,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   ;Hemisphere flag
   IF glatc GT 0 THEN hemis = 1 ELSE hemis = -1
   
-  ;Calculate the rotation angle regarding MLT
-  IF ~KEYWORD_SET(geo_plot) THEN BEGIN
-    aacgmconvcoord, glatc, glonc,0.1, mlatc,mlonc,err, /TO_AACGM
-    ts = time_struct(time) & yrsec = (ts.doy-1)*86400L + LONG(ts.sod)
-    tmltc = aacgmmlt(ts.year, yrsec, mlonc)
-    mltc = ( tmltc + 24. ) MOD 24.
-    mltc_lon = 360./24.* mltc
-    
-    rot_angle = (-mltc_lon*hemis +360.) MOD 360.
-    IF rot_angle GT 180. THEN rot_angle -= 360.
-    
-    ;Rotate oppositely for the S. hemis.
-    if hemis lt 0 then begin 
-      rot_angle = ( rot_angle + 180. ) mod 360.
-      ;rot_angle *= (-1.)
-      rot_angle = (rot_angle+360.) mod 360.
-      if rot_angle gt 180. then rot_angle -= 360.
-    endif
-  ENDIF ELSE rot_angle = 0.
   
-  ;Calculate the rotation angle of the north dir in a polar plot
-  ;ts = time_struct(time)
-  ;aacgm_conv_coord, 60., 0., 400., mlat,mlon,err, /TO_AACGM
-  ;mlt = aacgm_mlt( ts.year, long((ts.doy-1)*86400.+ts.sod), mlon)
-  
-  ;Set the plot position
-  pre_pos = !p.position
-  IF KEYWORD_SET(position) THEN BEGIN
-    !p.position = position
-  ENDIF ELSE BEGIN
-    nopos = 1
-    position = !p.position
-  ENDELSE
-  IF position[0] GE position[2] OR position[1] GE position[3] THEN BEGIN
-    PRINT, '!p.position is not set, temporally use [0,0,1,1]'
-    position = [0.,0.,1.,1.]
-    !p.position = position
-  ENDIF
-  
-  ;Set the scale for drawing the map_set canvas
-  IF KEYWORD_SET(clip) THEN scale=30e+6 ELSE scale=50e+6
-  IF KEYWORD_SET(force_scale) THEN scale = force_scale
-  
-  ;Resize the canvas size for the position values
-  IF ~KEYWORD_SET(nopos) THEN BEGIN
-    scl = (position[2]-position[0]) < (position[3]-position[1])
-  ENDIF ELSE BEGIN
-    scl = 1.
-    IF !x.window[1]-!x.window[0] GT 0. THEN $
-      scl = (!x.window[1]-!x.window[0]) < (!y.window[1]-!y.window[0])
-  ENDELSE
-  scale /= scl
-  
-  
-  ;Set the lat-lon canvas and draw the continents
-  IF ~KEYWORD_SET(geo_plot) THEN BEGIN
-    IF ~KEYWORD_SET(stereo) THEN BEGIN
-      map_set, mlatc, mltc_lon, rot_angle, $
-        /satellite, sat_p=[6.6, 0., 0.], scale=scale, $
-        /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
-    ENDIF ELSE BEGIN
-      map_set, mlatc, mltc_lon, rot_angle, $
-        /stereo, sat_p=[6.6, 0., 0.], scale=scale, $
-        /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
-    ENDELSE
-  ENDIF ELSE BEGIN
-    IF ~KEYWORD_SET(stereo) THEN BEGIN
-      map_set, glatc, glonc, rot_angle, $
-        /satellite, sat_p=[6.6, 0., 0.], scale=scale, $
-        /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
-    ENDIF ELSE BEGIN
-      map_set, glatc, glonc, rot_angle, $
-        /stereo, sat_p=[6.6, 0., 0.], scale=scale, $
-        /isotropic, /horizon, noerase=~KEYWORD_SET(erase)
-    ENDELSE
-  ENDELSE
-  
-  if ~keyword_set(nogrid) then begin
-    if ~keyword_set(twohourmltgrid) then sd_latlt_grid, dlat=10., dlt=1  $
-      else sd_latlt_grid, dlat=10., dlt=2
-  endif
   
   ;Resize the canvas size for the position values
   scl = (!x.window[1]-!x.window[0]) < (!y.window[1]-!y.window[0])
