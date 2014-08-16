@@ -36,7 +36,7 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     IF ~KEYWORD_SET(geo_plot) THEN BEGIN
       aacgmconvcoord,glat,glon,alt,mlat,mlon,err,/TO_AACGM
       mlon = (mlon + 360.) MOD 360.
-      ts = time_struct(!sdarn.sd_polar.plot_time)
+      ts = time_struct(!map2d.time)
       yrsec = LONG( alt )
       yrsec[*] = LONG((ts.doy-1)*86400L + ts.sod)
       yr = yrsec & yr[*] = ts.year
