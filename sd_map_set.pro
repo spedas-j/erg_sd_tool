@@ -87,8 +87,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     linethick_grid=linethick_grid 
   
   
-  IF keyword_set(glatc) AND keyword_set(glonc) AND $
-     ((size(glatc, /type) gt 0) AND (size(glatc, /type) lt 6)) AND $
+  IF ((size(glatc, /type) gt 0) AND (size(glatc, /type) lt 6)) AND $
       ((size(glonc, /type) gt 0) AND (size(glonc, /type) lt 6)) THEN BEGIN
     glonc = (glonc+360.) MOD 360.
     IF glonc GT 180. THEN glonc -= 360.
