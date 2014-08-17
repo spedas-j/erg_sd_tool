@@ -1,5 +1,5 @@
 PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
-    geo_plot=geo_plot, linestyle=linestyle, beams=beams, linecolor=linecolor, $
+    geo_plot=geo_plot, coord=coord, linestyle=linestyle, beams=beams, linecolor=linecolor, $
     linethick=linethick, draw_beamnum=draw_beamnum, $
     rgrange=rgrange, pixelonly=pixelonly  
     
@@ -19,6 +19,11 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     PRINT, 'Data currently available: ',valid_sites
     RETURN
   ENDIF
+  
+  if size(coord, /type) ne 0 then begin
+    map2d_coord, coord 
+  endif
+  if keyword_set(geo_plot) then !map2d.coord = 0
   
   ;The loop to draw fovs of multiple stations
   FOR i=0, N_ELEMENTS(stns)-1 DO BEGIN

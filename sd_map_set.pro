@@ -44,7 +44,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     center_glat=glatc, center_glon=glonc, $
     mltlabel=mltlabel, lonlab=lonlab, $
     force_scale=force_scale, $
-    geo_plot=geo_plot, $
+    geo_plot=geo_plot, coord=coord, $
     stereo=stereo, $
     charscale=charscale, $
     nogrid=nogrid, twohourmltgrid=twohourmltgrid, $
@@ -61,8 +61,11 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
   npar = N_PARAMS()
   IF npar LT 1 THEN time = !map2d.time
   
-  ; AACGM flag 
-  aacgm = ~keyword_set(geo_plot) 
+  ;For coordinates 
+  if size(coord, /type) ne 0 then begin
+    map2d_coord, coord 
+  endif
+  if keyword_set(geo_plot) then !map2d.coord = 0 
   
   ; Set the scale for roughly clipping a field of view for one radar 
   IF KEYWORD_SET(clip) THEN scale=30e+6 ELSE scale=50e+6
@@ -80,7 +83,7 @@ PRO sd_map_set, time, erase=erase, clip=clip, position=position, $
     glatc=glatc, glonc=glonc, $
     erase=erase, scale=scale, position=position, $
     stereo=stereo, charsize=charsize, $
-    aacgm=aacgm, set_time=time, $
+    set_time=time, $
     mltlabel=0, lonlab=lonlab, $
     nogrid=nogrid, $
     dlat_grid=dlat_grid, dlon_grid=dlon_grid, color_grid=color_grid, $

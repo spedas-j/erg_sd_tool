@@ -45,6 +45,7 @@ PRO plot_map_sdfit, var $
     , lonlab=lonlab $
     , force_scale=force_scale $
     , geo_plot=geo_plot $
+    , coord=coord $
     , coast=coast $
     , gscatmaskoff=gscatmaskoff $
     , nocolorscale=nocolorscale $
@@ -63,15 +64,17 @@ PRO plot_map_sdfit, var $
   sd_init
   
   ;For coordinates 
-  if keyword_set(geo_plot) or !map2d.coord eq 0 then geo_plot = 1 
-  if ~keyword_set(geo_plot) and !map2d.coord eq 1 then geo_plot = 0 
+  if size(coord, /type) ne 0 then begin
+    map2d_coord, coord 
+  endif
+  if keyword_set(geo_plot) then !map2d.coord = 0 
   
   ;Set map_set if any map projection is not defined
   sd_map_set, erase=(~KEYWORD_SET(noerase)), clip=clip, position=position, $
     center_glat=glatc, center_glon=glonc, $
     mltlabel=mltlabel, lonlab=lonlab, $
     force_scale=force_scale, $
-    geo_plot=geo_plot
+    geo_plot=geo_plot, coord=coord 
     
     
   ;Draw a fan plot on map

@@ -34,7 +34,7 @@
 ; $URL: $
 ;-
 PRO overlay_map_coast,fill=fill,col=col, $
-      static=static,time=time, geo_plot=geo_plot, $
+      static=static,time=time, geo_plot=geo_plot, coord=coord, $
       position=position, south=south, height=height 
 
   stack = SCOPE_TRACEBACK(/structure)
@@ -58,6 +58,11 @@ PRO overlay_map_coast,fill=fill,col=col, $
       time = (tr[0]+tr[1])/2.  ; Take the center of the designated time range
     ENDELSE
   ENDIF
+  
+  if size(coord, /type) ne 0 then begin
+    map2d_coord, coord 
+  endif
+  if keyword_set(geo_plot) then !map2d.coord = 0
   
   ts = time_struct(time)
   year=ts.year

@@ -67,7 +67,7 @@ end
 
 ;----------------------------------------------------------
 PRO overlay_map_sdfit, datvn, time=time, position=position, $
-    erase=erase, clip=clip, geo_plot=geo_plot, $
+    erase=erase, clip=clip, geo_plot=geo_plot, coord=coord, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     notimelabel=notimelabel, timelabelpos=timelabelpos, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
@@ -91,6 +91,11 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
       time = (tr[0]+tr[1])/2.  ; Take the center of the designated time range
     ENDELSE
   ENDIF
+  
+  if size(coord, /type) ne 0 then begin
+    map2d_coord, coord 
+  endif
+  if keyword_set(geo_plot) then !map2d.coord = 0
   
   ;if datvn is the index number for tplot var
   datvn = tnames(datvn)
