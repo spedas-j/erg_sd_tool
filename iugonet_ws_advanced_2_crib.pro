@@ -83,7 +83,7 @@ map2d_init
 map2d_time, 2210 
 plot_map_sdfit, 'sd_pyk_vlos_2'
 plot_map_sdfit, 'sd_pyk_vlos_2', /coast 
-erg_load_sdfit, site=�ehan', /get_support
+erg_load_sdfit, site='han', /get_support
 zlim, 'sd_han_vlos_2', -800,800
 plot_map_sdfit, ['sd_pyk_vlos_2', 'sd_han_vlos_2'], /coast
 map2d_coord, 'geo' 
