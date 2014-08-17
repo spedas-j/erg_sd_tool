@@ -62,6 +62,10 @@ PRO plot_map_sdfit, var $
   ;Initialize the 2D plot environment
   sd_init
   
+  ;For coordinates 
+  if keyword_set(geo_plot) or !map2d.coord eq 0 then geo_plot = 1 
+  if ~keyword_set(geo_plot) and !map2d.coord eq 1 then geo_plot = 0 
+  
   ;Set map_set if any map projection is not defined
   sd_map_set, erase=(~KEYWORD_SET(noerase)), clip=clip, position=position, $
     center_glat=glatc, center_glon=glonc, $

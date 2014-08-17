@@ -89,7 +89,7 @@ PRO overlay_map_coast,fill=fill,col=col, $
     
       ;IF coast(0,i)*hemisphere GT 0 THEN BEGIN
       
-        if ~keyword_set(geo_plot) then begin  ;For plotting in AACGM
+        if ~keyword_set(geo_plot) and !map2d.coord eq 1 then begin  ;For plotting in AACGM
           aacgmconvcoord,coast[0,i],coast[1,i],height,mlat,mlon,err,/TO_AACGM
           mag_pos = [mlat, mlon]
           ;mag_pos=cnvcoord(coast(0,i),coast(1,i),1)

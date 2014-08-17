@@ -33,7 +33,7 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     glon=REFORM(d.y[0,*,*,0])
     alt = glat & alt[*] = 400 ;km
     
-    IF ~KEYWORD_SET(geo_plot) THEN BEGIN
+    IF ~KEYWORD_SET(geo_plot) and !map2d.coord eq 1 THEN BEGIN
       aacgmconvcoord,glat,glon,alt,mlat,mlon,err,/TO_AACGM
       mlon = (mlon + 360.) MOD 360.
       ts = time_struct(!map2d.time)

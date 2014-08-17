@@ -31,7 +31,7 @@
 ;-
 PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix, $
   center_glat=center_glat, center_glon=center_glon, gscatmaskoff=gscatmaskoff, $
-  ,force_scale=force_scale, pixel_scale=pixel_scale
+  force_scale=force_scale, pixel_scale=pixel_scale, clip=clip, coast=coast 
 
   ;Check the arguments
   n_par = n_params()
@@ -58,9 +58,9 @@ PRO make_fanplot_pictures, varn, shhmm, ehhmm, prefix=prefix, $
   
   i = 0L
   for time=stime, etime, 60. do begin
-    sd_time, time
-    plot_map_sdfit, varn, /coast,$
-      /clip, center_gla=center_glat,center_glon=center_glon, $
+    map2d_time, time
+    plot_map_sdfit, varn, coast=coast,$
+      clip=clip, center_glat=center_glat,center_glon=center_glon, $
       /mltlabel, $
       gscatmaskoff=gscatmaskoff, force_scale=force_scale,$
       pixel_scale=pixel_scale
