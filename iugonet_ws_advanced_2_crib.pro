@@ -25,7 +25,7 @@ tplot
 ; === slide 20 === 
 tlimit 
 tlimit, /last 
-tlimit, full 
+tlimit, /full 
 tlimit, '2013-09-23/20:30', '2013-09-24/00:00' 
 
 
@@ -46,7 +46,7 @@ tplot,['sd_pyk_vlos_2_azim05','sd_pyk_vlos_2_azim09']
 ; === slide 23 ===
 set_coords, 'sd_pyk_vlos_2_azim??', 'gate' 
 get_fixed_pixel_graph, 'sd_pyk_vlos_2', beam=7, range_gate=18 
-tplot, ['sd_pyk_vlos_2_azim07', ' sd_pyk_vlos_2_bm07rg018 ' ] 
+tplot, ['sd_pyk_vlos_2_azim07', 'sd_pyk_vlos_2_bm07rg018' ] 
 
 
 ; === slide 24 === 
@@ -54,6 +54,7 @@ loadct_sd, 44
 tplot, 'sd_pyk_vlos_2_azim07'
 loadct_sd, 45, /center
 tplot, 'sd_pyk_vlos_2_azim07'
+loadct_sd, 43
 
 
 ; === slide 25 === 
