@@ -100,13 +100,13 @@ plot_map_sdfit, ['sd_pyk_vlos_2','sd_han_vlos_2'], /coast, /clip, center_glat=75
 
 
 ; === slide 33 ===
-sd_time, 2155
+map2d_time, 2155
 plot_map_sdfit, ['sd_pyk_vlos_2','sd_han_vlos_2'],/clip, /coast, center_glat=75, center_glon=0, position=[0.0,0.5,0.5,1.0] , /nocolorscale
-sd_time, 2200
+map2d_time, 2200
 plot_map_sdfit, ['sd_pyk_vlos_2','sd_han_vlos_2'],/clip, /coast, center_glat=75, center_glon=0, position=[0.5,0.5,1.0,1.0],  /noerase , /nocolorscale
-sd_time, 2205
+map2d_time, 2205
 plot_map_sdfit, ['sd_pyk_vlos_2','sd_han_vlos_2'],/clip, /coast, center_glat=75, center_glon=0, position=[0.0,0.0,0.5,0.5],  /noerase, /nocolorscale
-sd_time, 2210
+map2d_time, 2210
 plot_map_sdfit, ['sd_pyk_vlos_2','sd_han_vlos_2'],/clip, /coast, center_glat=75, center_glon=0,  position=[0.5,0.0,1.0,0.5],  /noerase, colorscalepos=[0.05, 0.65, 0.08, 0.95]
 
 
