@@ -43,7 +43,7 @@ pro aacgmconvcoord, glat,glon,alt,mlat,mlon,err, TO_AACGM=TO_AACGM, TO_GEO=TO_GE
   
   glon = (glon + 360.) mod 360.
   
-  if !sdarn.aacgm_dlm_exists then begin
+  if !map2d.aacgm_dlm_exists then begin
     ;print, 'using AACGM_DLM'
     aacgm_conv_coord, glat,glon,alt,mlat1,mlon1,err1,$
       TO_AACGM=TO_AACGM, TO_GEO=TO_GEO

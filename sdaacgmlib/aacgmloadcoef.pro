@@ -40,7 +40,7 @@ if npar ne 1 then return
 year = year[0] ;Use the first element if mistakenly given as an array 
 
 ;Only AACGM DLM has a subroutine to load the S-H coefficients for given year
-if !sdarn.aacgm_dlm_exists then begin 
+if !map2d.aacgm_dlm_exists then begin 
   ;print, 'using AACGM_DLM'
   
   ;Choose the coef. file of the year closest to the one given as an argument

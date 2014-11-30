@@ -67,7 +67,7 @@ end
 
 ;----------------------------------------------------------
 PRO overlay_map_sdfit, datvn, time=time, position=position, $
-    erase=erase, clip=clip, geo_plot=geo_plot, $
+    erase=erase, clip=clip, geo_plot=geo_plot, coord=coord, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     notimelabel=notimelabel, timelabelpos=timelabelpos, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
@@ -85,12 +85,17 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
   npar=N_PARAMS()
   IF npar LT 1 THEN RETURN
   IF ~KEYWORD_SET(time) THEN BEGIN
-    t0 = !sdarn.sd_polar.plot_time
+    t0 = !map2d.time
     get_timespan, tr
     IF t0 GE tr[0] AND t0 LE tr[1] THEN time = t0 ELSE BEGIN
       time = (tr[0]+tr[1])/2.  ; Take the center of the designated time range
     ENDELSE
   ENDIF
+  
+  if size(coord, /type) ne 0 then begin
+    map2d_coord, coord 
+  endif
+  if keyword_set(geo_plot) then !map2d.coord = 0
   
   ;if datvn is the index number for tplot var
   datvn = tnames(datvn)
@@ -204,7 +209,7 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
         pos_plt = pos
         
         ;Convert to AACGM
-        IF ~KEYWORD_SET(geo_plot) THEN BEGIN
+        IF ~KEYWORD_SET(geo_plot) and !map2d.coord eq 1 THEN BEGIN
           ts = time_struct(time)
           year = ts.year & yrsec = LONG((ts.doy-1)*86400. + ts.sod)
           glat = REFORM(pos[*,*,1]) & glon = REFORM((pos[*,*,0]+360.) MOD 360.)

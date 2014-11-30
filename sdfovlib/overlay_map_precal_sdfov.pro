@@ -25,7 +25,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   
   ;Prepare for AACGM conversion
   if ~keyword_set(geo_plot) then begin
-    ts = time_struct( !sdarn.sd_polar.plot_time)
+    ts = time_struct( !map2d.time)
     yrsec = long( (ts.doy-1)*86400L + ts.sod )
     aacgmloadcoef, ts.year 
   endif

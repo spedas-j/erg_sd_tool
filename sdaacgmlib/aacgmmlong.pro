@@ -37,7 +37,7 @@ function aacgmmlong, yr, t0, mlt
 help, name='!sdarn',out=out
 if out eq '' then sd_init
 
-if !sdarn.aacgm_dlm_exists then begin 
+if !map2d.aacgm_dlm_exists then begin 
   ;print, 'using AACGM_DLM'
   tmlon = aacgm_mlong(yr,t0,mlt)
   tmlon = ( tmlon + 360. ) mod 360.
