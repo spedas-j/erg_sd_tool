@@ -28,6 +28,9 @@ map2d_init  ; To set only the AACGM DLM flag for now
 defsysv,'!sdarn',exists=exists
 if (not keyword_set(exists)) or (keyword_set(reset)) then begin
 
+  ;Set the AACGM coef. file path and year list
+  aacgmfindcoeffile, prefix, yrlist
+  
   defsysv,'!sdarn', $
     { $
       init: 0 $
@@ -35,7 +38,13 @@ if (not keyword_set(exists)) or (keyword_set(reset)) then begin
                   charsize: 1.0 $
                 } $
       ,remote_data_dir:'http://ergsc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/' $
+      , aacgm: { $
+                  coefprefix:prefix $
+                  , coefyrlist:yrlist $
+                } $
     }
+    
+    
     
 endif
 
