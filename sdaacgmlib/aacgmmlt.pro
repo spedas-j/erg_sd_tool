@@ -38,7 +38,7 @@ function aacgmmlt, yr, t0, mlon
 help, name='!sdarn',out=out
 if out eq '' then sd_init
 
-if !sdarn.aacgm_dlm_exists then begin 
+if !map2d.aacgm_dlm_exists then begin 
   ;print, 'using AACGM_DLM'
   mlt_tmp = aacgm_mlt(yr,t0,mlon)
   mlt = mlon 

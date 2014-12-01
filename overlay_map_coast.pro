@@ -34,7 +34,7 @@
 ; $URL: $
 ;-
 PRO overlay_map_coast,fill=fill,col=col, $
-      static=static,time=time, geo_plot=geo_plot, $
+      static=static,time=time, geo_plot=geo_plot, coord=coord, $
       position=position, south=south, height=height 
 
   stack = SCOPE_TRACEBACK(/structure)
@@ -52,12 +52,17 @@ PRO overlay_map_coast,fill=fill,col=col, $
   sd_init
   
   IF ~KEYWORD_SET(time) THEN BEGIN
-    t0 = !sdarn.sd_polar.plot_time
+    t0 = !map2d.time
     get_timespan, tr
     IF t0 GE tr[0] AND t0 LE tr[1] THEN time = t0 ELSE BEGIN
       time = (tr[0]+tr[1])/2.  ; Take the center of the designated time range
     ENDELSE
   ENDIF
+  
+  if size(coord, /type) ne 0 then begin
+    map2d_coord, coord 
+  endif
+  if keyword_set(geo_plot) then !map2d.coord = 0
   
   ts = time_struct(time)
   year=ts.year
@@ -89,7 +94,7 @@ PRO overlay_map_coast,fill=fill,col=col, $
     
       ;IF coast(0,i)*hemisphere GT 0 THEN BEGIN
       
-        if ~keyword_set(geo_plot) then begin  ;For plotting in AACGM
+        if ~keyword_set(geo_plot) and !map2d.coord eq 1 then begin  ;For plotting in AACGM
           aacgmconvcoord,coast[0,i],coast[1,i],height,mlat,mlon,err,/TO_AACGM
           mag_pos = [mlat, mlon]
           ;mag_pos=cnvcoord(coast(0,i),coast(1,i),1)
