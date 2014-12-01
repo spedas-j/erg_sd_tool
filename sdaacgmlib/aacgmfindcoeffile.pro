@@ -3,6 +3,8 @@ pro aacgmfindcoeffile, prefix, coefyrlist
   map2d_init
   
   prefix0 = getenv('AACGM_DAT_PREFIX')
+  prefix = '' ;Initialize
+  coefyrlist = [0] ; Initialize
   
   if strlen(prefix0) gt 1 then begin  ; If AACGM_DAT_PREFIX env. variable is set
   
@@ -13,14 +15,13 @@ pro aacgmfindcoeffile, prefix, coefyrlist
   endif else begin  ; If not set, then set the coef. dir in SPEDAS tree.
   
     cmd_paths = strsplit( !path, ';', /ext )
-    for i=0L, n_elements(cmd_path)-1 do begin
+    for i=0L, n_elements(cmd_paths)-1 do begin
       cmd_path = cmd_paths[i]
       if file_test(cmd_path+'/aacgmidl.pro') then break
     endfor
-    if i eq n_elements(cmd_path) then begin
+    if i eq n_elements(cmd_paths) then begin
       print, 'Cannot find aacgmidl.pro!'
-      print, 'Seems that the SPEDAS tree is not properly installed!'
-      prefix = '' & coefyrlist = [0]
+      print, 'Seems that the SPEDAS tree is not properly installed...'
       return
     endif
     
@@ -31,8 +32,14 @@ pro aacgmfindcoeffile, prefix, coefyrlist
   
   coeffpath = file_search(prefix+'????.asc', /fold_case)
   if strlen(coeffpath[0]) lt 1 then begin
-    print, 'Cannot find any AACGM coefficient file!'
-    coefyrlist = [0]
+    if strlen(prefix0) gt 1 then begin
+      print, 'Cannot find any file at the prefix dir ... try to look for the coef files in SPEDAS tree.' 
+      setenv, 'AACGM_DAT_PREFIX=' ;Clear the env. variable 
+      aacgmfindcoeffile, prefix, coefyrlist ;Call it recursively 
+      return
+    endif
+    print, 'Cannot find any AACGM coefficient file at the following prefix dir.'
+    print, '---> '+prefix+'????.asc'
     return
   endif
   
@@ -45,6 +52,9 @@ pro aacgmfindcoeffile, prefix, coefyrlist
       setenv, 'AACGM_DAT_PREFIX='+strjoin( strsplit(prefix,'/',/ext), '\\' )
     endelse
   endif
+  
+  print, 'AACGM coef path: '+prefix
+  print, 'Year list of coef. files available: ', coefyrlist
   
   return
 end
