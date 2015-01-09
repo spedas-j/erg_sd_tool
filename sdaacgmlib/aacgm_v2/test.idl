@@ -1,0 +1,120 @@
+.compile aacgmlib_v2
+.compile aacgm_v2
+
+;-----------------------------------------------------------------------------
+; Note that you must now set the Date and Time explicitly. An error will
+; occur if you do not. Try it.
+;
+
+year  = 1997
+month = 6
+day   = 25
+; hour, minute, second have little effect...
+
+ret = AACGM_v2_SetDateTime(year,month,day)
+
+;-----------------------------------------------------------------------------
+; test single input
+;
+
+lat0 = 50.
+lon0 = 120.
+alt  = 111.
+
+p = cnvcoord_v2(lat0,lon0, alt)
+
+print, ''
+print, '********************* TESTING AACGM SOFTWARE ***********************'
+print, ''
+
+print, 'SINGLE INPUT'
+print, ''
+print, '      44.8032     -167.378      1.00000'
+print, ''
+print, 'actual   output:'
+print, p
+print, ''
+print, ''
+
+;-----------------------------------------------------------------------------
+; Now set to current date and time, results will now vary
+
+ret = AACGM_v2_SetNow()
+
+p = cnvcoord_v2(lat0,lon0, alt)
+
+print, ''
+print, 'SINGLE INPUT'
+print, ''
+print, 'expected output: (values will vary depending on current date/time)'
+print, '      45.3963     -165.960      1.00000'
+print, ''
+print, 'actual   output:'
+print, p
+print, ''
+print, ''
+
+;-----------------------------------------------------------------------------
+; test vector input and reset date to a fixed time so output does not vary
+;
+
+ret = AACGM_v2_SetDateTime(2014,01,22)
+
+inp = [[50.,120.,111.], [55.,50.,250.], [-50.,-120.,600.], [-75.,120.,0.], $
+			[33,15,2000], [23,50,150], [11,-60,330]]
+
+p = cnvcoord_v2(inp)
+
+print, 'VECTOR INPUT'
+print, ''
+print, 'expected output:'
+print, '      45.3709     -166.021      1.00000'
+print, '      52.1509      123.924      1.00000'
+print, '     -45.1342     -34.0333      1.00000'
+print, '     -88.1962      77.4812      1.00000'
+print, '      38.6303      89.3984      1.00000'
+print, '      19.5064      122.797      1.00000'
+print, '      21.3722      17.5013      1.00000'
+print, ''
+print, 'actual   output:'
+print, p
+print, ''
+print, ''
+
+;-----------------------------------------------------------------------------
+; test inverse transformation
+;
+lat0 = 50.
+lon0 = 12.
+alt  = 611.
+
+p = cnvcoord_v2(lat0,lon0, alt)
+q = cnvcoord_v2(p[0],p[1],alt, /geo)		; inverse xform using coeffs
+
+; comment the next line out if you do not have geopack installed
+r = cnvcoord_v2(p[0],p[1],alt, /geo, /trace)	; inv using tracing
+
+print, ''
+print, '--------------------- INVERSE TRANSFORMATION -----------------------'
+print, ''
+print, 'expected output:'
+print, '   50.000000   12.000000  611.000000  original geographic (lat lon height)'
+print, '   48.130348   88.363991    1.000000  AACGM coordinates'
+print, '   49.966473   11.993222    1.000000  Inverse xform using coefficients'
+print, '   49.996384   12.006536    1.000000  Inverse xform using field line tracing'
+print, ''
+print, 'actual   output:'
+fmt = '(3(f12.6),2x,a)'
+print, lat0,lon0,alt, 'original geographic (lat lon height)', format=fmt
+print, p, 'AACGM coordinates', format=fmt
+print, q, 'Inverse xform using coefficients', format=fmt
+print, r, 'Inverse xform using field line tracing', format=fmt
+print, ''
+print, ''
+print, ' Note that the inverse transformation is less accurate than the'
+print, ' forward transformation when using coefficients. Using field line'
+print, ' tracing (/trace) for the inverse transformation restores accuracy.'
+print, ''
+
+exit
+
