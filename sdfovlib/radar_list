@@ -1,4 +1,4 @@
-0 unk
+0 tst
 1 gbr
 2 sch
 3 kap
@@ -22,11 +22,11 @@
 32 wal
 33 bks
 40 hok
-41 how
+41 hkw
 64 inv
 65 rkn
 66 cly
-80 ekb
+80 ekt
 128 svb
 204 fhw
 205 fhe
@@ -37,3 +37,5 @@
 301 brt
 302 mgw
 303 mge
+96 dce
+22 sps
