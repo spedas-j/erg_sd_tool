@@ -1,0 +1,10 @@
+To generate save files for SD FOVs: 
+
+ruby make_radar_list.rb >! radar_list
+../bin/go
+.r gen_fov_savfiles.pro
+exit
+
+Then copy sdfov/*.sav to the designated directory in ERG-SC SD tool. 
+
+
