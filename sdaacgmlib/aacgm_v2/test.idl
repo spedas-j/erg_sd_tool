@@ -1,11 +1,27 @@
+.compile genmag
+.compile igrflib_v2
 .compile aacgmlib_v2
 .compile aacgm_v2
+
+ch = ''
+fmt = '(a,$)'
 
 ;-----------------------------------------------------------------------------
 ; Note that you must now set the Date and Time explicitly. An error will
 ; occur if you do not. Try it.
 ;
+lat0 = 22.2
+lon0 = -44.3
+alt  = 150.
+p = cnvcoord_v2(lat0,lon0, alt)
 
+print, "<Press Return to continue>", format=fmt
+read, ch
+
+;-----------------------------------------------------------------------------
+; now set the date
+;
+;
 year  = 1997
 month = 6
 day   = 25
@@ -24,17 +40,20 @@ alt  = 111.
 p = cnvcoord_v2(lat0,lon0, alt)
 
 print, ''
-print, '********************* TESTING AACGM SOFTWARE ***********************'
+print, '********************* TESTING AACGM-v2 SOFTWARE ***********************'
 print, ''
 
 print, 'SINGLE INPUT'
 print, ''
-print, '      44.8032     -167.378      1.00000'
+print, '      44.5949     -167.372      1.00000
 print, ''
 print, 'actual   output:'
 print, p
 print, ''
 print, ''
+
+print, "<Press Return to continue>", format=fmt
+read, ch
 
 ;-----------------------------------------------------------------------------
 ; Now set to current date and time, results will now vary
@@ -47,12 +66,34 @@ print, ''
 print, 'SINGLE INPUT'
 print, ''
 print, 'expected output: (values will vary depending on current date/time)'
-print, '      45.3963     -165.960      1.00000'
+print, '      45.2636     -165.883      1.00000'
 print, ''
 print, 'actual   output:'
 print, p
 print, ''
 print, ''
+
+print, "<Press Return to continue>", format=fmt
+read, ch
+
+;-----------------------------------------------------------------------------
+; test of field-line tracing
+
+p = cnvcoord_v2(lat0,lon0,alt,/trace)
+
+print, ''
+print, 'SINGLE INPUT: Trace'
+print, ''
+print, 'expected output: (values will vary depending on current date/time)'
+print, '      45.2595     -165.885      1.00000'
+print, ''
+print, 'actual   output:'
+print, p
+print, ''
+print, ''
+
+print, "<Press Return to continue>", format=fmt
+read, ch
 
 ;-----------------------------------------------------------------------------
 ; test vector input and reset date to a fixed time so output does not vary
@@ -68,18 +109,21 @@ p = cnvcoord_v2(inp)
 print, 'VECTOR INPUT'
 print, ''
 print, 'expected output:'
-print, '      45.3709     -166.021      1.00000'
-print, '      52.1509      123.924      1.00000'
-print, '     -45.1342     -34.0333      1.00000'
-print, '     -88.1962      77.4812      1.00000'
-print, '      38.6303      89.3984      1.00000'
-print, '      19.5064      122.797      1.00000'
-print, '      21.3722      17.5013      1.00000'
+print, '      45.2079     -166.000      1.00000'
+print, '      51.9634      123.870      1.00000'
+print, '     -44.9648     -34.1206      1.00000'
+print, '     -88.2221      79.4775      1.00000'
+print, '      38.5443      89.3851      1.00000'
+print, '      19.3899      122.812      1.00000'
+print, '      21.3406      17.4919      1.00000'
 print, ''
 print, 'actual   output:'
 print, p
 print, ''
 print, ''
+
+print, "<Press Return to continue>", format=fmt
+read, ch
 
 ;-----------------------------------------------------------------------------
 ; test inverse transformation
@@ -99,9 +143,9 @@ print, '--------------------- INVERSE TRANSFORMATION -----------------------'
 print, ''
 print, 'expected output:'
 print, '   50.000000   12.000000  611.000000  original geographic (lat lon height)'
-print, '   48.130348   88.363991    1.000000  AACGM coordinates'
-print, '   49.966473   11.993222    1.000000  Inverse xform using coefficients'
-print, '   49.996384   12.006536    1.000000  Inverse xform using field line tracing'
+print, '   47.934391   88.304184    1.000000  AACGM coordinates'
+print, '   49.625992   12.039086    1.000000  Inverse xform using coefficients'
+print, '   49.657848   12.051748    1.000000  Inverse xform using field line tracing'
 print, ''
 print, 'actual   output:'
 fmt = '(3(f12.6),2x,a)'

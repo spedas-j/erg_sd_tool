@@ -22,6 +22,11 @@
 ;                    moved coefficient loading and time interpolation into new
 ;                    function, AACGM_v2_TimeInterp.
 ; 20140918 SGS v1.0  change function names to _v2 for wider distribution
+; 20150121 SGS v2.0  replace geopack calls with internal calls; minor bug
+;                    fixes; New release to coincide with new set of
+;                    coefficients derived from IGRF12 model [1900-2020];
+;                    Tracing functions (RK45 and Newval) now live in igrflib
+;                    and do not rely on geopack
 ;
 ; Functions:
 ;
@@ -32,12 +37,14 @@
 ; AACGM_v2_Alt2CGM
 ; AACGM_v2_CGM2Alt
 ; AACGM_v2_ConvertGeoCoord
-; AACGM_v2_Newval
-; AACGM_v2_RK45
 ; AACGM_v2_Dayno
 ; AACGM_v2_Trace
 ; AACGM_v2_Trace_inv
 ; AACGM_v2_TimeInterp
+;
+; moved to igrflib.pro
+; AACGM_v2_Newval
+; AACGM_v2_RK45
 ;
 ;------------------------------------------------------------------------------
 ;
@@ -94,8 +101,7 @@ common AACGM_v2_Com, coef_v2,coefs_v2, cint_v2, $
 ;
 
 function AACGM_v2_LoadCoef, units, order=ord
-
-common AACGM_v2_Com
+	common AACGM_v2_Com
 
 	on_ioerror, iofail
 
@@ -395,9 +401,10 @@ end
 ;
 
 pro AACGM_v2_Alt2CGM, r_height_in, r_lat_alt, r_lat_adj
+	common IGRF_v2_Com
 
 	; convert from at-altitude to AACGM coordinates
-	eradius = 6371.2
+;	eradius = 6371.2
 	eps     = 1e-9
 	unim    = 0.9999999
 
@@ -405,7 +412,7 @@ pro AACGM_v2_Alt2CGM, r_height_in, r_lat_alt, r_lat_adj
 	ra = r1*r1
 	if (ra lt eps) then ra = eps
 
-	r0 = (r_height_in/eradius + 1.) / ra
+	r0 = (r_height_in/RE + 1.) / ra
 	if (r0 lt unim) then r0 = unim
   
 	r1 = acos(sqrt(1./r0))
@@ -450,14 +457,15 @@ end
 ;
 
 pro AACGM_v2_CGM2Alt, r_height_in,r_lat_in, r_lat_adj, error
-		
+	common IGRF_v2_Com
+
 	; convert from AACGM to at-altitude coordinates
-	eradius = 6371.2
+	;eradius = 6371.2
 	unim    = 1
 	error   = 0
 
 	r1 = cos(!pi*r_lat_in/180.0)
-	ra = (r_height_in/eradius + 1)*(r1*r1)
+	ra = (r_height_in/RE+ 1)*(r1*r1)
 	if (ra gt unim) then begin
 		ra = unim
 		error = 1
@@ -529,9 +537,12 @@ pro AACGM_v2_ConvertGeoCoord, lat_in,lon_in,height_in, lat_out,lon_out, $
 																error, geo=geo, trace=trace, $
 																bad_idea=bad_idea, allow_trace=allow_trace, $
 																eps=eps, at_alt=at_alt, verbose=verbose, $
-																debug=debug
+																gcentric=gcentric, debug=debug
+	common AACGM_v2_Com
+	common IGRF_v2_Com
 
-common AACGM_v2_Com
+	; need RE later on
+	if (n_elements(RE) eq 0) then init_common
 
 	if (height_in lt 0) then begin
 		print, $
@@ -569,6 +580,16 @@ common AACGM_v2_Com
 		print, 'ERROR: longitudes must be in the range 0 to 360 degrees'
 		error = -16
 		return
+	endif
+
+	; convert geodetic to geocentric
+	if not keyword_set(gcentric) then begin
+		rtp = geod2geoc(lat_in, lon_in, height_in)
+
+		;* modify lat/lon/alt to geocentric values */
+		lat_in = 90.d - rtp[1]/DTOR
+		lon_in = rtp[2]/DTOR
+		height_in = (rtp[0]-1.d)*RE
 	endif
 
 	; field line tracing
@@ -616,18 +637,21 @@ common AACGM_v2_Com
 	y = double(0)
 	z = double(0)
 
-	lon_input = lon_in*!pi/180.0 
+;	lon_input = lon_in*!pi/180.0 
+	lon_input = lon_in*DTOR
 
 	; Intermediate coordinate. Only used for inverse transmformation
 ;	if not keyword_set(at_alt) or (flag eq 0) then begin
 	if not keyword_set(at_alt) and (flag eq 0) then begin
-		colat_input = (90.-lat_in)*!pi/180.0
+;		colat_input = (90.-lat_in)*!pi/180.0
+		colat_input = (90.-lat_in)*DTOR
 	endif else begin
 		; convert from AACGM to at-altitude coordinates
 		error = -64
 		AACGM_v2_CGM2Alt, height_in,lat_in, lat_adj, errflg
 		if (errflg ne 0) then return
-		colat_input = (90. - lat_adj)*!pi/180.0
+;		colat_input = (90. - lat_adj)*!pi/180.0
+		colat_input = (90. - lat_adj)*DTOR
 	endelse
 
 	; SGS - remove this feature after timing tests
@@ -809,6 +833,7 @@ end
 function AACGM_v2_Convert, in_lat,in_lon,height, out_lat,out_lon,r, geo=geo, $
 														trace=trace, bad_idea=bad_idea, $
 														eps=eps, allow_trace=allow_trace, $
+														gcentric=gcentric, $
 														verbose=verbose, debug=debug
 
 	geo = keyword_set(geo)
@@ -825,6 +850,7 @@ function AACGM_v2_Convert, in_lat,in_lon,height, out_lat,out_lon,r, geo=geo, $
 																tmp_lat,tmp_lon, error, geo=geo, $
 																trace=trace, bad_idea=bad_idea, $
 																allow_trace=allow_trace, eps=eps, $
+																gcentric=gcentric, $
 																verbose=verbose, debug=debug
 			out_lat[i] = tmp_lat
 			out_lon[i] = tmp_lon
@@ -837,6 +863,7 @@ function AACGM_v2_Convert, in_lat,in_lon,height, out_lat,out_lon,r, geo=geo, $
 															out_lat,out_lon, error, geo=geo, $
 															trace=trace, bad_idea=bad_idea, $
 															allow_trace=allow_trace, eps=eps, $
+															gcentric=gcentric, $
 															verbose=verbose, debug=debug
 		r = 1.0
 endelse
@@ -846,190 +873,9 @@ end
 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-; fieldline tracing routines
-;
-; REQUIRES that geopack be installed
-;
-; internal function used for fieldline tracing IGRF model
+; fieldline tracing routines are now located in igrflib.pro
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-
-;------------------------------------------------------------------------------
-;
-; NAME:
-;       AACGM_v2_Newval
-;
-; PURPOSE:
-;       Computes the vector of rate functions using the IGRF magnetic field at
-;       the position given by the variable pxyz. The direction is given by
-;       the signed variable idir and the stepsize is given by the variable ds
-;   
-; CALLING SEQUENCE:
-;       AACGM_v2_Newval, pxyz, idir,ds
-;
-;     Input Arguments:  
-;       pxyz          - 3-element array of the current position in Cartesian
-;                       coordinates: pxyz = [x,y,z].
-;       idir          - Direction along the field to move: +1 North, -1 South
-;       ds            - Step size to move
-;
-;     Return Value:
-;       knew          - array of rate function values for [x,y,z] coordinates
-;
-; HISTORY:
-;
-; Revision 1.0  14/06/10 SGS initial version
-; 
-; NOTES:
-;
-; geopack is required to be installed for this function to work
-; 
-;+-----------------------------------------------------------------------------
-;
-
-function AACGM_v2_Newval, pxyz, idir,ds
-
-  geopack_sphcar, pxyz[0],pxyz[1],pxyz[2], r,theta,phi, /to_sphere
-  geopack_igrf_geo, r,theta,phi, br,btheta,bphi
-  geopack_bspcar, theta,phi, br,btheta,bphi, bx,by,bz
-
-  bmag = sqrt(bx*bx + by*by + bz*bz)
-
-  knew = ds*idir*[bx,by,bz]/bmag
-  return, knew
-end
-
-;------------------------------------------------------------------------------
-;
-; NAME:
-;       AACGM_v2_RK45
-;
-; PURPOSE:
-;       Compute a single step along the magnetic field line using either a
-;       fixed stepsize RK4 method or a Runge-Kutta-Fehlberg adaptive stepsize
-;       ODE solver.
-;   
-; CALLING SEQUENCE:
-;       AACGM_v2_RK45, x,y,z, idir, ds, eps, $
-;                       fixed=fixed, max_ds=max_ds, RRds=RRds
-;
-;     Input Arguments:  
-;       x,y,z         - Cartesian position of current location in Re
-;       idir          - Direction along the field to move: +1 North, -1 South
-;       ds            - Step size in units of Re
-;       eps           - Global truncation error we wish to maintain, in units
-;                       of Re
-;
-;     Keywords:
-;       fixed         - set this keyword to do RK4 method with stepsize ds
-;       max_ds        - maximum stepsize that is allowed, in units of Re
-;       RRds          - set to use a maximum stepsize that is proportional
-;                       to cube of the distance from the origin.
-;
-;     Return Value:
-;       [x,y,z]       - Cartesian position of the next position
-;
-; HISTORY:
-;
-; Revision 1.0  14/06/10 SGS initial version
-; 
-; NOTES:
-;
-; geopack is required to be installed for this function to work
-; 
-;+-----------------------------------------------------------------------------
-;
-
-function AACGM_v2_RK45, x,y,z, idir, ds, eps, fixed=fixed, $
-													max_ds=max_ds, RRds=RRds, verbose=verbose
-
-	RE   =  6371.2		; magnetic reference spherical radius from IGRF
-
-	; convert position to spherical coords
-	geopack_sphcar, x,y,z, r,theta,phi, /to_sphere
-
-	; compute IGRF field in spherical coords
-	geopack_igrf_geo, r,theta,phi, br,btheta,bphi
-
-	; convert field from spherical coords to Cartesian
-	geopack_bspcar, theta,phi, br,btheta,bphi, bx,by,bz
-
-	; magnitude of field to normalize vector
-	bmag = sqrt(bx*bx + by*by + bz*bz)
-
-	if keyword_set(fixed) then begin
-		; RK4 Method
-		k1 = ds*idir*[bx,by,bz]/bmag
-		k2 = AACGM_v2_Newval([x,y,z] + .5*k1, idir,ds)
-		k3 = AACGM_v2_Newval([x,y,z] + .5*k2, idir,ds)
-		k4 = AACGM_v2_Newval([x,y,z] + k3, idir,ds)
-
-		tmp = (k1 + 2*k2 + 2*k3 + k4)/6.
-		x += tmp[0]
-		y += tmp[1]
-		z += tmp[2]
-	endif else begin
-		; Adaptive RK45 method
-		RR = eps+1	; just to get into the loop
-		while (RR gt eps) do begin
-			k1 = ds*idir*[bx,by,bz]/bmag
-
-			k2 = AACGM_v2_Newval([x,y,z] + k1/4., idir,ds)
-			k3 = AACGM_v2_Newval([x,y,z] + 3.*k1/32. + 9.*k2/32., idir,ds)
-			k4 = AACGM_v2_Newval([x,y,z] + 1932.*k1/2197. - 7200.*k2/2197. + $
-														7296.*k3/2197., idir,ds)
-			k5 = AACGM_v2_Newval([x,y,z] + 439.*k1/216. - 8.*k2 + 3680.*k3/513. - $
-														845.*k4/4104., idir,ds)
-			k6 = AACGM_v2_Newval([x,y,z] - 8.*k1/27. + 2.*k2 - 3544.*k3/2565. + $
-														1859.*k4/4104. - 11.*k5/40., idir,ds)
-
-			w1 = [x,y,z] + 25.*k1/216. + 1408.*k3/2565. + 2197.*k4/4104. - k5/5.
-			w2 = [x,y,z] + 16.*k1/135. + 6656.*k3/12825. + 28561.*k4/56430. - $
-											9.*k5/50. + 2.*k6/55.
-
-			RR = abs(w1 - w2)/ds
-			RR = sqrt(total(RR*RR))
-			if keyword_set(verbose) then print, 'diff: ', RR
-			if RR eq 0 then begin
-				; it is possible for the two solutions to give the same answer, which
-				; would correspond to an infinitely large stepsize
-				if keyword_set(max_ds) then ds = max_ds		; limit the stepsize or
-																									; just leave it alone
-			endif else begin
-				delt = 0.84 * (eps / RR)^0.25		; this formula relates the difference
-                                        ; in the local trucation errors to the
-                                        ; global error of the solution. There
-                                        ; are lots of assumptions here...
-
-				if keyword_set(verbose) then print, 'delt: ', delt
-				newds = ds * delt
-				ds = newds
-
-				; maximum stepsize is fixed to max_ds in units of Re
-				if keyword_set(max_ds) then	ds = min([max_ds,ds])
-
-				; Setting this keyword uses a maximum stepsize that is proportional to
-				; the distance from the origin, i.e., the further away from the origin
-				; the larger the stepsize you can take to maintain the same accuracy.
-				; Note that this is the maximum stepsize, if the algorithm says it
-				; should be smaller, it will use the smaller.
-				; Maximum stepsize is r^3 * 50km, where r is in units of Re
-				if keyword_set(RRds) then		ds = min([50*r*r*r/RE, ds])
-			endelse
-		endwhile
-
-		; we use the RK4 solution
-		x = w1[0]
-		y = w1[1]
-		z = w1[2]
-		; You might think that using the higher order RK5 method would be better,
-		; but there is the suggestion that using the RK4 solution _guarantees_
-		; accuracy while the RK5 does not. Apparently some texts are now
-		; suggesting using the RK5 solution...
-	endelse
-
-	return, [x,y,z]
-end
 
 ;------------------------------------------------------------------------------
 ;
@@ -1068,8 +914,15 @@ end
 
 pro AACGM_v2_Trace, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 										fixed=fixed, ds=ds, eps=eps, max_ds=max_ds
+	common AACGM_v2_Com
+	common IGRF_v2_Com
 
-	RE    = 6371.2							; magnetic reference spherical radius from IGRF
+	IGRF_SetDateTime, aacgm_v2_datetime.year, aacgm_v2_datetime.month, $
+										aacgm_v2_datetime.day,  aacgm_v2_datetime.hour,  $
+										aacgm_v2_datetime.minute, aacgm_v2_datetime.second, $
+										err=error
+	if (error ne 0) then return
+
 	if not keyword_set(ds) then $
 		ds  = 1.									; 1 km default starting stepsize
 	dsRE  = ds/RE
@@ -1081,17 +934,20 @@ pro AACGM_v2_Trace, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 	; radial step size dependence that is default
 	if keyword_set(max_ds) then RRds = 0 else RRds = 1
 
-	r     = (RE + height_in)/RE	; 1.0 is surface of Earth
-	theta = (90.-lat_in)*!dtor	; colatitude in radians
-	phi   = lon_in*!dtor				; longitude  in radians
+	rtp = dblarr(3)
+	rtp[0] = (RE + height_in)/RE	; 1.0 is surface of Earth
+	rtp[1] = (90.-lat_in)*DTOR		; colatitude in radians
+	rtp[2] = lon_in*DTOR					; longitude  in radians
 
 	; convert position to Cartesian coords
-	geopack_sphcar, r,theta,phi, x,y,z, /to_rect
+	;//geopack_sphcar, r,theta,phi, x,y,z, /to_rect
+	xyzg = sph2car(rtp)
 
 	; convert to magnetic Dipole coordinates
-	geopack_conv_coord, x,y,z, xx,yy,zz, /from_geo, /to_mag
+	;//geopack_conv_coord, x,y,z, xx,yy,zz, /from_geo, /to_mag
+	xyzm = geo2mag(xyzg)
 
-	if zz gt 0 then idir = -1 else idir = 1		; N or S hemisphere
+	if xyzm[2] gt 0 then idir = -1 else idir = 1		; N or S hemisphere
 
 	dsRE = dsRE0
 
@@ -1105,54 +961,50 @@ pro AACGM_v2_Trace, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 	; this set of fieldlines as undefined; just like those that lie below
 	; the surface of the Earth.
 
-	while idir * zz lt 0 do begin
+	while idir * xyzm[2] lt 0 do begin
 
-		xprev = x		; save for interpolation
-		yprev = y
-		zprev = z
+		xyzp = xyzg
 
-		newpos = AACGM_v2_RK45(x,y,z, idir, dsRE, eps, $
-																	fixed=fixed, max_ds=max_ds, RRds=RRds)
+;//		AACGM_v2_RK45(x,y,z, idir, dsRE, eps, $
+;//																	fixed=fixed, max_ds=max_ds, RRds=RRds)
 		; x,y,z are passed by reference and modified here...
+		AACGM_v2_RK45, xyzg, idir, dsRE, eps
 
 		; convert to magnetic Dipole coordinates
-		geopack_conv_coord, x,y,z, xx,yy,zz, /from_geo, /to_mag
+		;//geopack_conv_coord, x,y,z, xx,yy,zz, /from_geo, /to_mag
+		xyzm = geo2mag(xyzg)
 
 	endwhile
 
 	; now bisect stepsize (fixed) to land on magnetic equator w/in 1 meter
-	xc = xprev
-	yc = yprev
-	zc = zprev
+	xyzc = xyzp
 
 	while dsRE gt 1e-3/RE do begin
 		dsRE *= .5
-		xprev = xc
-		yprev = yc
-		zprev = zc
-		newpos = AACGM_v2_RK45(xc,yc,zc, idir, dsRE, eps, /fixed)
-		geopack_conv_coord, xc,yc,zc, xx,yy,zz, /from_geo, /to_mag
+		xyzp = xyzc
+		AACGM_v2_RK45, xyzc, idir, dsRE, eps, /fixed
+;//		geopack_conv_coord, xc,yc,zc, xx,yy,zz, /from_geo, /to_mag
+		xyzm = geo2mag(xyzc)
 
 		; Is it possible that resetting here causes a doubling of the tol?
-		if idir * zz gt 0 then begin
-			xc = xprev
-			yc = yprev
-			zc = zprev
-		endif
+		if idir * xyzm[2] gt 0 then xyzc = xyzp
 	endwhile
 
 	; 'trace' back to surface along Dipole field lines
-	Lshell = sqrt(xc*xc + yc*yc + zc*zc)
-	if Lshell lt (RE+height_in)/RE then begin	; Magnetic equator is below your...
+	Lshell = sqrt(total(xyzc*xyzc))
+	if Lshell lt (RE+height_in)/RE then begin
+		; Magnetic equator is below your...
 		lat_out = !values.f_nan
 		lon_out = !values.f_nan
 		error   = 1
 	endif else begin
-		geopack_conv_coord, xc,yc,zc, xx,yy,zz, /from_geo, /to_mag
-		geopack_sphcar, xx,yy,zz, mr,mtheta,mphi, /to_sphere
+		;//geopack_conv_coord, xc,yc,zc, xx,yy,zz, /from_geo, /to_mag
+		;//geopack_sphcar, xx,yy,zz, mr,mtheta,mphi, /to_sphere
+		xyzm = geo2mag(xyzc)
+		rtp  = car2sph(xyzm)
 
-		lat_out = -idir*acos(sqrt(1./Lshell))/!dtor
-		lon_out = mphi/!dtor
+		lat_out = -idir*acos(sqrt(1./Lshell))/DTOR
+		lon_out = rtp[2]/DTOR
 		if lon_out gt 180 then lon_out -= 360		; SGS - make consistent with output
 																						; from coefficient functions
 		error   = 0
@@ -1198,15 +1050,22 @@ end
 
 pro AACGM_v2_Trace_inv, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 										fixed=fixed, ds=ds, eps=eps, max_ds=max_ds, verbose=verbose
+	common AACGM_v2_Com
+	common IGRF_v2_Com
 
-	RE    = 6371.2							; magnetic reference spherical radius from IGRF
+	IGRF_SetDateTime, aacgm_v2_datetime.year, aacgm_v2_datetime.month, $
+										aacgm_v2_datetime.day,  aacgm_v2_datetime.hour,  $
+										aacgm_v2_datetime.minute, aacgm_v2_datetime.second, $
+										err=error
+	if (error ne 0) then return
+
 	if not keyword_set(ds) then $
 		ds  = 1.									; 1 km default starting stepsize
 	dsRE  = ds/RE
 	dsRE0 = dsRE
 	if not keyword_set(eps) then $
-;		eps   = 1e-4/RE						; global error (RE)
-		eps   = 1e-2/RE						; global error (RE)
+;		eps   = 1e-2/RE						; global error (RE)
+		eps   = 1e-4/RE						; global error (RE)
 
 	; if user wants to fix maximum step size then let them by turning off
 	; radial step size dependence that is default
@@ -1215,7 +1074,7 @@ pro AACGM_v2_Trace_inv, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 	; INV: for inverse we must first map AACGM to magnetic equator along
 	;      the dipole field line that passes through the Earth at lat/lon
 	if (abs(lat_in - 90.d) lt 1e-6) then lat_in = 90-1e-6
-	Lshell = 1.d/(cos(lat_in*!dtor)*cos(lat_in*!dtor))
+	Lshell = 1.d/(cos(lat_in*DTOR)*cos(lat_in*DTOR))
 
 	if keyword_set(verbose) then print, Lshell
 
@@ -1229,15 +1088,18 @@ pro AACGM_v2_Trace_inv, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 		phim = lon_in
 
 		; magnetic Cartesian coordinates of fieldline trace starting point
-		xm = Lshell*cos(phim*!dtor)
-		ym = Lshell*sin(phim*!dtor)
-		zm = 0.d
+		xyzm = dblarr(3)
+		xyzm[0] = Lshell*cos(phim*DTOR)
+		xyzm[1] = Lshell*sin(phim*DTOR)
+		xyzm[2] = 0.d
 
 		; geographic Cartesian coordinates of starting point
-		geopack_conv_coord, xm,ym,zm, x,y,z, /from_mag, /to_geo
+		;//geopack_conv_coord, xm,ym,zm, x,y,z, /from_mag, /to_geo
+		xyzg = mag2geo(xyzm)
 
 		; geographic spherical coordinates of starting point
-		geopack_sphcar, x,y,z, r,theta,phi, /to_sphere
+		;//geopack_sphcar, x,y,z, r,theta,phi, /to_sphere
+		rtp = car2sph(xyzg)
 
 		; direction of trace is determined by the starting hemisphere?
 		if lat_in gt 0 then idir = 1 else idir = -1   ; N or S hemisphere
@@ -1245,117 +1107,41 @@ pro AACGM_v2_Trace_inv, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 		dsRE = dsRE0
 
 		; trace back to altitude above Earth
-		while r gt (RE + height_in)/RE do begin
+		while rtp[0] gt (RE + height_in)/RE do begin
 
-			xprev = x		; save for interpolation
-			yprev = y
-			zprev = z
-
-			if keyword_set(verbose) then print, 'xyz: ', x,y,z, dsRE
-			newpos = AACGM_v2_RK45(x,y,z, idir, dsRE, eps, $
+			xyzp = xyzg
+			if keyword_set(verbose) then print, 'xyz: ', xyzg, dsRE
+			AACGM_v2_RK45, xyzg, idir, dsRE, eps, $
 															fixed=fixed, max_ds=max_ds, RRds=RRds, $
-															verbose=verbose)
-			if keyword_set(verbose) then print, 'xyz: ', x,y,z, dsRE
+															verbose=verbose
+			if keyword_set(verbose) then print, 'xyz: ', xyzg, dsRE
 
-			geopack_sphcar, x,y,z, r,theta,phi, /to_sphere
+			;//geopack_sphcar, x,y,z, r,theta,phi, /to_sphere
+			rtp = car2sph(xyzg)
 
 ;			if keyword_set(verbose) then stop
 		endwhile
 
 		; now bisect stepsize (fixed) to land on magnetic equator w/in 1 meter
-		xc = xprev
-		yc = yprev
-		zc = zprev
+		xyzc = xyzp
 
 		while dsRE gt 1e-3/RE do begin
 			dsRE *= .5
-			xprev = xc
-			yprev = yc
-			zprev = zc
-			newpos = AACGM_v2_RK45(xc,yc,zc, idir, dsRE, eps, /fixed)
+			xyzp = xyzc
+			AACGM_v2_RK45, xyzc, idir, dsRE, eps, /fixed
 
-			geopack_sphcar, xc,yc,zc, r,theta,phi, /to_sphere
+			;//geopack_sphcar, xc,yc,zc, r,theta,phi, /to_sphere
+			rtp = car2sph(xyzc)
 
-			if r lt (RE + height_in)/RE then begin
-				xc = xprev
-				yc = yprev
-				zc = zprev
-			endif
+			if rtp[0] lt (RE + height_in)/RE then xyzc = xyzp
 		endwhile
 
 		; record lat/lon and xyz
-		lat_out = 90. - theta/!dtor
-		lon_out = phi/!dtor
+		lat_out = 90. - rtp[1]/DTOR
+		lon_out = rtp[2]/DTOR
 		error   = 0
 	endelse
 
-end
-
-;------------------------------------------------------------------------------
-;
-; NAME:
-;       AACGM_v2_Dayno
-;
-; PURPOSE:
-;       Determine the day number of the given date.
-;   
-; CALLING SEQUENCE:
-;       AACGM_v2_Dayno, yr,mo,dy, days=days
-;
-;     Input Arguments:  
-;       yr            - 4-digit year
-;       mo            - Month: 1-January, 2-February, etc.
-;       dy            - Day of month, starting at 1
-;
-;       date inputs can be an array, but must be the same size and it is
-;       assumed that each day is from the same year.
-;
-;     Keywords:
-;       days          - set to a variable that will contain the total number of
-;                       days in the given year.
-;
-;     Return Value:
-;       dayno         - day number of the current year.
-;
-; HISTORY:
-;
-; Revision 1.0  14/06/10 SGS initial version
-; 
-;+-----------------------------------------------------------------------------
-;
-
-function AACGM_v2_Dayno, yr,mo,dy, days=days
-	; works on an array. assume that all from same day
-; WHAT IS THE POINT OF AN ARRAY OF THE SAME DAY?!
-
-	mdays=[0,31,28,31,30,31,30,31,31,30,31,30,31]
-
-	nelem = n_elements(yr)
-	if (yr[0] ne yr[nelem-1]) or $
-		(mo[0] ne mo[nelem-1]) or $
-		(dy[0] ne dy[nelem-1]) then begin
-			print, ''
-			print, 'Not same day in AACGM_v2_Dayno'
-			print, ''
-			exit
-	endif
-
-	tyr = yr[0]
-	; leap year calculation
-	if tyr mod 4 ne 0 then inc=0 $
-	else if tyr mod 400 eq 0 then inc=1 $
-	else if tyr mod 100 eq 0 then inc=0 $
-	else inc=1
-	mdays[2]=mdays[2]+inc
-
-	if keyword_set(days) then days = fix(total(mdays))
-
-	if nelem eq 1 then $
-		doy = total(mdays[0:mo[0]-1])+dy[0] $
-	else $
-		doy = intarr(nelem) + total(mdays[0:mo[0]-1])+dy[0]
-
-	return, fix(doy)
 end
 
 ;------------------------------------------------------------------------------
@@ -1390,7 +1176,7 @@ function AACGM_v2_TimeInterp
 					aacgm_v2_datetime.daysinyear
 
 	must_load = 0
-	if (isa(myear_v2_old) eq 0) then begin
+	if (n_elements(myear_v2_old) eq 0) then begin
 		; first time, so need to load new coefficients
 		must_load = 1
 	endif else if (myear_v2_old ne myear_v2) then begin
@@ -1437,11 +1223,5 @@ function AACGM_v2_TimeInterp
 	endif
 
 	return, 0
-end
-
-pro aacgmlib_v2 
-  
-  aacgm_v2
-  
 end
 

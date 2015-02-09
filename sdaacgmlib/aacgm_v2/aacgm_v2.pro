@@ -18,6 +18,9 @@
 ; 20140826 SGS v0.5  change to requiring data/time to be set using external
 ;                    functions (same as C version), rather than using keywords
 ; 20140918 SGS v1.0  change function names to _v2 for wider distribution
+; 20150121 SGS v2.0  upgrades for IGRF12: 1900-2020. Do not allow times outside
+;                    this range. Eliminate reliance on geopack DLMs by calling
+;                    native IDL routines.
 ;
 ; Functions:
 ;
@@ -42,7 +45,7 @@
 ;                                        [minute], [second])
 ;
 ;     Arguments:
-;       year          - year [1965-2015]
+;       year          - year [1900-2020)
 ;       month         - month [1-12]
 ;       day           - day [1-31]
 ;       hour          - hour [0-24]
@@ -60,6 +63,7 @@
 function AACGM_v2_SetDateTime, year,month,day,hour,minute,second
 
 	common AACGM_v2_Com
+	common IGRF_v2_Com
 
 	aacgm_v2_datetime = {year:-1, month:-1, day:-1, hour:-1, minute:-1, $
 												second:-1, dayno:-1, daysinyear:-1}
@@ -74,13 +78,25 @@ function AACGM_v2_SetDateTime, year,month,day,hour,minute,second
 	if np lt 1 then return, -1
 
 	days = -1
+	doy  = AACGM_v2_Dayno(year,month,day, days=days)
+	fyear = year + ((doy-1) + $
+						(hour + (minute + second/60.)/60.)/24.) / days
+
+	if n_elements(IGRF_FIRST_EPOCH) eq 0 then init_common
+	if (fyear lt IGRF_FIRST_EPOCH or fyear ge IGRF_LAST_EPOCH+5) then begin
+		print, ''
+		print, 'Date range for AACGM-v2 is ',IGRF_FIRST_EPOCH,'-',IGRF_LAST_EPOCH+5
+		print, ''
+		return, -1
+	endif
+
 	aacgm_v2_datetime.year       = year
 	aacgm_v2_datetime.month      = month
 	aacgm_v2_datetime.day        = day
 	aacgm_v2_datetime.hour       = hour
 	aacgm_v2_datetime.minute     = minute
 	aacgm_v2_datetime.second     = second
-	aacgm_v2_datetime.dayno      = AACGM_v2_Dayno(year,month,day, days=days)
+	aacgm_v2_datetime.dayno      = doy
 	aacgm_v2_datetime.daysinyear = days
 
 	err = AACGM_v2_TimeInterp()
@@ -111,21 +127,34 @@ end
 function AACGM_v2_SetNow
 
 	common AACGM_v2_Com
+	common IGRF_v2_Com
 
 	aacgm_v2_datetime = {year:-1, month:-1, day:-1, hour:-1, minute:-1, $
 												second:-1, dayno:-1, daysinyear:-1}
 
 	; use current time (in UT)
-	caldat, systime(/julian, /utc), month,day,year, hour,minute,sec
+	caldat, systime(/julian, /utc), month,day,year, hour,minute,second
 
 	days = -1
+	doy  = AACGM_v2_Dayno(year,month,day, days=days)
+	fyear = year + ((doy-1) + $
+						(hour + (minute + second/60.)/60.)/24.) / days
+
+	if n_elements(IGRF_FIRST_EPOCH) eq 0 then init_common
+	if (fyear lt IGRF_FIRST_EPOCH or fyear ge IGRF_LAST_EPOCH+5) then begin
+		print, ''
+		print, 'Date range for AACGM-v2 is ',IGRF_FIRST_EPOCH,'-',IGRF_LAST_EPOCH+5
+		print, ''
+		return, -1
+	endif
+
 	aacgm_v2_datetime.year       = year
 	aacgm_v2_datetime.month      = month
 	aacgm_v2_datetime.day        = day
 	aacgm_v2_datetime.hour       = hour
 	aacgm_v2_datetime.minute     = minute
-	aacgm_v2_datetime.second     = sec
-	aacgm_v2_datetime.dayno      = AACGM_v2_Dayno(year,month,day, days=days)
+	aacgm_v2_datetime.second     = second
+	aacgm_v2_datetime.dayno      = doy
 	aacgm_v2_datetime.daysinyear = days
 
 	err = AACGM_v2_TimeInterp()
@@ -170,7 +199,7 @@ function AACGM_v2_GetDateTime, year, month=month, day=day, $
 
 	common AACGM_v2_Com
 
-	if (isa(aacgm_v2_datetime) eq 0) then begin
+	if (n_elements(aacgm_v2_datetime) eq 0) then begin
 		if not keyword_set(silent) then $
 			print, "Date and Time are not currently set"
 		return, -1
@@ -240,16 +269,18 @@ end
 
 function cnvcoord_v2, in1,in2,in3, geo=geo, trace=trace, $
 														allow_trace=allow_trace, bad_idea=bad_idea, $
-														eps=eps, verbose=verbose, debug=debug
+														eps=eps, verbose=verbose, debug=debug, $
+														use_geopack=use_geopack, gcentric=gcentric
 
 ;model=model, $
 ;year=year, month=month,day=day, doy=doy, $
 ;hour=hour,minute=minute, sec=sec
 
 	common AACGM_v2_Com
+	common IGRF_v2_Com
 
 	; force user to explicitly set the date and time fields for calculations
-	if (isa(aacgm_v2_datetime) eq 0) then begin
+	if (n_elements(aacgm_v2_datetime) eq 0) then begin
 		print, ""
 		print, "ERROR: Date and Time are not currently set."
 		print, ""
@@ -263,26 +294,27 @@ function cnvcoord_v2, in1,in2,in3, geo=geo, trace=trace, $
 		return, -1
 	endif
 
-	if myear_v2 lt 1965 or myear_v2 gt 2015 then begin
-		print, 'year range is 1965-2015'
+	if myear_v2 lt IGRF_FIRST_EPOCH or myear_v2 gt IGRF_LAST_EPOCH+5 then begin
+		print, 'year range is ',IGRF_FIRST_EPOCH,'-',IGRF_LAST_EPOCH+5
 		return, -1
 	endif
 
 	; original Baker code that allows for various inputs
 	if (n_params() ge 3) then inp = float([in1,in2,in3]) $
 	else inp = float(in1)
-help, inp
+
 	if (n_elements(inp) mod 3 ne 0) then begin
 		print,'input position must be fltarr(3) [lat,long,height]'
 		return, -1
 	end
 
-	; could this be optimized? I.e., what if date/time does not change?
-	if keyword_set(trace) or keyword_set(allow_trace) then begin
-		geopack_recalc, aacgm_v2_datetime.year, aacgm_v2_datetime.month, $
-										aacgm_v2_datetime.day, aacgm_v2_datetime.hour, $
-										aacgm_v2_datetime.minute, aacgm_v2_datetime.second, /date
-	endif
+; Do this in the Trace functions
+;	; could this be optimized? I.e., what if date/time does not change?
+;	if keyword_set(trace) or keyword_set(allow_trace) then begin
+;		geopack_recalc, aacgm_v2_datetime.year, aacgm_v2_datetime.month, $
+;										aacgm_v2_datetime.day, aacgm_v2_datetime.hour, $
+;										aacgm_v2_datetime.minute, aacgm_v2_datetime.second, /date
+;	endif
 
 	err = 0
 	s0  = size(inp)
@@ -297,14 +329,15 @@ help, inp
 		ret_val = AACGM_v2_Convert(invec[0],invec[1],invec[2], olat,olon,rad, $
 																geo=geo, trace=trace, bad_idea=bad_idea, $
 																allow_trace=allow_trace, eps=eps, $
+																gcentric=gcentric, $
 																verbose=verbose, debug=debug)
 		outvec[0] = olat
 		outvec[1] = olon
 		outvec[2] = rad
 
 		if (ret_val ne 0) then begin
-			print,"cnvcoord_v2 error = ",ret_val,err
-			return, 0
+;			print,"cnvcoord_v2 error = ",ret_val,err
+;			return, 0
 		endif
 
 		outpos[*,j] = outvec
@@ -349,11 +382,5 @@ function mlt_v2, year, t, mlong
 		for i=0,n_elements(t)-1 do mt[i] = MLTConvert_v2(year,t[i],mlong)
 
 	return, mt
-end
-
-pro aacgm_v2 
-  
-  ;print, 'aacgm_v2 compiled.'
-
 end
 

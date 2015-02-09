@@ -5,11 +5,11 @@ Instructions:
 
 2. Set the environment variable AACGM_v2_DAT_PREFIX to the directory that
    you are storing the coefficients in AND include the prefix of the
-   coefficient files, i.e., aacgm_coeffs-11-
+   coefficient files, i.e., aacgm_coeffs-12-
 
    e.g.,
 
-   AACGM_v2_DAT_PREFIX=/mnt/thayerfs/shepherd/AACGM/idl/coeffs/aacgm_coeffs-11-
+   AACGM_v2_DAT_PREFIX=/mnt/thayerfs/shepherd/AACGM/idl/coeffs/aacgm_coeffs-12-
 
    Note that if you used the old AACGM software from JHU/APL you should have
    a similar variable that is already set.
@@ -62,6 +62,16 @@ Instructions:
 ;                       the distance from the origin in Re
 
 
+In order to use this software you must compile the following IDL libraries:
+
+genmag.pro
+igrflib_v2.pro
+aacgmlib_v2.pro
+aacgm_v2.pro
+
+and the IGRF12 coefficients must be accessible from the current directory:
+igrf12coeffs.txt
+
 
 This package include the following files:
 
@@ -69,5 +79,8 @@ AACGM IDL software:
 
 aacgm_v2.pro          ; user functions
 aacgmlib_v2.pro       ; internal library functions
+genmag.pro						; general purpose functions
+igrflib_v2.pro				; internal IGRF functions
+igrf12coeffs.txt			; IGRF12 coefficients
 test.idl              ; idl driver script
 
