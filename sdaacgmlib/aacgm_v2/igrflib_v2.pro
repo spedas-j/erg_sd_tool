@@ -1,3 +1,65 @@
+;------------------------------------------------------------------------------
+; IGRF library
+;
+; a collection of IDL routines intended to implement the IGRF magnetic field
+; model.
+;
+; 20150122 SGS v0.0  Initial implementation of functions to read IGRF
+;                    coefficient and produce magnetic field at a given
+;                    location. Several coordinate transformations.
+; 20150226 SGS v1.0  Added transformations between geodetic and geocentric
+;                    coordinates.
+;
+; Public Functions:
+;
+; IGRF_compute
+; IGRF_SetDateTime
+; IGRF_GetDateTime
+; IGRF_SetNow
+;
+; Private Functions:
+;
+; init_common
+; IGRF_loadcoefs
+; IGRF_Plm
+; IGRF_interpolate_coefs
+; IGRF_msg_notime
+;
+; AACGM_v2_errmsg
+; AACGM_v2_Newval
+; AACGM_v2_RK45
+;
+; Coordinate Transformations:
+;
+; sph2car
+; car2sph
+; bspcar
+; bcarsp
+; geo2mag
+; mag2geo
+; geod2geoc
+; plh2xyz
+; geoc2geod
+;
+;------------------------------------------------------------------------------
+;
+
+;*-----------------------------------------------------------------------------
+;
+; NAME:
+;       init_common
+;
+; PURPOSE:
+;       Initialize common variables for IGRF routines. Called from many IGRF
+;        functions that rely on various constants.
+;
+; CALLING SEQUENCE:
+;       init_common, err=err
+;     
+;     Keyword:
+;       error code
+;
+;+-----------------------------------------------------------------------------
 pro init_common, err=err
 	common IGRF_v2_Com, IGRF_datetime, IGRF_coef_set, IGRF_svs, IGRF_coefs, $
 											IGRF_file, IGRF_order, IGRF_maxnyr, IGRF_maxk, $
@@ -11,7 +73,8 @@ pro init_common, err=err
 	IGRF_maxk   = (IGRF_ORDER+1)*(IGRF_ORDER+1)
 	geopack     = {ctcl:0.d, ctsl:0.d, stcl:0.d, stsl:0.d, ct0:0.d, st0:0.d, $
 									cl0:0.d, sl0:0.d}
-	DTOR        = !const.pi/180.d
+;	DTOR        = !const.pi/180.d
+	DTOR        = !dpi/180.d
 	RE          = 6371.2			; magnetic reference spherical radius from IGRF
 	IGRF_FIRST_EPOCH = 1900
 	IGRF_LAST_EPOCH  = 2015
@@ -958,20 +1021,19 @@ end
 ;
 ; PURPOSE:
 ;       Convert from geodetic coordinates (as specified by WGS84) to
-;       geocentric coordinates.
+;       geocentric coordinates using algorithm from IGRF Fortran code.
 ; 
 ; CALLING SEQUENCE:
-;       err = geod2geoc(lat,lon,alt, rtp);
+;       [r,theta,phi] = geod2geoc(lat,lon,alt)
 ;     
 ;     Input Arguments:  
 ;       lat,lon       - geodetic latitude and longitude [degrees N and E]
 ;       alt           - distance above sea level [km]
 ;
-;     Output Argument:  
-;       rtp[3]        - geocentric coordinates
-;
 ;     Return Value:
-;       error code
+;       r             - radial distance from center of Earth [RE]
+;       theta         - angle from north pole [radians]
+;       phi           - azimuthal angle [radians]
 ;
 ;+-----------------------------------------------------------------------------
 
@@ -1217,5 +1279,123 @@ pro IGRF_msg_notime
 	"***************************************************************************"
 	print, ""
 
+end
+
+;*-----------------------------------------------------------------------------
+;
+; NAME:
+;       plh2xyz
+;
+; PURPOSE:
+;       Convert from geodetic coordinates (as specified by WGS84) to geocentric
+;       coordinates (RE = 6371.2 km) using an alternate method from wikipedia.
+; 
+; CALLING SEQUENCE:
+;       [r,theta,phi] = geod2geoc(lat,lon,alt)
+;     
+;     Input Arguments:  
+;       lat,lon       - geodetic latitude and longitude [degrees N and E]
+;       alt           - distance above sea level [km]
+;
+;     Return Value:  
+;       r             - radial distance from center of Earth [RE]
+;       theta         - angle from north pole [radians]
+;       phi           - azimuthal angle [radians]
+;
+;+-----------------------------------------------------------------------------
+
+function plh2xyz, lat, lon, alt
+	common IGRF_v2_Com
+
+	a = 6378.1370d							; semi-major axis
+	f = 1.d/298.257223563d			; flattening
+	b = a*(1.d -f)							; semi-minor axis
+	ee = (2.d - f) * f
+
+	st = sin(lat*DTOR)
+	ct = cos(lat*DTOR)
+	sp = sin(lon*DTOR)
+	cp = cos(lon*DTOR)
+
+	N = a / sqrt(1.d - ee*st*st)
+	Nac = (N + alt) * ct
+
+	x = Nac * cp
+	y = Nac * sp
+	z = (N*(1.d - ee)+alt) * st
+
+	r = sqrt(Nac*Nac + z*z)
+	t = acos(z/r)
+
+	rtp = dblarr(3)
+
+	rtp[0] = r/RE					; units of RE
+	rtp[1] = t
+	rtp[2] = lon*DTOR
+
+  return, rtp
+end
+
+;*-----------------------------------------------------------------------------
+;
+; NAME:
+;       geoc2geod
+;
+; PURPOSE:
+;       Convert from geocentric coordinates (RE = 6371.2 km) to geodetic
+;       coordinates (as specified by WGS84) using algorithm from wikipedia.
+; 
+; CALLING SEQUENCE:
+;       [lat,lon,h] = geoc2geod(lat,lon,r)
+;     
+;     Input Arguments:  
+;       lat,lon       - geocentric latitude and longitude [degrees N and E]
+;       r             - radial distance from center of Earth [RE]
+;
+;     Return Value:  
+;       lat,lon       - geodetic latitude and longitude using WGS84 [radians]
+;       h             - distance above sea level [km]
+;
+;+-----------------------------------------------------------------------------
+
+function geoc2geod, lat,lon,r
+	common IGRF_v2_Com
+
+	a = 6378.1370d							; semi-major axis
+	f = 1.d/298.257223563d			; flattening
+	b = a*(1.d -f)							; semi-minor axis
+	ee = (2.d - f) * f
+	e4 = ee*ee
+	aa = a*a
+
+	theta = (90.d - lat)*DTOR
+	phi   = lon * DTOR
+
+	st = sin(theta)
+	ct = cos(theta)
+	sp = sin(phi)
+	cp = cos(phi)
+
+	x = r*RE * st * cp
+	y = r*RE * st * sp
+	z = r*RE * ct
+
+	k0i   = 1.d - ee
+	pp    = x*x + y*y
+	zeta  = k0i*z*z/aa
+	rho   = (pp/aa + zeta - e4)/6.d
+	s     = e4*zeta*pp/(4.d*aa)
+	rho3  = rho*rho*rho
+	t     = (rho3 + s + sqrt(s*(s+2*rho3)))^(1.d/3.d)
+	u     = rho + t + rho*rho/t
+	v     = sqrt(u*u + e4*zeta)
+	w     = ee*(u + v - zeta)/(2.d*v)
+	kappa = 1.d + ee*(sqrt(u+v+w*w) + w)/(u + v)
+
+	dlat  = atan(z*kappa,sqrt(pp))/DTOR
+
+	h = sqrt(pp + z*z*kappa*kappa)/ee * (1.d/kappa - k0i)
+
+	return, [dlat,lon,h]
 end
 

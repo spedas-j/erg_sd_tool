@@ -546,10 +546,11 @@ pro AACGM_v2_ConvertGeoCoord, lat_in,lon_in,height_in, lat_out,lon_out, $
 
 	if (height_in lt 0) then begin
 		print, $
-			'ERROR: coordinate tranformations are not defined for altitudes < 0 km', $
+;			'ERROR: coordinate tranformations are not defined for altitudes < 0 km', $
+			'WARNING: coordinate transformations are not intended for altitudes < 0 km : ', $
 			height_in
 		error = -2
-		return
+;		return
 	endif
 
 	if height_in gt 2000 and $
@@ -578,12 +579,13 @@ pro AACGM_v2_ConvertGeoCoord, lat_in,lon_in,height_in, lat_out,lon_out, $
 	if lon_in lt 0 then lon_in += 360
 	if ((lon_in lt 0) or (lon_in gt 360)) then begin
 		print, 'ERROR: longitudes must be in the range 0 to 360 degrees'
+		print, lon_in
 		error = -16
 		return
 	endif
 
 	; convert geodetic to geocentric
-	if not keyword_set(gcentric) then begin
+	if not keyword_set(gcentric) and not keyword_set(geo) then begin
 		rtp = geod2geoc(lat_in, lon_in, height_in)
 
 		;* modify lat/lon/alt to geocentric values */
@@ -599,12 +601,22 @@ pro AACGM_v2_ConvertGeoCoord, lat_in,lon_in,height_in, lat_out,lon_out, $
 			AACGM_v2_Trace_inv, lat_in,lon_in,height_in, tmp_lat,tmp_lon, error, $
 										fixed=fixed, ds=ds, eps=eps, max_ds=max_ds, $
 										verbose=verbose
+			if not keyword_set(gcentric) then begin
+				p = geoc2geod(tmp_lat,tmp_lon,(RE+height_in)/RE)
+				lat_out = p[0]
+				lon_out  = p[1]
+;				height_in = p[2]		; not sure about this...
+			endif else begin
+				lat_out = tmp_lat
+				lon_out = tmp_lon
+			endelse
+
 		endif else begin
 			AACGM_v2_Trace, lat_in,lon_in,height_in, tmp_lat,tmp_lon, error, $
 										fixed=fixed, ds=ds, eps=eps, max_ds=max_ds
+			lat_out = tmp_lat
+			lon_out = tmp_lon
 		endelse
-		lat_out = tmp_lat
-		lon_out = tmp_lon
 		return
 	endif
 
@@ -781,6 +793,13 @@ pro AACGM_v2_ConvertGeoCoord, lat_in,lon_in,height_in, lat_out,lon_out, $
 
 	lat_out = 90. - colat_output*180.0/!pi
 	lon_out = lon_output*180.0/!pi
+
+	if not keyword_set(gcentric) and keyword_set(geo) then begin
+		p = geoc2geod(lat_out,lon_out,(RE+height_in)/RE)
+		lat_out = p[0]
+		lat_in  = p[1]
+		height_in = p[2]		; not sure about this...
+	endif
 
 	error = 0  
 	return
@@ -1139,6 +1158,8 @@ pro AACGM_v2_Trace_inv, lat_in,lon_in,height_in, lat_out,lon_out, error, $
 		; record lat/lon and xyz
 		lat_out = 90. - rtp[1]/DTOR
 		lon_out = rtp[2]/DTOR
+		if lon_out gt 180 then lon_out -= 360		; SGS - make consistent with output
+																						; from coefficient functions
 		error   = 0
 	endelse
 
@@ -1197,7 +1218,7 @@ function AACGM_v2_TimeInterp
 		endif
 
 		;   prefix = 'aacgm_coeffs-leo-11-'
-		print, 'Loading new coefficients: ', modyr, modyr+5
+		;print, 'Loading new coefficients: ', modyr, modyr+5
 		fnamea = prefix+string(format='(i4.4)',modyr)+'.asc'
 		fnameb = prefix+string(format='(i4.4)',modyr+5)+'.asc'
 		openr, ua, fnamea, /get_lun,/stdio

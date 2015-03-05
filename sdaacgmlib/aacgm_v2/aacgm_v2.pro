@@ -21,6 +21,7 @@
 ; 20150121 SGS v2.0  upgrades for IGRF12: 1900-2020. Do not allow times outside
 ;                    this range. Eliminate reliance on geopack DLMs by calling
 ;                    native IDL routines.
+; 20150223 SGS       decoupling MLT from AACGM-v2 software.
 ;
 ; Functions:
 ;
@@ -345,42 +346,5 @@ function cnvcoord_v2, in1,in2,in3, geo=geo, trace=trace, $
 	outpos = reform(outpos,s0[1:n_elements(s0)-3])
 
 	return, outpos
-end
-
-; SGS - have not looked at this function yet...
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;+
-; NAME:
-; mlt
-;
-; PURPOSE:
-;
-; convert UT time to MLT
-;
-; CALLING SEQUENCE:
-;
-;   mt = mlt(year, ut_seconds, mag_long)
-;
-;   inputs:  year, time in seconds from Jan. 1 at 00;00:00 UT
-;            magnetic longitude of the observation point
-; 
-;         the time in seconds can be found with routine "cnvtime"
-;   the magnetic longitude of the obs. point can be found
-;     by using routine "cnvcoord"
-;
-;-----------------------------------------------------------------------------
-
-function mlt_v2, year, t, mlong
-	year = fix(year)
-	t = long(t)
-	mlong = float(mlong)
-	if (n_elements(t) eq 1) then mt = 0.0 else mt = fltarr(n_elements(t))
-	if (n_elements(t) eq 1) then $
-		mt = MLTConvert_v2(year,t,mlong) $
-	else $
-		for i=0,n_elements(t)-1 do mt[i] = MLTConvert_v2(year,t[i],mlong)
-
-	return, mt
 end
 

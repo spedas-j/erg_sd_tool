@@ -65,3 +65,51 @@ function AACGM_v2_Dayno, yr,mo,dy, days=days
 	return, fix(doy)
 end
 
+;------------------------------------------------------------------------------
+;
+; NAME:
+;       AACGM_v2_Date
+;
+; PURPOSE:
+;       Determine the date from the given day number and year.
+;   
+; CALLING SEQUENCE:
+;       AACGM_v2_Dayno, yr, dayno, mo,dy
+;
+;     Input Arguments:  
+;       yr            - 4-digit year
+;       dayno         - day number, starting at 1 for Jan 1
+;
+;     Output Arguments:
+;       mo            - Month: 1-January, 2-February, etc.
+;       dy            - Day of month, starting at 1
+;
+; HISTORY:
+;
+; Revision 1.0  14/06/10 SGS initial version
+; 
+;+-----------------------------------------------------------------------------
+;
+
+pro AACGM_v2_Date, yr,dayno, mo,dy
+
+	err = 0
+
+	mdays=[0,31,28,31,30,31,30,31,31,30,31,30,31]
+
+	; leap year calculation
+	if yr mod 4 ne 0 then inc=0 $
+	else if yr mod 400 eq 0 then inc=1 $
+	else if yr mod 100 eq 0 then inc=0 $
+	else inc=1
+	mdays[2]=mdays[2]+inc
+
+	tots = intarr(13)
+	for k=0,12 do tots[k] = total(mdays[0:k])
+
+	q = where(tots ge dayno, nq)
+	mo = q[0]
+	dy = dayno - tots[q[0]-1]
+
+end
+
