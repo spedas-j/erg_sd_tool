@@ -255,7 +255,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
 
     ;Reassign scan numbers for the combined data 
     tn=prefix+'scanstartflag_'+suf[i]
-    get_data, tn, data=d, dl=dl, lim=lim & scflg = d.y 
+    get_data, tn, data=d, dl=dl, lim=lim & scflg = abs(d.y)
     scno = long(scflg) & scno[*] = -1 
     scno_t = 0L & scno[0] = scno_t 
     for n = 1L, n_elements(scno)-1 do begin
