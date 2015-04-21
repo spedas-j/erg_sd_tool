@@ -253,6 +253,19 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     IF idx[0] NE -1 THEN val[idx] = !values.f_nan
     store_data, tn, data={x:d.x, y:val, v:d.v}, dl=dl, lim=lim
 
+    ;Reassign scan numbers for the combined data 
+    tn=prefix+'scanstartflag_'+suf[i]
+    get_data, tn, data=d, dl=dl, lim=lim & scflg = d.y 
+    scno = long(scflg) & scno[*] = -1 
+    scno_t = 0L & scno[0] = scno_t 
+    for n = 1L, n_elements(scno)-1 do begin
+      if scflg[n] gt 0 then scno_t = scno_t + 1
+      scno[n] = scno_t 
+    endfor
+    tn=prefix+'scanno_'+suf[i]
+    get_data, tn, data=d, dl=dl, lim=lim 
+    store_data, tn, data={x:d.x, y:scno}, dl=dl, lim=lim 
+    
     ;Apply tclip the vlos data temporarily for demo 
     ;tclip, prefix+'vlos_'+suf[i] , -500.,500., /over
 
