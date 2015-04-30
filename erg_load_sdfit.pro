@@ -77,10 +77,10 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
   sd_init
 
   ;Set the list of the available sites
-  valid_sites = [ 'ade', 'adw', 'bks', 'cly', 'cve', 'cvw', 'dce', 'fhe', $
-                  'fhw', 'gbr', 'hal', 'han', 'hok', 'inv', 'kap', 'kod', $
-                  'ksr', 'pgr', 'pyk', 'rkn', 'san', 'sas', 'sto', 'sye', $
-                  'sys', 'tig', 'unw', 'wal', 'zho', 'hkw' ]
+  valid_sites = [ 'ade', 'adw', 'bks', 'bpk', 'cly', 'cve', 'cvw', 'dce', 'fhe', $
+                  'fhw', 'fir', 'gbr', 'hal', 'han', 'hok', 'hkw', 'inv', 'kap', 'ker', 'kod', $
+                  'ksr', 'mcm', 'pgr', 'pyk', 'rkn', 'san', 'sas', 'sps', 'sto', 'sye', $
+                  'sys', 'tig', 'unw', 'wal', 'zho' ]
 
   ;If a CDF file path is not given explicitly
   IF ~KEYWORD_SET(cdffn) THEN BEGIN
