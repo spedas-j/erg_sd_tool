@@ -14,7 +14,7 @@ pro aacgmfindcoeffile, prefix, coefyrlist
     
   endif else begin  ; If not set, then set the coef. dir in SPEDAS tree.
   
-    cmd_paths = strsplit( !path, ';', /ext )
+    cmd_paths = strsplit( !path, path_sep(/search), /ext )
     for i=0L, n_elements(cmd_paths)-1 do begin
       cmd_path = cmd_paths[i]
       if file_test(cmd_path+'/aacgmidl.pro') then break
