@@ -70,6 +70,7 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
     erase=erase, clip=clip, geo_plot=geo_plot, coord=coord, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     notimelabel=notimelabel, timelabelpos=timelabelpos, $
+    timelabelformat=timelabelformat, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
     charscale=charscale, force_nhemis=force_nhemis, $
     pixel_scale=pixel_scale
@@ -285,7 +286,8 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
       x = !x.window[0]+0.02 & y = !y.window[0]+0.02
     endelse
     
-    tstr = time_string(t, tfor='hh:mm')+' UT'
+    if ~keyword_set(timelabelformat) then timelabelformat = 'hh:mm'
+    tstr = time_string(t, tfor=timelabelformat)+' UT'
     XYOUTS, x, y, tstr, /normal, $
       font=1, charsize=charsz*2.5
   ENDIF
