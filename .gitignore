@@ -8,3 +8,7 @@
 TMP*cdf
 *.ps
 tmp
+*tar
+*tar.gz
+*zip
+
