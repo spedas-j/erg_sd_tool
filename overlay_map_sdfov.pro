@@ -13,7 +13,7 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     PRINT, 'Keyword SITE should be given'
     RETURN
   ENDIF
-  stns = thm_check_valid_name( site, valid_sites, /ignore_case, /include_all )
+  stns = ssl_check_valid_name( site, valid_sites, /ignore_case, /include_all )
   IF STRLEN(stns[0]) EQ 0 THEN BEGIN
     PRINT, 'No valid radar name in sites!'
     PRINT, 'Data currently available: ',valid_sites
