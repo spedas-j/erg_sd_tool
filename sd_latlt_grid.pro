@@ -26,7 +26,7 @@
 ; $URL: $
 ;-
 PRO sd_latlt_grid, dlat=dlat, dlt=dlt, color=color, linethick=linethick, $
-  twohourmltgrid=twohourmltgrid 
+  twohourmltgrid=twohourmltgrid, whitebgk=whitebgk 
     
   ;Initialize the SD plot environment
   sd_init
@@ -35,8 +35,9 @@ PRO sd_latlt_grid, dlat=dlat, dlt=dlt, color=color, linethick=linethick, $
   if ~keyword_set(dlt) then dlt = 1. 
   if keyword_set(twohourmltgrid) then dlt = 2. 
   
-  map_grid, latdel=dlat, londel=15.*dlt, color=color, glinethick=linethick  
-  
+  if keyword_set(whitebgk) then map_grid, latdel=dlat, londel=15.*dlt, color=255, glinethick=linethick*1.4  
+  map_grid, latdel=dlat, londel=15.*dlt, color=color, glinethick=linethick
+
   
   
   RETURN
