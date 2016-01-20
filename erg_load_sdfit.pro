@@ -93,7 +93,7 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     endif
 
     ;Check the site name
-    stns = thm_check_valid_name( sites, valid_sites, /ignore_case, /include_all )
+    stns = ssl_check_valid_name( sites, valid_sites, /ignore_case, /include_all )
     if strlen(stns[0]) eq 0 then begin
       print, 'No valid radar name in sites!'
       print, 'Data currently available: ',valid_sites
