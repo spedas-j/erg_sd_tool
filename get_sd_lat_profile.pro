@@ -14,6 +14,7 @@
 ; dlat:   latitudial width of each latitudinal bin for which the average values are obtained.  
 ; lonrng: the geographical longitude range for averaging
 ; maglat: Set this keyword if you give the latrng in magnetic latitude, not in geographical latitude. 
+; maglon: Set this keyword if  you give the lonrng in magnetic longitude. 
 ; new_vn: Set a string to create a new tplot variable containing the averaged values
 ;
 ; :EXAMPLES:
@@ -31,7 +32,7 @@
 ; $LastChangedRevision:$
 ; $URL:$
 ;-
-PRO get_sd_lat_profile, vn, latrng=latrng, lonrng=lonrng, dlat=dlat, maglat=maglat, new_vn=new_vn
+PRO get_sd_lat_profile, vn, latrng=latrng, lonrng=lonrng, dlat=dlat, maglat=maglat, maglon=maglon, new_vn=new_vn
   
   ;Currently this procedure can take as an argument:
   ; vlos, vlshell, (vlos|vnorth|veast), _iscat
@@ -47,7 +48,7 @@ PRO get_sd_lat_profile, vn, latrng=latrng, lonrng=lonrng, dlat=dlat, maglat=magl
   
   if n_elements(latrng) ne 2 or n_elements(lonrng) ne 2 then return
   
-  latrng = float(latrng)
+  latrng = minmax(float(latrng))
   dlat = abs(dlat)
   tlatarr = ( latrng[0] + dlat* findgen(ceil( (latrng[1]-latrng[0])/dlat )+1) ) < latrng[1]
  
@@ -64,7 +65,7 @@ PRO get_sd_lat_profile, vn, latrng=latrng, lonrng=lonrng, dlat=dlat, maglat=magl
     
     latmin = tlatarr[i] & latmax = tlatarr[i+1]
     latave = get_sd_ave(vn, latrng=[latmin,latmax],lonrng=lonrng,$
-                          maglat=maglat )
+                          maglat=maglat, maglon=maglon )
     valarr[*,i] = latave.y
     
   endfor
