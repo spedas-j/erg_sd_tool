@@ -10,7 +10,8 @@
 ; vn : a tplot variable the values in which are to be averaged
 ;
 ; :KEYWORD:
-; lonrng: the geographical latitude range for which the given values are averaged
+; lonrng: the geographical latitude range for which the given values are averaged. 
+;             Lonrng should be a 2-element array of [ western bnd, eastern bnd ] in deg of GEO or MAG coords. 
 ; dlon:   longitudinal width of each longitudinal bin for which the average values are obtained.  
 ; latrng: the geographical latiitude range for averaging
 ; maglat: Set this keyword if you give the latrng in magnetic latitude, not in geographical latitude. 
@@ -48,17 +49,27 @@ PRO get_sd_lon_profile, vn, latrng=latrng, lonrng=lonrng, dlon=dlon, maglat=magl
   
   if n_elements(latrng) ne 2 or n_elements(lonrng) ne 2 then return
   
-  lonrng = minmax(float(lonrng))
-  dlon = abs(dlon)
-  tlonarr = ( lonrng[0] + dlon* findgen(ceil( (lonrng[1]-lonrng[0])/dlon )+1) ) < lonrng[1]
- 
+  lonrng = (float(lonrng))
+  dlon = abs(dlon) 
+  if lonrng[1]-lonrng[0] gt 0 then begin
+    lonext = lonrng[1]-lonrng[0] 
+    tlonarr0 = ( lonrng[0] + dlon* findgen(ceil( (lonext)/dlon )+1) ) < lonrng[1] 
+    tlonarr = ( tlonarr0 + 360. ) mod 360. 
+    acrosslon0 = 0 
+  endif else begin
+    lonext = (360.-lonrng[0]) + lonrng[1] 
+    tlonarr0 = ( lonrng[0] + dlon* findgen(ceil( (lonext)/dlon )+1) ) < (360+lonrng[1]) 
+    tlonarr = ( tlonarr0 + 360. ) mod 360. 
+    acrosslon0 = 1 
+  endelse
   ;print, tlatarr
   
   ;Generate the time-lat array
   scan = get_scan_struc_arr(vn) 
   valarr = fltarr( n_elements(scan.x), n_elements(tlonarr)-1 )
   nlon = n_elements(tlonarr)
-  lonc = (tlonarr[1:(nlon-1)]+tlonarr[0:(nlon-2)])/2.
+  lonc = (tlonarr0[1:(nlon-1)]+tlonarr0[0:(nlon-2)])/2.
+  if acrosslon0 then lonc -= 360. 
   ;print, latc
   
   for i=0L, n_elements(tlonarr)-2 do begin
@@ -75,9 +86,10 @@ PRO get_sd_lon_profile, vn, latrng=latrng, lonrng=lonrng, dlon=dlon, maglat=magl
     new_vn = vn +'_lonpro_lat'+string(latrng[0],'(I03)')+'-'+$
       string(latrng[1],'(I03)')
       
+  if acrosslon0 then yran = minmax(tlonarr0)-360. else yran = minmax(tlonarr) 
   store_data, new_vn, data={x: scan.x, y:valarr, v:lonc}, $
     dl={spec:1}, $
-    lim={zrange:[-300,300]}
+    lim={zrange:[-500,500], ystyle:1, yrange:yran }
     
   return
 end
