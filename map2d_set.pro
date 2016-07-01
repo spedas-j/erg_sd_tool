@@ -41,7 +41,8 @@ PRO map2d_set, glatc=glatc, glonc=glonc, $
     coord=coord, set_time=set_time, mltlabel=mltlabel, lonlab=lonlab, $
     nogrid=nogrid, $
     dlat_grid=dlat_grid, dlon_grid=dlon_grid, color_grid=color_grid, $
-    linethick_grid=linethick_grid 
+    linethick_grid=linethick_grid, $
+    border=border 
     
 ;----- Initialize the map2d environment -----;
 map2d_init, set_time=set_time, coord=coord, $
@@ -132,7 +133,7 @@ map_set, latc, lonc, rot_angle, $
     satellite=satellite, stereo=stereo, sat_p=[6.6, 0., 0.], $
     scale=scale_tmp, /isotropic, /horizon, noerase=~keyword_set(erase), $
 	label=label, charsize=charsize, $
-  /noborder
+  noborder = ~keyword_set(border) 
 
 if ~keyword_set(nogrid) then $
   map2d_grid, dlat=dlat_grid, dlon=dlon_grid, color=color_grid, $
