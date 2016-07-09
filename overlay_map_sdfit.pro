@@ -298,6 +298,8 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
     if s eq 0 then ztitle = ''
     str_element, lim, 'zrange', val=zrange, success=s
     if s eq 0 then zrange = [-1000,1000]
+    str_element, lim, 'zticklen', val=yticklen, success=s 
+    if s then exstr = { yticklen: yticklen } else exstr = { zticklen: 0.3 } 
     if keyword_set(colorscalepos) then begin
       cp = colorscalepos
       x0 = !x.window[0] & xs = !x.window[1]-!x.window[0]
@@ -314,7 +316,7 @@ PRO overlay_map_sdfit, datvn, time=time, position=position, $
     !y.ticklen = 0.25
     draw_color_scale, range=zrange,$
       pos=cspos,$
-      title=ztitle, charsize=charsz*0.7
+      title=ztitle, charsize=charsz*0.7, _extra=exstr 
     !y.ticklen = pre_yticklen
     
   endif
