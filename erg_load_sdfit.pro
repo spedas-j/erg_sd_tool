@@ -129,8 +129,13 @@ PRO erg_load_sdfit, sites=sites, cdffn=cdffn, $
     datfileformat = 'YYYY/sd_fitacf_l2_'+stn+'_YYYYMMDD*cdf'
     relfnames = file_dailynames(file_format=datfileformat, trange=trange, times=times)
 
-    datfiles = file_retrieve(relfnames, $
-      local_data_dir=source.local_data_dir,remote_data_dir=source.remote_data_dir, _extra=source)
+;    datfiles = file_retrieve(relfnames, $
+;      local_data_dir=source.local_data_dir,remote_data_dir=source.remote_data_dir, _extra=source)
+    datfiles = $
+      spd_download( remote_file = relfnames, remote_path = source.remote_data_dir $
+      , local_path = source.local_data_dir $
+      , /last_version, no_download=no_download $
+      )
     IF total(file_test(datfiles)) eq 0 THEN BEGIN
       print, 'Cannot download/find data file: '+datfiles
       PRINT, 'No data was loaded!'
