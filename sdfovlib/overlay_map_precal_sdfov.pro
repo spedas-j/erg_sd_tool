@@ -1,7 +1,8 @@
 PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   linethick=linethick, $
   fill=fill, $
-  color=color 
+  color=color, $
+  force_nhemis=force_nhemis 
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok hkw inv kap kod ksr pgr pyk rkn sas sto wal ade adw', /ext )
@@ -59,6 +60,9 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
       yrsecs = long( glats) & yrsecs[*] = yrsec
       mlts = aacgmmlt( years, yrsecs,  (mlons+360.) mod 360  )
       
+      ;Project the fov to the northern hemisphere if force_nhemis is set.
+      if keyword_set(force_nhemis) then mlats = abs( mlats ) 
+       
       lats = mlats & lons = mlts /24. * 360.
     endelse
     
