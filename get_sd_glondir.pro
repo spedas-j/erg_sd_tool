@@ -110,6 +110,28 @@ PRO get_sd_glondir, vlos_vn
   t = SQRT(beam_dx_geo^2+beam_dy_geo^2+beam_dz_geo^2)
   beam_dx_geo /= t & beam_dy_geo /= t & beam_dz_geo /= t ;normalized
   
+  ;;;Get unit vectors of the "Glat direction"
+
+  glat = ctbl[*,*,1] & glon = ctbl[*,*,0]
+  altarr = glat & altarr[*,*] = alt
+
+  glatp = glat + 0.1 & glatm = glat - 0.1
+  glon = ( glon + 360. ) MOD 360.
+  glonp = glon 
+  glonm = glon 
+
+  xp = r*COS(glatp*!dtor)*COS(glonp*!dtor)
+  yp = r*COS(glatp*!dtor)*SIN(glonp*!dtor)
+  zp = r*SIN(glatp*!dtor)
+  xm = r*COS(glatm*!dtor)*COS(glonm*!dtor)
+  ym = r*COS(glatm*!dtor)*SIN(glonm*!dtor)
+  zm = r*SIN(glatm*!dtor)
+  glatdir_dx_geo = xp-xm   ;Glon dir at the center of each pixel
+  glatdir_dy_geo = yp-ym   ;Positive is eastward
+  glatdir_dz_geo = zp-zm
+  t = SQRT(glatdir_dx_geo^2+glatdir_dy_geo^2+glatdir_dz_geo^2)
+  glatdir_dx_geo /= t & glatdir_dy_geo /= t & glatdir_dz_geo /= t ;normalized
+
   ;;;Get unit vectors of the "Glon direction"
   
   glat = ctbl[*,*,1] & glon = ctbl[*,*,0]
@@ -132,18 +154,24 @@ PRO get_sd_glondir, vlos_vn
   t = SQRT(glondir_dx_geo^2+glondir_dy_geo^2+glondir_dz_geo^2)
   glondir_dx_geo /= t & glondir_dy_geo /= t & glondir_dz_geo /= t ;normalized
   
-  ;;;Get an angle between VLOS and Glon dir
+  ;;;Get an angle between VLOS and Glon dir/Glat dir
   cos_vlos_glondir = beam_dx_geo*glondir_dx_geo + beam_dy_geo*glondir_dy_geo $
     + beam_dz_geo*glondir_dz_geo   ;as a 2-D array in [nrang,azmax]
-    
-  ;;;Generate the glondir array
-  cos_vlos_glondir_arr = (TRANSPOSE(cos_vlos_glondir))[ azmno, * ]
+  cos_vlos_glatdir = beam_dx_geo*glatdir_dx_geo + beam_dy_geo*glatdir_dy_geo $
+    + beam_dz_geo*glatdir_dz_geo   ;as a 2-D array in [nrang,azmax]
   
+  acos_vlos_glondir = acos( cos_vlos_glondir ) * !radeg 
+  sine_sign = sign( cos_vlos_glatdir ) 
+  idx = where( sine_sign lt 0., cnt ) 
+  if cnt gt 0 then acos_vlos_glondir[idx] *= (-1.) 
+  
+  ;;;Generate the glondir/glatdir array
+  acos_vlos_glondir_arr = (TRANSPOSE(acos_vlos_glondir))[ azmno, * ]
   
   angle_var_vn = prefix+'glondir-bmdir_angle_'+suf
   IF STRLEN(tnames(angle_var_vn)) GT 6 THEN store_data,del=angle_var_vn
   store_data, angle_var_vn, $
-    data={x: vlos_time, y: ACOS(cos_vlos_glondir_arr)*!radeg, $
+    data={x: vlos_time, y:(acos_vlos_glondir_arr), $
     v: vlos_v}, $
     dl={spec:1}, $
     lim={ytitle:vlos_lim.ytitle, ysubtitle:vlos_lim.ysubtitle, $
