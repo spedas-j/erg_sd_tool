@@ -3,9 +3,9 @@ rd = read_ascii('radar_list', templ=tmpl )
 
 bm=16
 rg=75
-lst_16_110 = 'hok hkw'
+lst_16_110 = 'hok hkw lyr'
 lst_24_110 = 'bks wal ade adw'
-lst_22_110 = 'fhe fhw'
+lst_22_110 = 'fhe fhw bpk'
 lst_24_75 = 'cve cvw'
 lst_16_100 = 'gbr inv kap rkn cly'
 
