@@ -5,7 +5,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   force_nhemis=force_nhemis, force_shemis=force_shemis 
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok hkw inv kap kod ksr pgr pyk rkn sas sto wal ade adw', /ext )
+  nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok hkw inv kap kod ksr lyr pgr pyk rkn sas sto wal ade adw', /ext )
   sh_list = strsplit('bpk dce fir hal ker mcm san sps sye sys tig unw zho', /ext )
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   
@@ -50,7 +50,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
     glons = [ sdfovtbl.glon[0:bm,0], reform(sdfovtbl.glon[bm,0:rg]), $
       reverse(sdfovtbl.glon[0:bm,rg]), reverse(reform(sdfovtbl.glon[0,0:rg])) ]
     
-    if keyword_set(geo_plot) then begin
+    if keyword_set(geo_plot) or !map2d.coord eq 0 then begin
       lats = glats & lons = glons 
     endif else begin
       ;AACGM conversion
