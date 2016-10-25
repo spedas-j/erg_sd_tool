@@ -2,7 +2,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   linethick=linethick, $
   fill=fill, $
   color=color, $
-  force_nhemis=force_nhemis 
+  force_nhemis=force_nhemis, force_shemis=force_shemis 
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok hkw inv kap kod ksr pgr pyk rkn sas sto wal ade adw', /ext )
@@ -38,7 +38,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   for i=0, n_elements(stns)-1 do begin
     
     stn = stns[i]
-    tblfn = dir +'/sdfovtbl_'+stn+'.sav
+    tblfn = dir +'/sdfovtbl_'+stn+'.sav'
     if ~file_test(tblfn) then continue
     restore, tblfn 
     
@@ -62,7 +62,8 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
       
       ;Project the fov to the northern hemisphere if force_nhemis is set.
       if keyword_set(force_nhemis) then mlats = abs( mlats ) 
-       
+      if keyword_set(force_shemis) then mlats = -1. * abs(mlats) 
+      
       lats = mlats & lons = mlts /24. * 360.
     endelse
     
