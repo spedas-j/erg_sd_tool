@@ -37,7 +37,7 @@ if (not keyword_set(exists)) or (keyword_set(reset)) then begin
       ,sd_polar: { $
                   charsize: 1.0 $
                 } $
-      ,remote_data_dir:'http://ergsc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/' $
+      ,remote_data_dir:'http://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/' $
       , aacgm: { $
                   coefprefix:prefix $
                   , coefyrlist:yrlist $
