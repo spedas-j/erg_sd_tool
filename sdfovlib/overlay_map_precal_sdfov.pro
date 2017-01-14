@@ -2,7 +2,8 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   linethick=linethick, $
   fill=fill, $
   color=color, $
-  force_nhemis=force_nhemis, force_shemis=force_shemis 
+  force_nhemis=force_nhemis, force_shemis=force_shemis, $
+  get_sdfovtbl = get_sdfovtbl ;get_sdfovtbl should have an integer "1" when calling 
   
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   nh_list = strsplit('bks cve cvw ekb fhe fhw gbr han hok hkw inv kap kod ksr lyr pgr pyk rkn sas sto wal ade adw', /ext )
@@ -24,7 +25,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   sd_init
   
   ;Prepare for AACGM conversion
-  if ~keyword_set(geo_plot) then begin
+  if ~keyword_set(geo_plot) and ~keyword_set(get_sdfovtbl) then begin
     ts = time_struct( !map2d.time)
     yrsec = long( (ts.doy-1)*86400L + ts.sod )
     aacgmloadcoef, ts.year 
@@ -41,6 +42,9 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
     tblfn = dir +'/sdfovtbl_'+stn+'.sav'
     if ~file_test(tblfn) then continue
     restore, tblfn 
+    if keyword_set(get_sdfovtbl) then begin
+      get_sdfovtbl=sdfovtbl & return
+    endif
     
     bm = n_elements( sdfovtbl.glat[*,0] )-1
     rg = n_elements( sdfovtbl.glat[0,*] )-1
