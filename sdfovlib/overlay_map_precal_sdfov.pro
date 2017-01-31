@@ -16,7 +16,7 @@ PRO overlay_map_precal_sdfov, site=site, geo_plot=geo_plot, nh=nh, sh=sh, $
   if keyword_set(sh) then append_array, stns, sh_list
   if keyword_set(site) then append_array, stns, strsplit(site, /ext) 
   if stns[0] eq '' then return
-  print, stns 
+  ;print, stns 
   
   if ~keyword_set(color) then color = 0 ;default color
   
