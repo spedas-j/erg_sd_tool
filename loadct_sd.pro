@@ -10,7 +10,7 @@
 ; the one that was used in the JHU/APL SD site.
 ;
 ; :AUTHOR:
-;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;   Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ; :HISTORY:
 ;   2010/11/20: created
 ;

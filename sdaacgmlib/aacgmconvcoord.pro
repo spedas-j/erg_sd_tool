@@ -24,7 +24,7 @@
 ;   aacgmconvcoord, mlat,mlon,alt, glat,glon,err, /TO_GEO
 ;
 ; :AUTHOR:
-;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;   Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ;   2011/10/04: created and got through the initial bug fixes

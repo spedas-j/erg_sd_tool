@@ -19,7 +19,7 @@
 ;            e.g., ['2008-10-01/00:00:00','2008-10-02/00:00:00']
 ;
 ; :AUTHOR:
-;     Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
+;     Tomo Hori (E-mail: horit at isee.nagoya-u.ac.jp)
 ; :HISTORY:
 ;   2010/03/09: Created as a draft version
 ;   2010/07/01: now work for hok and ksr
@@ -37,7 +37,7 @@
 ;his/her scientific researches.
 ;
 ;As for questions and request for the data, please feel free to contact
-;the ERG-SC office (E-mail:  erg-sc-core at st4a.stelab.nagoya-u.ac.jp,
+;the ERG-SC office (E-mail:  erg-sc-core at st4a.isee.nagoya-u.ac.jp,
 ;please replace "at" by "@").
 ;------------------------------------------------------------------------------
 ;

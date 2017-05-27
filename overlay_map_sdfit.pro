@@ -20,7 +20,7 @@
 ;    charscale: Set a value of font size to write the time label and letters for the color scale
 ;
 ; :AUTHOR:
-; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/01/11: Created

@@ -19,7 +19,7 @@
 ;   make_fanplot_pictures, 'sd_hok_vlos_bothscat_1', 0230, 0300, prefix='pngdir/sd_hok_'
 ;
 ; :Author:
-; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/07/01: Created

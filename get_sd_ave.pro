@@ -20,7 +20,7 @@
 ;   dat = get_sd_ave( 'sd_hok_vlos_1', latrng=[60,70], lonrng=[140,170] 
 ;
 ; :Author:
-; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/07/03: Created

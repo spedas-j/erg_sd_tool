@@ -12,7 +12,7 @@
 ; AACGM routines (DLM, or IDL native ones attached to TDAS). 
 ; 
 ; :AUTHOR: 
-;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;   Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ; 
 ; :Params:
 ;   yr:     4-digit year for which MLT is calculated.

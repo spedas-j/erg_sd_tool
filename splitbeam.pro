@@ -6,7 +6,7 @@
 ;    splitbeam, 'sd_hok_vlos_0'
 ;
 ; :Author:
-;    Tomoaki Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;    Tomoaki Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ; :HISTORY:
 ;    2010/03/02: Created
 ;

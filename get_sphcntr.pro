@@ -20,7 +20,7 @@
 ;   pos = get_sphcntr( [lat1,lat2,lat3], [lon1,lon2,lon3] )
 ;
 ; :AUTHOR:
-; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/01/07: Created
