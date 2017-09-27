@@ -59,12 +59,12 @@ PRO splitbeam, tvars
         get_data, vn_gscat, data=ddg, dl=dlg, lim=limg
         store_data, vn_iono+azim_suf, data={x:dd.x[idx], y:dd.y[idx,*], v:dd.v}, dl=dl,lim=lim
         store_data, vn_gscat+azim_suf,data={x:ddg.x[idx],y:ddg.y[idx,*],v:ddg.v},dl=dlg,lim=limg
-        options, vn_iono+azim_suf, 'ytitle', STRUPCASE(stn)+' bm'+STRING(d.y[bmidx[i]], '(I2.2)')
+        options, vn_iono+azim_suf, 'ytitle', STRUPCASE(stn)+'!Cbm'+STRING(d.y[bmidx[i]], '(I2.2)')
         options, vn_iono+azim_suf, 'ysubtitle', '[range gate]'
         store_data, vn, data=[ vn_iono+azim_suf,vn_gscat+azim_suf ]
       endelse
       
-      options, vn, 'ytitle', STRUPCASE(stn)+' bm'+STRING(d.y[bmidx[i]], '(I2.2)')
+      options, vn, 'ytitle', STRUPCASE(stn)+'!Cbm'+STRING(d.y[bmidx[i]], '(I2.2)')
       options, vn, 'ysubtitle', '[range gate]'
       maxrg = max(dd.v,/nan)+1
       ylim, vn, [0,maxrg]
