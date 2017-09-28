@@ -25,7 +25,7 @@
 ; 2013/10/02: Initial release
 ;
 ; :Author:
-;   Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
+;   Tomo Hori (E-mail: horit at isee.nagoya-u.ac.jp)
 ;
 ; $LastChangedBy:$
 ; $LastChangedDate:$

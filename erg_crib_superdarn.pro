@@ -9,7 +9,7 @@
 ;    below into the IDL command line. 
 ;
 ; :AUTHOR: 
-;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;   Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;   
 ; :HISTORY:
 ;    2011/01/11: Added commands for 2-D map plotting

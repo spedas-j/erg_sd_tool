@@ -9,7 +9,7 @@
 ;   dat = get_scan_struc_arr( 'sd_hok_vlos_1' )
 ;
 ; :Author:
-; 	Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit at isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/07/01: Initial release

@@ -16,7 +16,7 @@
 ;   set_coords, 'sd_hok_vlos_1', 'mlat'
 ;
 ; :AUTHOR:
-; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2010/11/18: Created

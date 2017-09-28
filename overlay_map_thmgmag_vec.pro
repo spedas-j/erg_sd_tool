@@ -11,7 +11,7 @@
 ;         whose arc length on the world map is 10 deg.
 ; 
 ; :AUTHOR:
-; 	Tomo Hori (E-mail: horit at stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit at isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/12/21: Created

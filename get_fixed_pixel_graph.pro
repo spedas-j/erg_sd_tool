@@ -17,7 +17,7 @@
 ;   get_fixed_pixel_graph, 'sd_hok_vlos_1', beam=3, range_gate=65
 ;
 ; :AUTHOR:
-; 	Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+; 	Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ;
 ; :HISTORY:
 ; 	2011/06/22: Created

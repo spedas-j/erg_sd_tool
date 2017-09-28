@@ -10,7 +10,7 @@
 ;    
 ;
 ; :AUTHOR: 
-;   Tomo Hori (E-mail: horit@stelab.nagoya-u.ac.jp)
+;   Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ; :HISTORY: 
 ;   2010/03/10: Created
 ;   2014/08/12: Major changes to move on to the new "map2d" environment 
@@ -37,7 +37,7 @@ if (not keyword_set(exists)) or (keyword_set(reset)) then begin
       ,sd_polar: { $
                   charsize: 1.0 $
                 } $
-      ,remote_data_dir:'http://ergsc.stelab.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/' $
+      ,remote_data_dir:'http://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/radar/sd/fitacf/' $
       , aacgm: { $
                   coefprefix:prefix $
                   , coefyrlist:yrlist $
