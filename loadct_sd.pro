@@ -2,22 +2,29 @@
 ; PROCEDURE loadct_sd
 ;
 ; :DESCRIPTION:
-; Basically this procedure is the same as loadct2.pro except for
-; yellow (color=5) replaced with grey. In addition, if you run
-; this with an argument of 44 (e.g., loadct_sd, 44), then it
-; loads the Cutlass color table often used for SuperDARN data.
-; Using this with 45 as an argument gives you a color table similar to
-; the one that was used in the JHU/APL SD site.
+; This procedure is basically the same as loadct2.pro except for
+; yellow (color=5) replaced with grey. Some additional colormaps 
+; were also implemented for indices 44-47 as follows: 
+;    44 : the Cutlass color table often used for SuperDARN data
+;    45 : a color table similar to the one that was used in the JHU/APL SuperDARN website
+;    46 : the "jet" colormap used by matplotlib of python
+;    47 : the "viridis" colormap also used by matplotlib of python
+;
+; Some original functions to modify a colarmap were also added as keywords: 
+;  center_hatched: if set, colors arount the center of a colormap are hatched with white (default)
+;  hatched_color: set a color index used for the hatching turned on by center_hatched keyword
+;  hatched_width: number of indices over which the hatching is applied. Default is 21.
 ;
 ; :AUTHOR:
 ;   Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
 ; :HISTORY:
+;   2017/09/27: jet and viridis implemented
 ;   2010/11/20: created
 ;
-; $LastChangedBy: $
-; $LastChangedDate: $
-; $LastChangedRevision: $
-; $URL: $
+; $LastChangedBy: c0004hori $
+; $LastChangedDate: 2017-09-28 11:57:54 +0900 (Thu, 28 Sep 2017) $
+; $LastChangedRevision: 479 $
+; $URL: https://ergsc-local.isee.nagoya-u.ac.jp/svn/ergsc/trunk/erg/ground/radar/superdarn/loadct_sd.pro $
 ;-
 
 PRO set_col_tab_from_rgb_txt, rgb_txt, bottom_c
