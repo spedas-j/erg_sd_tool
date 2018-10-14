@@ -44,12 +44,16 @@ pro aacgmfindcoeffile, prefix, coefyrlist
   endif
   
   coefyrlist = fix( strmid( coeffpath, 7, 4, /rev ) )
-  
-  if !map2d.aacgm_dlm_exists and strlen(prefix0) lt 1 then begin
+ 
+  prefixdir=file_dirname( prefix )+'/'
+   
+  if strlen(prefix0) lt 1 then begin
     if !version.os_family ne 'Windows' then begin
       setenv, 'AACGM_DAT_PREFIX='+prefix
+      if !map2d.aacgm_dlm_exists then aacgm_set_path, prefixdir
     endif else begin
       setenv, 'AACGM_DAT_PREFIX='+strjoin( strsplit(prefix,'/',/ext), '\\' )
+      if !map2d.aacgm_dlm_exists then aacgm_set_path, strjoin( strsplit(prefixdir,'/',/ext), '\\' )
     endelse
   endif
   
