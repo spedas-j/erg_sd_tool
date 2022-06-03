@@ -9,6 +9,9 @@
 ;    45 : a color table similar to the one that was used in the JHU/APL SuperDARN website
 ;    46 : the "jet" colormap used by matplotlib of python
 ;    47 : the "viridis" colormap also used by matplotlib of python
+;    48 : the "Turbo" colormap
+;         (https://ai.googleblog.com/2019/08/turbo-improved-rainbow-colormap-for.html)
+;
 ;
 ; Some original functions to modify a colarmap were also added as keywords: 
 ;  center_hatched: if set, colors arount the center of a colormap are hatched with white (default)
@@ -195,7 +198,7 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
   
   IF ~KEYWORD_SET(ct) THEN ct = 46 ; JET
   
-                                ;Error check for ct
+  ;;Error check for ct
   if ct lt 0 or ct gt 74 then begin
      print, 'The number of currently available color tables are 0-74.'
      print, 'Please specify a table number of the above range.'
@@ -209,9 +212,9 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
      RETURN
   ENDIF
   
-  IF ct LT 43 OR ct GT 47 THEN BEGIN
-    ;;loadct, ct, bottom=bottom_c, file=file
-    loadct, ct, bottom=bottom_c
+  IF ct LT 43 OR ct GT 48 THEN BEGIN
+     ;;loadct,ct,bottom=bottom_c,file=file
+     loadct,ct,bottom=bottom_c
   ENDIF ELSE IF ct EQ 43 THEN BEGIN
      loadct,ct,bottom=bottom_c,file=file,/silent
      PRINT, '% Loading table SD-Special'
@@ -227,6 +230,9 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
   endif else if ct eq 47 then begin
      set_col_tab_from_rgb_txt, file_source_dirname()+'/col_tbl/rgb_viridis.txt', bottom_c
      print, '% Loading the Viridis color table'
+  endif else if ct eq 48 then begin
+     set_col_tab_from_rgb_txt, file_source_dirname()+'/col_tbl/rgb_turbo.txt', bottom_c
+     print, '% Loading the Turbo color table'
   endif
   
   
