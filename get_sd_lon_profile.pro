@@ -3,14 +3,14 @@
 ;
 ; :Description:
 ;   Obtain a tplot variable storing a time series of the values
-;   averaged over the given latitude/longitude range, to be plotted as a RTI-type plot.
+;   averaged over the given latitude/longitude range, to be plotted as an ewogram-type plot.
 ;   This procedure calls get_sd_ave() internally. 
 ;
 ; :PARAMTERS:
 ; vn : a tplot variable the values in which are to be averaged
 ;
 ; :KEYWORD:
-; lonrng: the geographical latitude range for which the given values are averaged. 
+; lonrng: the geographical longitude range for which the given values are averaged. 
 ;             Lonrng should be a 2-element array of [ western bnd, eastern bnd ] in deg of GEO or MAG coords. 
 ; dlon:   longitudinal width of each longitudinal bin for which the average values are obtained.  
 ; latrng: the geographical latiitude range for averaging
@@ -19,6 +19,9 @@
 ; new_vn: Set a string to create a new tplot variable containing the averaged values
 ;
 ; :EXAMPLES:
+;   ;; The following commands create a tplot variable containing LOSV values taken from the MLAT
+;   ;; range of 555 to 57 deg averaged for 1-deg in geolon
+;   ;; bins. 
 ;   erg_load_sdfit, site='hok',/get
 ;   get_sd_lon_profile, 'sd_hok_vlos_1', lonrng=[140,170], dlon=1., latrng=[55,57], /maglat
 ;

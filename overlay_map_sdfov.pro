@@ -1,7 +1,8 @@
 PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     geo_plot=geo_plot, coord=coord, linestyle=linestyle, beams=beams, linecolor=linecolor, $
     linethick=linethick, draw_beamnum=draw_beamnum, $
-    rgrange=rgrange, pixelonly=pixelonly  
+    rgrange=rgrange, pixelonly=pixelonly, $
+    nofov=nofov
     
   ;Set the list of the available sites
     valid_sites = [ 'ade', 'adw', 'bks', 'bpk', 'cly', 'cve', 'cvw', 'dce', 'fhe', $
@@ -59,16 +60,18 @@ PRO overlay_map_sdfov, site=site, force_nhemis=force_nhemis, $
     
     n_rg = N_ELEMENTS(mlat[*,0])-1
     n_az = N_ELEMENTS(mlat[0,*])-1
-    
-    PLOTS,tmlt[0,0:n_az],mlat[0,0:n_az], linestyle=linestyle, color=linecolor, $
-      thick=linethick
-    PLOTS,tmlt[0:n_rg,n_az],mlat[0:n_rg,n_az], linestyle=linestyle, color=linecolor, $
-      thick=linethick
-    PLOTS,tmlt[n_rg,0:n_az],mlat[n_rg,0:n_az], linestyle=linestyle, color=linecolor, $
-      thick=linethick
-    PLOTS,tmlt[0:n_rg,0],mlat[0:n_rg,0], linestyle=linestyle, color=linecolor, $
-      thick=linethick
-    
+   
+    if ~keyword_set(nofov) then begin
+      PLOTS,tmlt[0,0:n_az],mlat[0,0:n_az], linestyle=linestyle, color=linecolor, $
+        thick=linethick
+      PLOTS,tmlt[0:n_rg,n_az],mlat[0:n_rg,n_az], linestyle=linestyle, color=linecolor, $
+        thick=linethick
+      PLOTS,tmlt[n_rg,0:n_az],mlat[n_rg,0:n_az], linestyle=linestyle, color=linecolor, $
+        thick=linethick
+      PLOTS,tmlt[0:n_rg,0],mlat[0:n_rg,0], linestyle=linestyle, color=linecolor, $
+        thick=linethick
+    endif
+
     ;Draw selected beams
     if total(size(beams)) gt 0 then begin
       ;;print, beams

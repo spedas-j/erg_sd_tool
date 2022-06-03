@@ -24,10 +24,8 @@
 ;   2017/09/27: jet and viridis implemented
 ;   2010/11/20: created
 ;
-; $LastChangedBy: c0004hori $
 ; $LastChangedDate: 2017-09-28 11:57:54 +0900 (Thu, 28 Sep 2017) $
 ; $LastChangedRevision: 479 $
-; $URL: https://ergsc-local.isee.nagoya-u.ac.jp/svn/ergsc/trunk/erg/ground/radar/superdarn/loadct_sd.pro $
 ;-
 
 PRO set_col_tab_from_rgb_txt, rgb_txt, bottom_c
@@ -198,14 +196,14 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
   red = 6
   bottom_c = 7
   
-  IF ~KEYWORD_SET(ct) THEN ct = 43 ;FAST-Special
+  IF ~KEYWORD_SET(ct) THEN ct = 46 ; JET
   
-  ;;Error check for ct - already obsolete
-  ;;if ct lt 0 or ct gt 47 then begin
-  ;;   print, 'The number of currently available color tables are 0-47.'
-  ;;   print, 'Please specify a table number of the above range.'
-  ;;   return
-  ;;endif
+  ;;Error check for ct
+  if ct lt 0 or ct gt 74 then begin
+     print, 'The number of currently available color tables are 0-74.'
+     print, 'Please specify a table number of the above range.'
+     return
+  endif
   
   IF N_ELEMENTS(color_table) EQ 0 THEN color_table=ct
   previous_ct =  color_table
@@ -225,7 +223,7 @@ PRO loadct_sd,ct,invert=invert,reverse=revrse,file=file,previous_ct=previous_ct,
      print, '% Loading table Cutlass color bar for SD'
   ENDIF ELSE IF ct EQ 45 THEN BEGIN
      cut_col_tab2, bottom_c
-     print, '% Loading the color bar similar to the default in JHU/APL SD site'
+     print, '% Loading the color bar similar to the default in the old JHU/APL SD site'
   endif else if ct eq 46 then begin
      set_col_tab_from_rgb_txt, file_source_dirname()+'/col_tbl/rgb_jet.txt', bottom_c
      print, '% Loading the JET color table'
