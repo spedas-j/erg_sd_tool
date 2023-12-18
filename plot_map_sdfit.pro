@@ -51,7 +51,8 @@ PRO plot_map_sdfit, var $
     , nocolorscale=nocolorscale $
     , colorscalepos=colorscalepos $
     , force_nhemis=force_nhemis $
-    , pixel_scale=pixel_scale
+    , pixel_scale=pixel_scale $
+    , charscale=charscale
     
     
   ;the tplot var exists?
@@ -74,7 +75,7 @@ PRO plot_map_sdfit, var $
     center_glat=glatc, center_glon=glonc, $
     mltlabel=mltlabel, lonlab=lonlab, $
     force_scale=force_scale, $
-    geo_plot=geo_plot, coord=coord 
+    geo_plot=geo_plot, coord=coord, charscale=charscale 
     
     
   ;Draw a fan plot on map
@@ -83,7 +84,14 @@ PRO plot_map_sdfit, var $
     geo_plot=geo_plot, $
     nogscat=nogscat, gscatmaskoff=gscatmaskoff, $
     nocolorscale=nocolorscale, colorscalepos=colorscalepos, $
-    force_nhemis=force_nhemis, pixel_scale=pixel_scale
+    force_nhemis=force_nhemis, pixel_scale=pixel_scale, charscale=charscale
+    
+  ;Redraw MLT labels and time label and such
+  sd_map_set, erase=0, clip=clip, position=position, $
+    center_glat=glatc, center_glon=glonc, $
+    mltlabel=mltlabel, lonlab=lonlab, $
+    force_scale=force_scale, $
+    geo_plot=geo_plot, coord=coord, charscale=charscale 
     
   ;Draw the world map
   IF KEYWORD_SET(coast) THEN BEGIN
