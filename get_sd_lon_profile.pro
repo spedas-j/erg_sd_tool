@@ -93,6 +93,8 @@ PRO get_sd_lon_profile, vn, latrng=latrng, lonrng=lonrng, dlon=dlon, maglat=magl
   store_data, new_vn, data={x: scan.x, y:valarr, v:lonc}, $
     dl={spec:1}, $
     lim={zrange:[-500,500], ystyle:1, yrange:yran }
-    
+  ;Decorate the tplot var.
+  options, new_vn, zticklen=-0.35, ytickinterval=10., yminor=2
+
   return
 end
