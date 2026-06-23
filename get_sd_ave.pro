@@ -17,7 +17,8 @@
 ;
 ; :EXAMPLES:
 ;   erg_load_sdfit, site='hok',/get
-;   dat = get_sd_ave( 'sd_hok_vlos_1', latrng=[60,70], lonrng=[140,170] 
+;   dat = get_sd_ave( 'sd_hok_vlos_1', latrng=[60,70], lonrng=[140,170] )
+;   dat2= get_sd_ave( 'sd_hok_vlos_1', latrng=[60,70], lonrng=[140,170], losv_thres=[-1000, 1000]
 ;
 ; :Author:
 ; 	Tomo Hori (E-mail: horit@isee.nagoya-u.ac.jp)
@@ -53,7 +54,7 @@ FUNCTION in_phirng, x, range, west=west
   RETURN, -1
 END
 
-FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, maglon=maglon, new_vn=new_vn
+FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, maglon=maglon, new_vn=new_vn, losv_thres=losv_thres
   
   
   ;Check the arguments and keywords
@@ -62,6 +63,10 @@ FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, maglon=mag
   if (tnames(vn[0])) eq '' then return, !values.f_nan
   
   if n_elements(latrng) ne 2 or n_elements(lonrng) ne 2 then return, !values.f_nan
+  if defined(losv_thres) then begin
+    if n_elements(losv_thres) eq 1 then losvrng = [-1, 1] * abs(losv_thres)
+    if n_elements(losv_thres) eq 2 then losvrng = minmax( losv_thres)
+  endif
   
   is_maglat = keyword_set(maglat)
   is_maglon = keyword_set(maglon) 
@@ -110,6 +115,11 @@ FUNCTION get_sd_ave, vn, latrng=latrng, lonrng=lonrng, maglat=maglat, maglon=mag
   for i=0L, n_elements(scant)-1 do begin
     
     tmpscan = reform(scan[i,*,*])
+    ;Exclude LOSV values behond the threshold from the following averag calc.
+    if n_elements(losvrng) eq 2 then begin
+      id2 = where( tmpscan lt losvrng[0] or tmpscan gt losvrng[1], nid2 )
+      if nid2 gt 0 then tmpscan[id2] = !values.f_nan
+    endif
     if idx[0] ne -1 then val[i] = mean( tmpscan[idx], /nan ) $
     else val[i] = !values.f_nan
     

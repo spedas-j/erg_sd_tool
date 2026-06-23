@@ -36,7 +36,7 @@
 ; $LastChangedRevision:$
 ; $URL:$
 ;-
-PRO get_sd_lon_profile, vn, latrng=latrng, lonrng=lonrng, dlon=dlon, maglat=maglat, maglon=maglon, new_vn=new_vn
+PRO get_sd_lon_profile, vn, latrng=latrng, lonrng=lonrng, dlon=dlon, maglat=maglat, maglon=maglon, new_vn=new_vn, losv_thres=losv_thres
   
   ;Currently this procedure can take as an argument:
   ; vlos, vlshell, (vlos|vnorth|veast), _iscat
@@ -79,7 +79,7 @@ PRO get_sd_lon_profile, vn, latrng=latrng, lonrng=lonrng, dlon=dlon, maglat=magl
     
     lonmin = tlonarr[i] & lonmax = tlonarr[i+1]
     lonave = get_sd_ave(vn, lonrng=[lonmin,lonmax],latrng=latrng,$
-                          maglat=maglat, maglon=maglon )
+                          maglat=maglat, maglon=maglon, losv_thres=losv_thres )
     valarr[*,i] = lonave.y
     
   endfor
